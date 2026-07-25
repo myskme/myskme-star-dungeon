@@ -1,0 +1,2478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>星徒地牢 · MYSKME</title>
+<style>
+:root{
+  --bg:#0d0f18; --bg2:#141726; --bg3:#1c2033;
+  --ink:#f0ecdf; --ink2:#9aa3bd; --ink3:#6b7391;
+  --gold:#c8a558; --gold2:#e8cf95; --gold3:#7a6320;
+  --red:#ef4d4d; --green:#38b764; --blue:#41a6f6; --orange:#ef7d57; --yellow:#ffcd75;
+  --line:rgba(200,165,88,.24);
+  --glow-gold:0 0 0 2px rgba(200,165,88,.5), 0 0 18px -2px rgba(232,207,149,.45);
+  --px:ui-monospace,Menlo,Consolas,"Courier New",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--px); font-weight:700; letter-spacing:.06em;
+  /* 用 block + margin auto 居中，别用 flex 居中：
+     flex 居中遇到比视口宽/高的内容会把内容顶出屏幕（手机端右侧按钮被裁掉、长报告顶掉表头） */
+  display:block; padding:10px;
+  overflow-x:hidden;
+  background-image:
+    repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px),
+    radial-gradient(120% 80% at 50% 0%,#1a1e30 0%,#0d0f18 60%,#07080e 100%);
+}
+#app{width:100%;max-width:520px;margin:0 auto}
+.pbtn,.btn{min-width:0}
+.screen{display:flex;flex-direction:column;gap:12px}
+.hidden{display:none!important}
+
+/* ── 标题 ── */
+.title{text-align:center;padding:6px 0 2px}
+.title h1{font-size:26px;letter-spacing:.34em;text-indent:.34em;color:var(--gold2);
+  text-shadow:3px 3px 0 #000;font-weight:700}
+.title p{font-size:11px;color:var(--ink3);letter-spacing:.2em;margin-top:8px}
+
+/* ── 英雄选择 ── */
+.heroes{display:flex;flex-direction:column;gap:10px}
+.hcard{display:flex;align-items:center;gap:12px;padding:12px;
+  background:linear-gradient(180deg,var(--bg3),var(--bg2));
+  border:3px solid #2b3150;cursor:pointer;
+  transition:transform .12s,border-color .12s,box-shadow .12s}
+.hcard:hover{transform:translateY(-2px);border-color:var(--gold);box-shadow:var(--glow-gold)}
+.hcard:active{transform:translateY(1px) scale(.98);transition-duration:.05s}
+.hcard canvas{width:64px;height:64px;image-rendering:pixelated;flex:none;
+  background:radial-gradient(circle at 50% 40%,rgba(200,165,88,.16),transparent 70%)}
+.hinfo{flex:1;min-width:0}
+.hname{font-size:19px;color:var(--gold2);letter-spacing:.2em}
+.hrole{font-size:11px;color:var(--ink3);margin-top:4px;letter-spacing:.1em}
+.hskill{font-size:13px;color:var(--ink);margin-top:7px;line-height:1.5;letter-spacing:.04em}
+.hstat{font-size:11px;color:var(--ink2);margin-top:5px}
+.hstat b{color:var(--gold)}
+
+/* ── 模式入口与课堂设置 ── */
+.modegrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modebtn{min-height:92px;padding:14px;border:3px solid #2b3150;
+  background:linear-gradient(180deg,var(--bg3),var(--bg2));color:var(--ink);cursor:pointer;
+  font-family:var(--px);font-weight:700;text-align:left;transition:transform .12s,border-color .12s,box-shadow .12s}
+.modebtn:hover,.modebtn.active{border-color:var(--gold);box-shadow:var(--glow-gold)}
+.modebtn:active{transform:translateY(1px) scale(.98)}
+.modebtn b{display:block;color:var(--gold2);font-size:18px;letter-spacing:.18em;margin-bottom:7px}
+.modebtn span{font-size:11px;line-height:1.6;color:var(--ink2);letter-spacing:.04em}
+.sectionhead{font-size:14px;color:var(--gold2);letter-spacing:.2em;text-align:center;
+  padding:10px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.countgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}
+.countbtn{min-height:54px;border:3px solid #2b3150;background:var(--bg2);color:var(--ink2);
+  font:700 18px var(--px);cursor:pointer}
+.countbtn.active{border-color:var(--gold);color:var(--gold2);box-shadow:var(--glow-gold)}
+.seatlist{display:flex;flex-direction:column;gap:9px}
+.seatpick{border:3px solid #2b3150;background:var(--bg2);padding:10px}
+.seatpicktop{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.seatpicktop b{font-size:15px;color:var(--gold2);letter-spacing:.14em}
+.seatpicktop span{font-size:11px;color:var(--ink2)}
+.herochoices{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.herochoice{min-height:48px;border:2px solid #2b3150;background:#111522;color:var(--ink2);
+  font:700 13px var(--px);cursor:pointer}
+.herochoice.active{border-color:var(--gold);color:var(--gold2);background:#222239}
+.startclass{min-height:60px;font-size:17px;color:var(--gold2);border-color:var(--gold)}
+
+/* ── HUD ── */
+#hud{display:flex;align-items:center;gap:10px;padding:9px 11px;
+  background:var(--bg2);border:3px solid #2b3150}
+#hud canvas{width:34px;height:34px;image-rendering:pixelated;flex:none}
+.hudmid{flex:1;min-width:0}
+.hudtop{display:flex;justify-content:space-between;align-items:baseline;font-size:12px}
+.hudtop b{color:var(--gold2);font-size:14px;letter-spacing:.16em}
+.hudtop span{color:var(--ink2)}
+.bar{height:10px;background:#000;border:2px solid #2b3150;margin-top:5px;position:relative;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--green),#7fe08a);
+  transition:width .28s cubic-bezier(.16,1,.3,1)}
+.bar.low i{background:linear-gradient(90deg,var(--red),#ff8a8a)}
+.hudnum{font-size:11px;color:var(--ink2);margin-top:4px;display:flex;gap:12px}
+.hudnum b{color:var(--ink)}
+.classhud{border:3px solid var(--gold);background:var(--bg2);padding:10px}
+.classturn{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.classturn b{font-size:19px;color:var(--gold2);letter-spacing:.1em;line-height:1.35}
+.apbox{display:flex;align-items:center;gap:6px;flex:none}
+.apbox span:first-child{font-size:10px;color:var(--ink2);letter-spacing:.08em;margin-right:2px}
+.apdot{width:15px;height:15px;border:3px solid #48506d;background:#111522}
+.apdot.on{border-color:var(--gold2);background:var(--gold);box-shadow:0 0 8px rgba(232,207,149,.5)}
+.classroster{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:9px}
+.rosterseat{padding:6px;border:2px solid #2b3150;color:var(--ink2);font-size:10px;
+  line-height:1.55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rosterseat.active{border-color:var(--gold);color:var(--gold2)}
+.rosterseat.resting{color:var(--ink3);border-color:#242a42}
+
+/* ── 舞台 ── */
+#stage{position:relative;width:100%;aspect-ratio:1/1;
+  border:3px solid #2b3150;background:#05060b;overflow:hidden}
+#cv{width:100%;height:100%;display:block;image-rendering:pixelated}
+#fx{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.fnum{position:absolute;transform:translate(-50%,-50%);font-size:19px;font-weight:700;
+  pointer-events:none;text-shadow:2px 2px 0 #000;animation:floatUp .95s ease forwards;white-space:nowrap}
+.fnum.crit{font-size:27px}
+@keyframes floatUp{
+  0%{opacity:0;transform:translate(-50%,-38%) scale(.7)}
+  25%{opacity:1;transform:translate(-50%,-58%) scale(1.18)}
+  100%{opacity:0;transform:translate(-50%,-130%) scale(1)}}
+#stage.shaking{animation:shake .38s cubic-bezier(.36,.07,.19,.97)}
+@keyframes shake{
+  10%,90%{transform:translate(-2px,1px)}20%,80%{transform:translate(3px,-1px)}
+  30%,70%{transform:translate(-4px,2px)}40%,60%{transform:translate(4px,-2px)}
+  50%{transform:translate(-3px,1px)}}
+
+/* ── 提示条 ── */
+#tip{font-size:12px;color:var(--ink2);text-align:center;line-height:1.7;
+  padding:8px 10px;background:var(--bg2);border:3px solid #2b3150;letter-spacing:.04em}
+#tip b{color:var(--gold2)}
+
+/* ── 方向键 ── */
+#pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pbtn{padding:16px 0;font-size:22px;font-family:var(--px);font-weight:700;color:var(--gold2);
+  background:linear-gradient(180deg,var(--bg3),var(--bg2));border:3px solid #2b3150;cursor:pointer;
+  transition:transform .12s,border-color .12s,box-shadow .12s;user-select:none}
+.pbtn:hover{border-color:var(--gold);box-shadow:var(--glow-gold)}
+.pbtn:active{transform:translateY(1px) scale(.96);transition-duration:.05s}
+.pbtn.wait{font-size:13px;letter-spacing:.16em}
+.pbtn.ghost{opacity:0;pointer-events:none}
+
+/* ── 底部按钮 ── */
+.row{display:flex;gap:8px}
+.btn{flex:1;padding:11px;font-size:13px;font-family:var(--px);font-weight:700;letter-spacing:.14em;
+  color:var(--ink2);background:var(--bg2);border:3px solid #2b3150;cursor:pointer;
+  transition:transform .12s,border-color .12s,color .12s}
+.btn:hover{border-color:var(--gold);color:var(--gold2)}
+.btn:active{transform:translateY(1px) scale(.98);transition-duration:.05s}
+
+/* ── 结算 ── */
+#over{text-align:center;gap:16px}
+#over .big{font-size:34px;letter-spacing:.3em;text-indent:.3em;text-shadow:3px 3px 0 #000}
+#over .big.win{color:var(--gold2)}
+#over .big.lose{color:var(--red)}
+#over .sum{font-size:13px;color:var(--ink2);line-height:2}
+#over .sum b{color:var(--gold2)}
+
+/* ── 教学卡 ── */
+#howto{position:fixed;inset:0;z-index:60;background:rgba(5,6,11,.94);
+  display:flex;align-items:center;justify-content:center;padding:20px}
+#howto .box{max-width:400px;border:3px solid var(--gold);background:var(--bg2);padding:20px}
+#howto h2{font-size:17px;color:var(--gold2);letter-spacing:.24em;text-align:center;margin-bottom:16px}
+#howto li{list-style:none;font-size:13px;line-height:1.9;color:var(--ink);margin-bottom:10px;
+  display:flex;gap:10px;align-items:flex-start}
+#howto li s{color:var(--gold2);text-decoration:none;flex:none}
+#howto b{color:var(--red)}
+
+/* 课堂判分：围桌传 iPad 时，一眼看清、一指点中 */
+#classJudge{position:fixed;inset:0;z-index:75;background:rgba(5,6,11,.96);
+  display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
+.judgebox{width:100%;max-width:460px;border:3px solid var(--gold);background:var(--bg2);padding:18px}
+.judgewho{display:flex;align-items:center;gap:14px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.judgewho canvas{width:68px;height:68px;image-rendering:pixelated;flex:none}
+.judgewho p{font-size:11px;color:var(--ink2);margin-bottom:6px}
+.judgewho h2{font-size:23px;line-height:1.4;color:var(--gold2);letter-spacing:.1em}
+.judgehint{font-size:12px;color:var(--ink2);line-height:1.8;margin:13px 0;text-align:center}
+.judgegrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.gradebtn{min-height:66px;padding:9px;border:3px solid #2b3150;background:#151a2a;color:var(--ink);
+  font:700 16px/1.35 var(--px);cursor:pointer}
+.gradebtn b{display:block;color:var(--gold2);font-size:20px}
+.gradebtn.wrong b{color:var(--red)}
+.gradebtn:active{transform:translateY(1px) scale(.98)}
+.judgenote{font-size:11px;color:var(--ink3);line-height:1.6;text-align:center;margin-top:12px}
+
+/* 方向键里的像素箭头（不用 emoji/箭头字符） */
+.pbtn svg{width:22px;height:22px;display:block;margin:0 auto;fill:currentColor;
+  shape-rendering:crispEdges}
+
+/* 章节过场大字 */
+#chapter{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  pointer-events:none;font-size:19px;letter-spacing:.26em;color:var(--gold2);
+  text-shadow:3px 3px 0 #000;opacity:0;z-index:20;
+  background:linear-gradient(180deg,transparent 34%,rgba(5,6,11,.88) 40%,
+             rgba(5,6,11,.88) 60%,transparent 66%)}
+#chapter.go{animation:chap 1.9s ease forwards}
+@keyframes chap{0%{opacity:0;transform:scale(.9)}18%{opacity:1;transform:scale(1)}
+  72%{opacity:1}100%{opacity:0}}
+
+/* 层间三选一 */
+#upgrade,#codex{position:fixed;inset:0;z-index:70;background:rgba(5,6,11,.94);
+  display:flex;align-items:center;justify-content:center;padding:18px;overflow:auto}
+.upbox,.cxbox{width:100%;max-width:420px;border:3px solid var(--gold);background:var(--bg2);padding:18px}
+.upbox h2,.cxbox h2{font-size:16px;color:var(--gold2);letter-spacing:.28em;text-align:center;
+  margin-bottom:15px;text-indent:.28em}
+.upcard{border:3px solid #2b3150;background:linear-gradient(180deg,var(--bg3),var(--bg2));
+  padding:13px;margin-bottom:10px;cursor:pointer;
+  transition:transform .12s,border-color .12s,box-shadow .12s}
+.upcard:hover{transform:translateY(-2px);border-color:var(--gold);box-shadow:var(--glow-gold)}
+.upcard:active{transform:translateY(1px) scale(.98);transition-duration:.05s}
+.upname{font-size:17px;color:var(--gold2);letter-spacing:.2em}
+.updesc{font-size:12px;color:var(--ink2);margin-top:6px;letter-spacing:.06em}
+
+/* 图鉴 */
+.cxrow{display:flex;align-items:center;gap:11px;padding:9px 0;
+  border-bottom:1px solid rgba(200,165,88,.14)}
+.cxrow canvas{width:36px;height:36px;image-rendering:pixelated;flex:none}
+.cxrow.dim canvas{opacity:.22;filter:grayscale(1)}
+.cxn{font-size:14px;color:var(--gold2);letter-spacing:.14em}
+.cxrow.dim .cxn{color:var(--ink3)}
+.cxd{font-size:11px;color:var(--ink2);margin-top:4px;line-height:1.6;letter-spacing:.03em}
+.cxrow.dim .cxd{color:var(--ink3)}
+
+#flash{position:fixed;inset:0;pointer-events:none;z-index:80;opacity:0;
+  background:radial-gradient(ellipse at center,rgba(255,255,255,.9),rgba(255,255,255,.25))}
+#flash.go{animation:flashOut .45s ease-out}
+#flash.red{background:radial-gradient(ellipse at center,rgba(220,50,50,.65),rgba(160,20,20,.25))}
+@keyframes flashOut{0%{opacity:.8}100%{opacity:0}}
+
+@media(max-width:760px){
+  .title h1{font-size:22px}
+  .hcard canvas{width:56px;height:56px}
+  .pbtn{padding:19px 0}
+}
+@media(max-width:390px){
+  body{padding:7px}
+  .modegrid{grid-template-columns:1fr}
+  .modebtn{min-height:74px}
+  .countgrid{gap:4px}
+  .countbtn{min-height:48px}
+  .herochoices{gap:4px}
+  .herochoice{min-height:44px;font-size:12px}
+  .classturn{align-items:flex-start;flex-direction:column}
+  .classroster{grid-template-columns:repeat(2,1fr)}
+  .judgegrid{grid-template-columns:1fr}
+  .gradebtn{min-height:58px}
+  .judgewho canvas{width:56px;height:56px}
+  .judgewho h2{font-size:19px}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- 菜单 -->
+  <div id="menu" class="screen">
+    <div class="title">
+      <h1>星徒地牢</h1>
+      <p>黑域来袭 · 选一种闯关方式</p>
+    </div>
+    <div class="modegrid">
+      <button class="modebtn" id="btnSingle"><b>一个人闯</b><span>原来的完整地牢玩法，选一位星徒独自出发。</span></button>
+      <button class="modebtn" id="btnClass"><b>课堂模式</b><span>一至六人轮流答题、传递设备，共同闯同一座地牢。</span></button>
+    </div>
+    <div id="singlePicker" class="hidden">
+      <div class="sectionhead">选 一 位 星 徒</div>
+      <div class="heroes" id="heroList" style="margin-top:10px"></div>
+    </div>
+    <div class="row">
+      <button class="btn" id="btnHow">怎么玩</button>
+      <button class="btn" id="btnCodex">黑域图鉴</button>
+    </div>
+  </div>
+
+  <!-- 课堂设置 -->
+  <div id="classSetup" class="screen hidden">
+    <div class="title">
+      <h1>课堂模式</h1>
+      <p>同一座地牢 · 固定座位轮流传递</p>
+    </div>
+    <div class="sectionhead">先 选 人 数</div>
+    <div class="countgrid" id="classCounts"></div>
+    <div class="sectionhead">再 给 每 个 座 位 选 星 徒</div>
+    <div class="seatlist" id="classSeats"></div>
+    <button class="btn startclass" id="btnClassStart">开始共同闯关</button>
+    <button class="btn" id="btnClassBack">回到主菜单</button>
+  </div>
+
+  <!-- 游戏 -->
+  <div id="game" class="screen hidden">
+    <div id="hud">
+      <canvas id="hudCv" width="16" height="16"></canvas>
+      <div class="hudmid">
+        <div class="hudtop"><b id="hName">瑾</b><span id="hFloor">第一层</span></div>
+        <div class="bar" id="hpBar"><i id="hpFill" style="width:100%"></i></div>
+        <div class="hudnum">
+          <span>血 <b id="nHp">20/20</b></span>
+          <span>攻 <b id="nAtk">3</b></span>
+          <span>金 <b id="nCoin">0</b></span>
+        </div>
+      </div>
+    </div>
+
+    <div id="classHud" class="classhud hidden">
+      <div class="classturn">
+        <b id="classTurnName">轮到 一号 · 瑾</b>
+        <div class="apbox" id="apDots"><span>行动点</span></div>
+      </div>
+      <div class="classroster" id="classRoster"></div>
+    </div>
+
+    <div id="stage"><canvas id="cv" width="144" height="144"></canvas><div id="fx"></div><div id="chapter"></div></div>
+
+    <div id="tip">格子上亮起<b>红叉</b> = 下回合那里会挨打，<b>走开就能躲掉</b></div>
+
+    <div id="pad">
+      <button class="pbtn ghost"></button>
+      <button class="pbtn" data-d="u"><svg viewBox="0 0 16 16"><polygon points="8,3 13.5,11 2.5,11"/></svg></button>
+      <button class="pbtn ghost"></button>
+      <button class="pbtn" data-d="l"><svg viewBox="0 0 16 16"><polygon points="3,8 11,2.5 11,13.5"/></svg></button>
+      <button class="pbtn wait" data-d="w">等一回合</button>
+      <button class="pbtn" data-d="r"><svg viewBox="0 0 16 16"><polygon points="13,8 5,2.5 5,13.5"/></svg></button>
+      <button class="pbtn ghost"></button>
+      <button class="pbtn" data-d="d"><svg viewBox="0 0 16 16"><polygon points="8,13 13.5,5 2.5,5"/></svg></button>
+      <button class="pbtn ghost"></button>
+    </div>
+
+    <div class="row">
+      <button class="btn" id="btnBack">换英雄</button>
+      <button class="btn" id="btnSound">音效 开</button>
+      <button class="btn" id="btnHow2">怎么玩</button>
+    </div>
+  </div>
+
+  <!-- 层间三选一 -->
+  <div id="upgrade" class="hidden">
+    <div class="upbox">
+      <h2>选 一 个 变 强</h2>
+      <div id="upList"></div>
+    </div>
+  </div>
+
+  <!-- 黑域图鉴 -->
+  <div id="codex" class="hidden">
+    <div class="cxbox">
+      <h2>黑 域 图 鉴</h2>
+      <div id="cxList"></div>
+      <div class="row" style="margin-top:14px"><button class="btn" id="btnCxClose">回去</button></div>
+    </div>
+  </div>
+
+  <!-- 结算 -->
+  <div id="over" class="screen hidden">
+    <div class="big" id="overBig">胜 利</div>
+    <div class="sum" id="overSum"></div>
+    <div class="row">
+      <button class="btn" id="btnAgain">再来一局</button>
+      <button class="btn" id="btnMenu">换英雄</button>
+    </div>
+  </div>
+</div>
+
+<div id="classJudge" class="hidden">
+  <div class="judgebox">
+    <div class="judgewho">
+      <canvas id="judgeCv" width="16" height="16"></canvas>
+      <div><p>现在请这位同学答题</p><h2 id="judgeName">轮到 一号 · 瑾</h2></div>
+    </div>
+    <div class="judgehint">老师判分后，游戏会给出本回合行动点。</div>
+    <div class="judgegrid">
+      <button class="gradebtn" data-score="3"><b>答得好　3 分</b>获得 3 点行动</button>
+      <button class="gradebtn" data-score="2"><b>答对　2 分</b>获得 2 点行动</button>
+      <button class="gradebtn" data-score="1"><b>答对一部分　1 分</b>获得 1 点行动</button>
+      <button class="gradebtn wrong" data-score="0"><b>答错　0 分</b>仍可走 1 步</button>
+    </div>
+    <div class="judgenote">记分归记分，行动归行动。答错也不会被罚坐着等。</div>
+  </div>
+</div>
+
+<div id="howto" class="hidden">
+  <div class="box">
+    <h2>六句话学会</h2>
+    <ul>
+      <li><s>一</s><div>点方向键走一步（也可以直接点格子）。一个人闯时，<b>你走一步，敌人才动一步</b>，不急，慢慢想。</div></li>
+      <li><s>二</s><div>朝敌人走过去＝<b>打它</b>。血量就在它脚下，几下能打死看得见。</div></li>
+      <li><s>三</s><div>格子上的<b>红叉</b>＝下回合那里会挨打。<b>站开就躲掉了</b>，头目的大招也一样。</div></li>
+      <li><s>四</s><div>走到<b>金色楼梯</b>下一层，每层可以<b>选一个变强</b>。共九层，三个头目。</div></li>
+      <li><s>五</s><div>打不过就<b>绕开</b>——「等一回合」让它先动，往往比硬拼划算。</div></li>
+      <li><s>六</s><div>课堂模式先由老师判 <b>3／2／1／答错</b>，再行动。答错记 0 分，仍有 1 点行动；全队走完敌人才动。</div></li>
+    </ul>
+    <div class="row" style="margin-top:14px"><button class="btn" id="btnHowClose">知道了</button></div>
+  </div>
+</div>
+
+<div id="flash"></div>
+
+<script>
+"use strict";
+/* ══════════════════════════════════════════════════════════════
+   星徒地牢 · MYSKME 像素战术地牢（可玩小样）
+   设计参考：Shattered Pixel Dungeon（下地牢/撞怪/英雄/捡宝）
+             Into the Breach（敌人意图预告=完美信息，本作"容易懂"的第一功臣）
+             Hoplite（短局）
+   全部像素美术由代码绘制，零图片文件，所以单文件极小、秒开、离线可玩。
+   注意：本作品禁用一切 emoji 与符号字符（含带圈数字、箭头字符），箭头一律用像素 SVG。
+   ══════════════════════════════════════════════════════════════ */
+
+/* ---------- 调色板 ---------- */
+const PAL={
+  '.':null,
+  'k':'#12131c','w':'#f4f4f4','e':'#c9cfe0','g':'#94b0c2','d':'#5a6988','s':'#2b2f4a',
+  'o':'#ef7d57','f':'#c05a2e','r':'#ef4d4d','y':'#ffcd75','m':'#c8a558','t':'#e8cf95',
+  'n':'#38b764','v':'#1f8a4c','b':'#41a6f6','p':'#7e2553','h':'#f2b8c6','c':'#8b5a2b'
+};
+
+/* ---------- 16×16 像素图 ---------- */
+const SPR={
+/* 瑾 · 赤狐 */
+jin:[
+'................',
+'...k........k...',
+'..ok........ko..',
+'..ook......koo..',
+'..oooo....oooo..',
+'...oooooooooo...',
+'..oooooooooooo..',
+'..ooookooookoo..',
+'..oooooooooooo..',
+'..ooowwwwwwooo..',
+'..ooowwkkwwooo..',
+'...oooowwoooo...',
+'...oowwwwwwoo...',
+'...oowwwwwwoo...',
+'....o.o..o.o....',
+'................'],
+/* 文 · 雪狼 */
+wen:[
+'................',
+'...g........g...',
+'..eg........ge..',
+'..eeg......gee..',
+'..eeee....eeee..',
+'...eeeeeeeeee...',
+'..eeeeeeeeeeee..',
+'..eeeekeeekee...',
+'..eeeeeeeeeeee..',
+'..eeewwwwwweee..',
+'..eeewwkkwweee..',
+'...eeeewweeee...',
+'...eewwwwwwee...',
+'...eewwwwwwee...',
+'....e.e..e.e....',
+'................'],
+/* 晰 · 弗莱明巨兔 */
+xi:[
+'................',
+'.....w....w.....',
+'.....wh..hw.....',
+'.....wh..hw.....',
+'.....ww..ww.....',
+'....wwwwwwww....',
+'...wwwwwwwwww...',
+'...wwkwwwwkww...',
+'...wwwwwwwwww...',
+'...wwwhhhhwww...',
+'...wwwhkkhwww...',
+'....wwwwwwww....',
+'....wwwwwwww....',
+'....wwwwwwww....',
+'....w.w..w.w....',
+'................'],
+/* 蛇卒 */
+snake:[
+'................',
+'................',
+'.....nnnn.......',
+'....nnnnnn......',
+'....nknnnkn.....',
+'....nnnnnnn.....',
+'.....nrrrn......',
+'......nnn.......',
+'.....nnnnn......',
+'....nnvvvnn.....',
+'...nnvvvvvnn....',
+'...nnvvvvvnn....',
+'....nnvvvnn.....',
+'.....nnnnn......',
+'................',
+'................'],
+/* 影卒 */
+shade:[
+'................',
+'................',
+'......ssss......',
+'.....ssssss.....',
+'.....ssssss.....',
+'.....srssrs.....',
+'.....ssssss.....',
+'....ssssssss....',
+'...ssssssssss...',
+'...ssssssssss...',
+'...ssssssssss...',
+'....ssssssss....',
+'....ssssssss....',
+'.....ssssss.....',
+'......ssss......',
+'................'],
+/* 鸦卫（用石板蓝而非纯黑，否则在暗地板上隐形） */
+crow:[
+'................',
+'................',
+'......dddd......',
+'.....dddddd.....',
+'.....dyddyd.....',
+'.....dddddd.....',
+'.....ddddddm....',
+'....sdddddds....',
+'...sdddddddds...',
+'...sdddddddds...',
+'....sdddddds....',
+'.....dddddd.....',
+'......dddd......',
+'......m..m......',
+'................',
+'................'],
+/* 浩 · 原牛（护守者·反弹之墙） */
+hao:[
+'................',
+'.ee..........ee.',
+'..ee........ee..',
+'...cccccccccc...',
+'..cccccccccccc..',
+'..cckcccccckcc..',
+'..cccccccccccc..',
+'..ccccwwwwcccc..',
+'..cccwwwwwwccc..',
+'..cccwkkkkwccc..',
+'...ccwwwwwwcc...',
+'...cccccccccc...',
+'...cccccccccc...',
+'...cc.cccc.cc...',
+'...kk......kk...',
+'................'],
+/* 海 · 驼鹿（街舞者·震荡波） */
+hai:[
+'.ee.ee....ee.ee.',
+'..eeee....eeee..',
+'...ee......ee...',
+'....cccccccc....',
+'...cccccccccc...',
+'...cckcccckcc...',
+'...cccccccccc...',
+'....cccccccc....',
+'....ccwwwwcc....',
+'....cwkkkkwc....',
+'.....cwwwwc.....',
+'.....cccccc.....',
+'....cccccccc....',
+'....cccccccc....',
+'.....cc..cc.....',
+'................'],
+/* 雾蝰（远程吐毒） */
+viper:[
+'................',
+'................',
+'......gggg......',
+'.....gggggg.....',
+'.....gkggkg.....',
+'.....gggggg.....',
+'......gwwg......',
+'.......gg.......',
+'......gggg......',
+'.....gg..gg.....',
+'....gg....gg....',
+'...gg......gg...',
+'..gg........gg..',
+'..g..........g..',
+'................',
+'................'],
+/* 坚壳（血厚步慢） */
+shell:[
+'................',
+'................',
+'................',
+'....dddddddd....',
+'...dddddddddd...',
+'..dddddddddddd..',
+'..dddssssssddd..',
+'..dddssssssddd..',
+'..dddddddddddd..',
+'..dyddddddddyd..',
+'...dddddddddd...',
+'....dddddddd....',
+'.....d.dd.d.....',
+'................',
+'................',
+'................'],
+/* 璇 · 狞猫（第一章头目·突进） */
+xuan:[
+'..k..........k..',
+'..k..........k..',
+'..kk........kk..',
+'..yk........ky..',
+'..yyy......yyy..',
+'...yyyyyyyyyy...',
+'..yyyyyyyyyyyy..',
+'..yykyyyyyykyy..',
+'..yyyyyyyyyyyy..',
+'..yyywwwwwwyyy..',
+'..yyywwkkwwyyy..',
+'...yyywwwwyyy...',
+'...yyyyyyyyyy...',
+'....yyyyyyyy....',
+'....y.y..y.y....',
+'................'],
+/* 叶王 · 网纹蟒女王（最终头目·召唤+十字重击） */
+ye:[
+'....m.m.m.m.....',
+'....mmmmmmm.....',
+'...pppppppppp...',
+'..pppppppppppp..',
+'..ppyppppppypp..',
+'..pppppppppppp..',
+'..pvvppppppvvp..',
+'...pppppppppp...',
+'....prrrrrrp....',
+'.....pppppp.....',
+'....pvvvvvvp....',
+'...pvvppppvvp...',
+'...pppppppppp...',
+'..pppvvvvvvppp..',
+'..pppppppppppp..',
+'...pppppppppp...'],
+/* 慧 · 西伯利亚虎（第二章头目·横扫）
+   注意：必须一眼区别于赤狐瑾——满格更大 + 黑色虎纹 + 黄瞳 + 獠牙。
+   第一版画得跟狐狸几乎一样，并排放根本分不清，是严重可读性事故。 */
+tiger:[
+'..o..........o..',
+'..oo........oo..',
+'.okko......okko.',
+'.oooo......oooo.',
+'.oooooooooooooo.',
+'.okkoookkoookko.',
+'.oyyooooooooyyo.',
+'.oykooooooookyo.',
+'.okoowwwwwwooko.',
+'.oooowwkkwwoooo.',
+'.oooowwwwwwoooo.',
+'.oooowkwwkwoooo.',
+'.okkooooooookko.',
+'.ooowwwwwwwwooo.',
+'.oo.ooo..ooo.oo.',
+'................'],
+/* 药水 */
+potion:[
+'................',
+'................',
+'................',
+'......eee.......',
+'......eke.......',
+'.....kkkkk......',
+'.....krrrk......',
+'....kkrrrkk.....',
+'....krrrrrk.....',
+'....krrrrrk.....',
+'....krrrrrk.....',
+'.....kkkkk......',
+'................',
+'................',
+'................',
+'................'],
+/* 金币 */
+coin:[
+'................',
+'................',
+'................',
+'................',
+'.....mmmmmm.....',
+'....mmttttmm....',
+'....mmtmmtmm....',
+'....mmtmmtmm....',
+'....mmttttmm....',
+'.....mmmmmm.....',
+'................',
+'................',
+'................',
+'................',
+'................',
+'................'],
+/* 剑（+攻击） */
+sword:[
+'................',
+'................',
+'.......ee.......',
+'.......ee.......',
+'.......ee.......',
+'.......ee.......',
+'.......ee.......',
+'.......ee.......',
+'.....mmmmmm.....',
+'.......cc.......',
+'.......cc.......',
+'......mmmm......',
+'................',
+'................',
+'................',
+'................'],
+/* 甲（+血上限） */
+armor:[
+'................',
+'................',
+'................',
+'....mmmmmmmm....',
+'....mddddddm....',
+'....mddddddm....',
+'....mddddddm....',
+'....mddddddm....',
+'.....mddddm.....',
+'......mddm......',
+'.......mm.......',
+'................',
+'................',
+'................',
+'................',
+'................'],
+/* 楼梯（下一层） */
+stairs:[
+'................',
+'................',
+'..mmmmmmmmmmmm..',
+'..mkkkkkkkkkkm..',
+'..mmmmmmmmmmmm..',
+'....mkkkkkkkkm..',
+'....mmmmmmmmmm..',
+'......mkkkkkkm..',
+'......mmmmmmmm..',
+'........mkkkkm..',
+'........mmmmmm..',
+'..........mkkm..',
+'..........mmmm..',
+'................',
+'................',
+'................']
+};
+
+/* ---------- 英雄（技能全部字段化：三选一强化直接加这些字段） ---------- */
+const HEROES=[
+ {id:'jin', name:'瑾', spr:'jin', animal:'赤狐', role:'争头名 · 暴击',
+  hp:20, atk:3, crit:0.30, tag:'爆发',
+  skill:'三成几率打出<b>双倍伤害</b>', desc:'打得狠，但也脆。'},
+ {id:'wen', name:'文', spr:'wen', animal:'雪狼', role:'觉醒者 · 背水狂化',
+  hp:24, atk:2, berserk:5, tag:'逆转',
+  skill:'<b>血越少，打得越狠</b>（最多 +5）', desc:'越到绝境越强。'},
+ {id:'xi',  name:'晰', spr:'xi', animal:'弗莱明巨兔', role:'软抵抗 · 吸血快刃',
+  hp:16, atk:3, lifesteal:1, tag:'续航',
+  skill:'每打中一次<b>回 1 点血</b>', desc:'最不容易死，新手先选它。'},
+ {id:'hao', name:'浩', spr:'hao', animal:'原牛', role:'护守者 · 反弹之墙',
+  hp:28, atk:2, reflect:2, tag:'坚壁',
+  skill:'挨打时<b>反弹 2 点</b>给打你的人', desc:'血最厚，能扛能磨。'},
+ {id:'hai', name:'海', spr:'hai', animal:'驼鹿', role:'街舞者 · 震荡波',
+  hp:22, atk:3, splash:1, tag:'群攻',
+  skill:'打人时<b>震到旁边的敌人</b>（溅射 1 点）', desc:'被围住时最舒服。'}
+];
+
+/* ---------- 敌人（boss 带 pattern：所有攻击一律预告，绝不偷袭） ---------- */
+const MOBS={
+  snake:{name:'蛇卒', spr:'snake', hp:5,  atk:2, coin:2,  lore:'黑域最常见的爪牙，成群结队地堵路。'},
+  crow: {name:'鸦卫', spr:'crow',  hp:4,  atk:2, coin:2,  lore:'替黑域盯梢的哨兵，飞得比想得快。'},
+  shade:{name:'影卒', spr:'shade', hp:8,  atk:3, coin:3,  lore:'没有面孔的兵，只认命令不认人。'},
+  viper:{name:'雾蝰', spr:'viper', hp:5,  atk:3, coin:3, range:2,
+         lore:'隔着两格就能吐出毒雾，站成一条直线最危险。'},
+  shell:{name:'坚壳', spr:'shell', hp:14, atk:3, coin:4, slow:true,
+         lore:'壳厚步子慢，硬碰硬很吃亏，绕开它更省事。'},
+  xuan: {name:'璇',  spr:'xuan', hp:20, atk:4, coin:15, boss:true, pattern:'dash',
+         lore:'黑域头目。狞猫的耳簇一竖，就是要扑过来了。'},
+  tiger:{name:'慧',  spr:'tiger', hp:26, atk:6, coin:25, boss:true, pattern:'sweep',
+         lore:'黑域头目。西伯利亚虎蓄力一圈横扫，身边八格都别站。'},
+  ye:   {name:'叶王', spr:'ye',   hp:36, atk:6, coin:50, boss:true, pattern:'queen',
+         lore:'黑域之主，网纹蟒女王。召影卒、十字重击，是这座地牢的尽头。'}
+};
+
+/* ---------- 三章九层 ---------- */
+const N=9, TS=16;          // 9×9 格，每格 16 像素
+const CHAPTERS=[
+  {name:'第一章 · 旧课堂',   wall:'#3a2d1e', wallTop:'#4b3c29', wallDark:'#241a10',
+   floor:'#15100a', dot:'#1d1710'},
+  {name:'第二章 · 紫蛇森林', wall:'#2e2140', wallTop:'#3d2d54', wallDark:'#1b1228',
+   floor:'#120e1b', dot:'#1a1426'},
+  {name:'第三章 · 灰塔',     wall:'#232941', wallTop:'#2e3654', wallDark:'#171b2c',
+   floor:'#11141f', dot:'#161a28'}
+];
+const FLOORS=[
+  {ch:0, mobs:['snake','snake','crow'],              items:['potion','coin']},
+  {ch:0, mobs:['snake','crow','crow','snake'],       items:['potion','sword','coin']},
+  {ch:0, mobs:['xuan','snake','crow'],               items:['potion','potion','coin']},
+  {ch:1, mobs:['snake','shade','viper'],             items:['potion','coin','armor']},
+  {ch:1, mobs:['shade','viper','crow','snake'],      items:['potion','sword','coin']},
+  {ch:1, mobs:['tiger','shade','viper'],             items:['potion','potion','coin']},
+  {ch:2, mobs:['shell','shade','shade','viper','crow'], items:['potion','coin','armor']},
+  {ch:2, mobs:['shell','shell','shade','viper','crow'], items:['potion','sword','coin']},
+  {ch:2, mobs:['ye','shell','shade'],                items:['potion','potion','coin']}
+];
+function floorName(fi){ return CHAPTERS[FLOORS[fi].ch].name+' · 第'+(fi+1)+'层'; }
+
+/* ---------- 状态 ---------- */
+let G=null;
+let classEndArmed=false, classEndTimer=null;
+const SEAT_NAMES=['一号','二号','三号','四号','五号','六号'];
+const BATTLE_FIELDS=['hp','maxhp','atk','crit','berserk','lifesteal','reflect','splash','px','py'];
+function classPoints(score){ return score>=3?3:score>=2?2:1; }
+function classPlayer(){
+  return G&&G.classroom ? G.classroom.players[G.classroom.current] : null;
+}
+function classSaveActive(){
+  const p=classPlayer(); if(!p)return;
+  BATTLE_FIELDS.forEach(k=>{ p[k]=G[k]; });
+}
+function classLoadPlayer(index){
+  if(!G||!G.classroom)return;
+  const p=G.classroom.players[index]; if(!p)return;
+  G.classroom.current=index; G.hero=p.hero;
+  BATTLE_FIELDS.forEach(k=>{ G[k]=p[k]; });
+}
+function classLivingPlayers(){
+  return G&&G.classroom ? G.classroom.players.filter(p=>!p.resting) : [];
+}
+function classPlayerAt(x,y,skip){
+  if(!G||!G.classroom)return null;
+  return G.classroom.players.find(p=>p!==skip&&!p.resting&&p.px===x&&p.py===y)||null;
+}
+
+/* ---------- 8-bit 音效（WebAudio 程序合成，零音频文件） ---------- */
+const SND={ac:null, on:true};
+const TONES={
+  move:   [{f:220,t:'square',d:.045,v:.05}],
+  hit:    [{f:180,t:'square',d:.07,v:.13},{f:120,t:'square',d:.06,v:.10,at:.04}],
+  crit:   [{f:330,t:'square',d:.08,v:.16},{f:660,t:'square',d:.10,v:.14,at:.05}],
+  hurt:   [{f:150,t:'sawtooth',d:.16,v:.16},{f:90,t:'sawtooth',d:.16,v:.13,at:.05}],
+  pickup: [{f:520,t:'square',d:.06,v:.12},{f:780,t:'square',d:.08,v:.12,at:.05}],
+  stairs: [{f:440,t:'square',d:.07,v:.11},{f:330,t:'square',d:.07,v:.11,at:.06},
+           {f:220,t:'square',d:.12,v:.11,at:.12}],
+  boss:   [{f:70,t:'sawtooth',d:.42,v:.20},{f:104,t:'square',d:.30,v:.12,at:.10}],
+  win:    [{f:392,t:'square',d:.10,v:.14},{f:523,t:'square',d:.10,v:.14,at:.10},
+           {f:659,t:'square',d:.10,v:.14,at:.20},{f:784,t:'square',d:.24,v:.15,at:.30}],
+  lose:   [{f:330,t:'square',d:.14,v:.14},{f:262,t:'square',d:.14,v:.13,at:.13},
+           {f:196,t:'square',d:.30,v:.13,at:.26}]
+};
+function sfx(name){
+  if(G && G.sim) return;                 // 模拟局：静默
+  if(!SND.on) return;
+  try{
+    if(!SND.ac) SND.ac=new (window.AudioContext||window.webkitAudioContext)();
+    if(SND.ac.state==='suspended') SND.ac.resume();
+    const ac=SND.ac, now=ac.currentTime;
+    (TONES[name]||[]).forEach(n=>{
+      const o=ac.createOscillator(), g=ac.createGain();
+      o.type=n.t; o.frequency.value=n.f;
+      const t0=now+(n.at||0);
+      g.gain.setValueAtTime(0.0001,t0);
+      g.gain.exponentialRampToValueAtTime(n.v,t0+0.008);
+      g.gain.exponentialRampToValueAtTime(0.0001,t0+n.d);
+      o.connect(g); g.connect(ac.destination);
+      o.start(t0); o.stop(t0+n.d+0.02);
+    });
+  }catch(err){ /* 音频不可用就静默，不影响游戏 */ }
+}
+
+/* ---------- 局外记录（localStorage，独立键，不与任何存档混用） ---------- */
+const META_KEY='starDungeon_meta_v1';
+let META={best:{}, seen:{}, sound:true};
+function metaLoad(){
+  try{
+    const raw=localStorage.getItem(META_KEY);
+    if(raw){ const o=JSON.parse(raw); META={best:o.best||{}, seen:o.seen||{}, sound:o.sound!==false}; }
+  }catch(err){}
+  SND.on=META.sound;
+}
+function metaSave(){ try{ localStorage.setItem(META_KEY,JSON.stringify(META)); }catch(err){} }
+function markSeen(){
+  if(!G||G.sim||G.classroom) return; // 模拟局与课堂局绝不点亮单人图鉴
+  let ch=false;
+  G.ents.forEach(e=>{ if(!META.seen[e.type]){ META.seen[e.type]=true; ch=true; } });
+  if(ch) metaSave();
+}
+function recordRun(won){
+  if(!G||G.sim||G.classroom) return; // 模拟局与课堂局绝不写单人战绩
+  const id=G.hero.id, b=META.best[id]||{floor:0,win:false,coin:0};
+  META.best[id]={
+    floor:Math.max(b.floor,G.fi+1),
+    win:b.win||won,
+    coin:Math.max(b.coin,G.coin)
+  };
+  metaSave();
+}
+
+/* ---------- 中途存档（断点续玩）----------
+   铁律（自鸣棋血泪）：独立键、不与战绩 META 混用、只在回合结算后单次 setItem 原子写；
+   胜负一出立即清档，绝不出现"死了还能续、通关又续赚金币"的复活漏洞。 */
+const RUN_KEY='starDungeon_run_v1';
+function saveRun(){
+  if(!G||G.sim||G.headless||G.classroom||G.over) return;
+  try{
+    localStorage.setItem(RUN_KEY, JSON.stringify({v:1,
+      hero:G.hero.id, hp:G.hp, maxhp:G.maxhp, atk:G.atk,
+      crit:G.crit, berserk:G.berserk, lifesteal:G.lifesteal, reflect:G.reflect, splash:G.splash,
+      coin:G.coin, kills:G.kills, turns:G.turns, fi:G.fi, px:G.px, py:G.py,
+      wall:G.wall.map(w=>w?1:0).join(''), stairs:G.stairs,
+      ents:G.ents.map(e=>({t:e.type,x:e.x,y:e.y,hp:e.hp,tick:e.tick,intent:e.intent})),
+      items:G.items, perk:!!G.perkPending, perkIds:G.perkChoices||null}));
+  }catch(err){}
+}
+function clearRun(){
+  if(!G||G.sim||G.classroom) return;
+  try{ localStorage.removeItem(RUN_KEY); }catch(err){}
+}
+function loadRun(){
+  try{
+    const raw=localStorage.getItem(RUN_KEY); if(!raw) return null;
+    const d=JSON.parse(raw);
+    if(d.v!==1) return null;
+    if(!HEROES.some(h=>h.id===d.hero)) return null;
+    if(!Array.isArray(d.ents)||d.ents.some(o=>!o||!MOBS[o.t]
+        ||!Number.isInteger(o.x)||!Number.isInteger(o.y)||o.x<0||o.y<0||o.x>=N||o.y>=N
+        ||!Number.isInteger(o.hp)||o.hp<=0)) return null;
+    // intent 只认 null 或 {t:字符串, cells 缺省/合法数组}——畸形意图会让绘制循环当场断链
+    const okCell=c=>c&&Number.isInteger(c.x)&&Number.isInteger(c.y);
+    if(d.ents.some(o=>o.intent!=null && (typeof o.intent.t!=='string'
+        ||(o.intent.cells!==undefined&&(!Array.isArray(o.intent.cells)||!o.intent.cells.every(okCell)))))) return null;
+    if(!Array.isArray(d.items)||d.items.some(o=>!o||!SPR[o.type]
+        ||!Number.isInteger(o.x)||!Number.isInteger(o.y))) return null;
+    if(typeof d.wall!=='string'||d.wall.length!==N*N) return null;
+    if(!Number.isInteger(d.fi)||d.fi<0||d.fi>=FLOORS.length) return null;
+    if(!Number.isInteger(d.px)||!Number.isInteger(d.py)||d.px<0||d.py<0||d.px>=N||d.py>=N) return null;
+    if(!Number.isInteger(d.stairs)||d.stairs<0||d.stairs>=N*N) return null;
+    if(!Number.isInteger(d.hp)||d.hp<=0||!Number.isInteger(d.maxhp)||d.maxhp<d.hp) return null;
+    return d;
+  }catch(err){ return null; }
+}
+function resumeRun(){
+  const d=loadRun(); if(!d) return;
+  const h=HEROES.find(v=>v.id===d.hero);
+  G={hero:h, hp:d.hp, maxhp:d.maxhp, atk:d.atk,
+     crit:d.crit||0, berserk:d.berserk||0, lifesteal:d.lifesteal||0,
+     reflect:d.reflect||0, splash:d.splash||0,
+     coin:d.coin||0, kills:d.kills||0, turns:d.turns||0,
+     fi:d.fi, px:d.px, py:d.py, over:false, parts:[],
+     wall:[...d.wall].map(c=>c==='1'), stairs:d.stairs,
+     ents:d.ents.map(o=>Object.assign(mkMob(o.t,o.x,o.y),{hp:o.hp,tick:o.tick||0,intent:o.intent||null})),
+     items:d.items||[], fname:floorName(d.fi), perkPending:!!d.perk};
+  document.getElementById('hFloor').textContent=G.fname;
+  show('game'); syncHud();
+  if(G.perkPending) offerUpgrades(d.perkIds||null);
+}
+
+const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+ctx.imageSmoothingEnabled=false;
+const fxEl=document.getElementById('fx'), stageEl=document.getElementById('stage');
+
+function rnd(n){return Math.floor(Math.random()*n)}
+function key(x,y){return y*N+x}
+function inb(x,y){return x>=0&&y>=0&&x<N&&y<N}
+
+/* ---------- 地牢生成（随机游走保证连通） ---------- */
+function genFloor(fi){
+  const cfg=FLOORS[fi];
+  const wall=new Array(N*N).fill(true);
+  let x=4,y=4, carved=0;
+  wall[key(x,y)]=false; carved=1;
+  let guard=0;
+  while(carved<48 && guard++<4000){
+    const d=rnd(4);
+    const nx=x+(d===0?1:d===1?-1:0), ny=y+(d===2?1:d===3?-1:0);
+    if(nx<1||ny<1||nx>N-2||ny>N-2) continue;
+    x=nx;y=ny;
+    if(wall[key(x,y)]){wall[key(x,y)]=false;carved++}
+  }
+  const floors=[];
+  for(let i=0;i<N*N;i++) if(!wall[i]) floors.push(i);
+
+  // 玩家起点 = 第一个碎片；用 BFS 找最远格当楼梯
+  const start=key(4,4);
+  const dist=bfs(wall,start);
+  let far=start, fd=-1;
+  floors.forEach(i=>{ if(dist[i]>fd){fd=dist[i];far=i} });
+
+  // 放怪与道具（距起点 >=3）
+  const pool=floors.filter(i=>dist[i]>=3 && i!==far);
+  shuffle(pool);
+  const ents=[], items=[];
+  cfg.mobs.forEach(m=>{ const c=pool.pop(); if(c==null)return;
+    ents.push(mkMob(m, c%N, (c/N)|0)); });
+  cfg.items.forEach(it=>{ const c=pool.pop(); if(c==null)return;
+    items.push({x:c%N,y:(c/N)|0,type:it}); });
+
+  return {wall,stairs:far,ents,items,name:floorName(fi)};
+}
+function bfs(wall,start){
+  const d=new Array(N*N).fill(-1); d[start]=0;
+  const q=[start];
+  while(q.length){
+    const c=q.shift(), cx=c%N, cy=(c/N)|0;
+    [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{
+      const nx=cx+dx, ny=cy+dy;
+      if(!inb(nx,ny))return;
+      const k=key(nx,ny);
+      if(wall[k]||d[k]>=0)return;
+      d[k]=d[c]+1; q.push(k);
+    });
+  }
+  return d;
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}}
+
+/* ---------- 开局 ---------- */
+function startGame(heroId,opts){
+  const h=HEROES.find(v=>v.id===heroId);
+  G={hero:h, hp:h.hp, maxhp:h.hp, atk:h.atk, coin:0, fi:0, px:4, py:4,
+     crit:h.crit||0, berserk:h.berserk||0, lifesteal:h.lifesteal||0,
+     reflect:h.reflect||0, splash:h.splash||0,
+     over:false, parts:[], kills:0, turns:0};
+  if(opts && opts.sim){ G.sim=true; G.headless=true; }
+  loadFloor(0);
+  if(!G.sim){ show('game'); syncHud(); saveRun(); }
+}
+function makeClassPlayer(heroId,index){
+  const h=HEROES.find(v=>v.id===heroId)||HEROES[0];
+  return {seat:index,name:SEAT_NAMES[index],hero:h,score:0,resting:false,
+    hp:h.hp,maxhp:h.hp,atk:h.atk,crit:h.crit||0,berserk:h.berserk||0,
+    lifesteal:h.lifesteal||0,reflect:h.reflect||0,splash:h.splash||0,px:4,py:4};
+}
+function startClassGame(heroIds,opts){
+  const ids=(heroIds||[]).slice(0,6);
+  if(!ids.length) ids.push(HEROES[0].id);
+  const players=ids.map(makeClassPlayer);
+  const h=players[0].hero;
+  G={hero:h,hp:h.hp,maxhp:h.hp,atk:h.atk,coin:0,fi:0,px:4,py:4,
+    crit:h.crit||0,berserk:h.berserk||0,lifesteal:h.lifesteal||0,
+    reflect:h.reflect||0,splash:h.splash||0,over:false,parts:[],kills:0,turns:0,
+    classroom:{players,current:0,ap:0,phase:'between'}};
+  if(opts&&opts.sim){ G.sim=true; G.headless=true; }
+  else if(opts&&opts.headless){ G.headless=true; }
+  loadFloor(0);
+  if(!G.headless) show('game');
+  classBeginRound();
+}
+function classDifficulty(count,boss){
+  const n=Math.max(1,Math.min(6,count||1));
+  return {
+    hp:(boss?1.25:1)*n,
+    atk:Math.ceil(n/2),
+    extra:Math.min(5,n)
+  };
+}
+function scaleClassFloor(f){
+  const count=G.classroom.players.length, base=classDifficulty(count,false);
+  const scaleMob=e=>{
+    const d=e.boss?classDifficulty(count,true):base;
+    e.maxhp=Math.ceil(e.maxhp*d.hp); e.hp=e.maxhp;
+    e.atk+=d.atk;
+  };
+  f.ents.forEach(scaleMob);
+  const extra=base.extra;
+  if(!extra)return;
+  const used=new Set([key(4,4),f.stairs,...f.ents.map(e=>key(e.x,e.y)),...f.items.map(i=>key(i.x,i.y))]);
+  const cells=[];
+  for(let i=0;i<N*N;i++) if(!f.wall[i]&&!used.has(i)) cells.push(i);
+  shuffle(cells);
+  const spawnType=(FLOORS[G.fi].mobs.find(t=>!MOBS[t].boss)||'snake');
+  for(let i=0;i<extra&&cells.length;i++){
+    const c=cells.pop(), e=mkMob(spawnType,c%N,(c/N)|0);
+    scaleMob(e); f.ents.push(e);
+  }
+}
+function placeClassPlayers(fi){
+  const dist=bfs(G.wall,key(4,4));
+  const blocked=new Set([G.stairs,...G.ents.map(e=>key(e.x,e.y)),...G.items.map(i=>key(i.x,i.y))]);
+  const cells=[];
+  for(let i=0;i<N*N;i++) if(!G.wall[i]&&dist[i]>=0&&!blocked.has(i)) cells.push(i);
+  cells.sort((a,b)=>dist[a]-dist[b]||a-b);
+  G.classroom.players.forEach((p,i)=>{
+    if(fi>0&&p.resting){ p.resting=false; p.hp=p.maxhp; }
+    const c=cells[i]===undefined?key(4,4):cells[i];
+    p.px=c%N; p.py=(c/N)|0;
+  });
+  const first=G.classroom.players.findIndex(p=>!p.resting);
+  classLoadPlayer(first<0?0:first);
+}
+function loadFloor(fi){
+  const newChapter = fi===0 || FLOORS[fi].ch!==FLOORS[fi-1].ch;
+  G.fi=fi;
+  const f=genFloor(fi);
+  if(G.classroom) scaleClassFloor(f);
+  G.wall=f.wall; G.stairs=f.stairs; G.ents=f.ents; G.items=f.items; G.fname=f.name;
+  if(G.classroom) placeClassPlayers(fi);
+  else{ G.px=4; G.py=4; }
+  computeIntents();
+  markSeen();
+  if(G.sim||G.headless) return;
+  if(newChapter) chapterCard(CHAPTERS[FLOORS[fi].ch].name);
+  const b=G.ents.find(e=>e.boss);
+  if(b) setTimeout(()=>bossEntry(),newChapter?900:260);
+  document.getElementById('hFloor').textContent=f.name;
+}
+function classBeginRound(){
+  if(!G||!G.classroom||G.over)return;
+  const first=G.classroom.players.findIndex(p=>!p.resting);
+  if(first<0){ lose(); return; }
+  classLoadPlayer(first);
+  G.classroom.ap=0; G.classroom.phase='judge';
+  syncHud();
+  showClassJudge();
+}
+function showClassJudge(){
+  if(!G||!G.classroom||G.headless)return;
+  const p=classPlayer();
+  document.getElementById('judgeName').textContent='轮到 '+p.name+' · '+p.hero.name;
+  const jc=document.getElementById('judgeCv').getContext('2d');
+  jc.clearRect(0,0,16,16); drawSprTo(jc,p.hero.spr);
+  document.getElementById('classJudge').classList.remove('hidden');
+}
+function gradeStudent(score){
+  if(!G||!G.classroom||G.classroom.phase!=='judge'||G.over)return;
+  const n=Math.max(0,Math.min(3,Number(score)||0)), p=classPlayer();
+  p.score+=n;
+  G.classroom.ap=classPoints(n); G.classroom.phase='act';
+  if(!G.headless) document.getElementById('classJudge').classList.add('hidden');
+  syncHud();
+}
+function classUseAction(){
+  classSaveActive();
+  G.classroom.ap=Math.max(0,G.classroom.ap-1);
+  if(G.classroom.ap>0){ syncHud(); return; }
+  const ps=G.classroom.players;
+  let next=-1;
+  for(let i=G.classroom.current+1;i<ps.length;i++) if(!ps[i].resting){ next=i; break; }
+  if(next>=0){
+    classLoadPlayer(next); G.classroom.phase='judge'; syncHud(); showClassJudge(); return;
+  }
+  classEnemyTurn();
+}
+function classEnemyTurn(){
+  classSaveActive();
+  G.classroom.phase='enemy'; G.turns++;
+  enemiesAct();
+  if(G.over)return;
+  if(!classLivingPlayers().length){ lose(); return; }
+  computeIntents();
+  classBeginRound();
+}
+/* 章节过场大字 */
+function chapterCard(txt){
+  const el=document.getElementById('chapter');
+  el.textContent=txt; el.classList.remove('go'); void el.offsetWidth; el.classList.add('go');
+}
+
+/* ---------- 层间三选一强化 ---------- */
+const UPGRADES=[
+  {id:'atk',  name:'利刃',  desc:'攻击 +1',            ok:()=>true,          go:()=>{G.atk+=1}},
+  {id:'body', name:'坚体',  desc:'血上限 +4，并回 4 血', ok:()=>true,          go:()=>{G.maxhp+=4;G.hp+=4}},
+  {id:'heal', name:'回春',  desc:'立刻回满血',          ok:()=>G.hp<G.maxhp,  go:()=>{G.hp=G.maxhp}},
+  {id:'crit', name:'锐意',  desc:'暴击几率 +10%',       ok:()=>G.crit>0,      go:()=>{G.crit+=0.10}},
+  {id:'rage', name:'狂澜',  desc:'背水狂化上限 +2',      ok:()=>G.berserk>0,   go:()=>{G.berserk+=2}},
+  {id:'suck', name:'饮血',  desc:'吸血 +1',            ok:()=>G.lifesteal>0, go:()=>{G.lifesteal+=1}},
+  {id:'wall', name:'壁垒',  desc:'反弹 +1',            ok:()=>G.reflect>0,   go:()=>{G.reflect+=1}},
+  {id:'wave', name:'回响',  desc:'震荡溅射 +1',         ok:()=>G.splash>0,    go:()=>{G.splash+=1}}
+];
+function offerUpgrades(fixedIds){
+  G.perkPending=true;
+  document.querySelector('#upgrade h2').textContent='选 一 个 变 强';
+  let pick;
+  if(fixedIds){                                   // 续档定牌：拿回上次抽到的那三张，刷新也换不了
+    pick=fixedIds.map(id=>UPGRADES.find(u=>u.id===id)).filter(u=>u&&u.ok());
+  }
+  if(!pick||!pick.length){
+    const pool=UPGRADES.filter(u=>u.ok());
+    shuffle(pool);
+    pick=pool.slice(0,3);
+  }
+  G.perkChoices=pick.map(u=>u.id);
+  const box=document.getElementById('upList');
+  box.innerHTML='';
+  pick.forEach(u=>{
+    const d=document.createElement('div'); d.className='upcard';
+    d.innerHTML='<div class="upname">'+u.name+'</div><div class="updesc">'+u.desc+'</div>';
+    d.onclick=()=>{ u.go(); sfx('pickup'); document.getElementById('upgrade').classList.add('hidden');
+                    G.perkPending=false; G.perkChoices=null; syncHud(); saveRun(); };
+    box.appendChild(d);
+  });
+  document.getElementById('upgrade').classList.remove('hidden');
+}
+const CLASS_UPGRADES=[
+  {id:'atk',name:'全队利刃',desc:'每位星徒攻击 +1'},
+  {id:'body',name:'全队坚体',desc:'每位星徒血上限 +4，并回 4 血'},
+  {id:'heal',name:'全队回春',desc:'每位星徒立刻回满血'}
+];
+function applyClassUpgrade(id){
+  G.classroom.players.forEach(p=>{
+    if(id==='atk') p.atk+=1;
+    else if(id==='body'){ p.maxhp+=4; p.hp=Math.min(p.maxhp,p.hp+4); }
+    else if(id==='heal') p.hp=p.maxhp;
+  });
+  classLoadPlayer(G.classroom.current);
+}
+function offerClassUpgrades(){
+  G.classroom.phase='upgrade';
+  if(G.headless){
+    applyClassUpgrade('atk'); classBeginRound(); return;
+  }
+  const box=document.getElementById('upList');
+  box.innerHTML='';
+  CLASS_UPGRADES.forEach(u=>{
+    const d=document.createElement('div'); d.className='upcard';
+    d.innerHTML='<div class="upname">'+u.name+'</div><div class="updesc">'+u.desc+'</div>';
+    d.onclick=()=>{
+      applyClassUpgrade(u.id); sfx('pickup');
+      document.getElementById('upgrade').classList.add('hidden');
+      classBeginRound();
+    };
+    box.appendChild(d);
+  });
+  document.querySelector('#upgrade h2').textContent='选 一 个 全 队 强 化';
+  document.getElementById('upgrade').classList.remove('hidden');
+}
+
+/* ---------- 敌人意图（Into the Breach 式完美信息）
+   铁律：敌人下回合要打到的每一格，本回合就必须标出来。绝不允许出现没预告的伤害。
+   意图格式：{t:'atk',cells:[{x,y}]} / {t:'dash',cells,to} / {t:'summon',x,y} / {t:'mov',x,y} / {t:'wait'} */
+function cellsAround(x,y){
+  const out=[];
+  for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+    if(!dx&&!dy)continue;
+    if(inb(x+dx,y+dy)) out.push({x:x+dx,y:y+dy});
+  }
+  return out;
+}
+function cellsCross(x,y){
+  return [[1,0],[-1,0],[0,1],[0,-1]].map(([dx,dy])=>({x:x+dx,y:y+dy})).filter(c=>inb(c.x,c.y));
+}
+/* 从 e 到玩家若成一条直线且中间无墙，返回沿途格子（不含 e 自身），否则 null */
+function lineToPlayer(e,maxLen){
+  const dx=G.px-e.x, dy=G.py-e.y;
+  if(dx&&dy) return null;
+  const len=Math.abs(dx)+Math.abs(dy);
+  if(len<1||len>maxLen) return null;
+  const sx=Math.sign(dx), sy=Math.sign(dy), cells=[];
+  for(let i=1;i<=len;i++){
+    const cx=e.x+sx*i, cy=e.y+sy*i;
+    if(!inb(cx,cy)||G.wall[key(cx,cy)]) return null;   // 墙挡住就不算
+    cells.push({x:cx,y:cy});
+  }
+  return cells;
+}
+function computeIntentFor(e){
+  e.tick=(e.tick||0)+1;
+  const p=e.pattern;
+
+    // 头目节奏铁律：大招之后必须留一拍"破绽"（不攻击的回合）。
+    // 没有破绽＝玩家每次输出都必挨打＝纯换血消耗战（夜班模拟证明会无限僵持）。
+    // 有破绽＝「躲大招—上去打一刀—再躲」的舞步，无伤打法存在但要走位挣。
+
+    // 头目：叶王 —— 每 4 回合召唤（召唤格提前标出）；十字重击与破绽交替
+    if(p==='queen'){
+      if(e.tick%6===0 && G.ents.filter(x=>x.type==='shade').length<2){
+        const spot=cellsAround(e.x,e.y).find(c=>!G.wall[key(c.x,c.y)]&&!occupied(c.x,c.y,e));
+        if(spot){ e.intent={t:'summon',x:spot.x,y:spot.y}; return; }
+      }
+      if(e.tick%2===1 && Math.abs(G.px-e.x)+Math.abs(G.py-e.y)<=2){
+        e.intent={t:'atk', cells:cellsCross(e.x,e.y).filter(c=>!G.wall[key(c.x,c.y)])}; return;
+      }
+      if(adjacent(e.x,e.y,G.px,G.py)){ e.intent={t:'wait'}; return; }   // 破绽：站桩喘气
+      const st=stepToward(e);
+      e.intent = st ? {t:'mov',x:st.x,y:st.y} : {t:'wait'}; return;
+    }
+
+    // 头目：慧 —— 玩家进圈才蓄力横扫，出招后必歇一拍；圈外全速追击
+    if(p==='sweep'){
+      const near=Math.max(Math.abs(G.px-e.x),Math.abs(G.py-e.y))<=1;   // 在她八格圈里
+      if(near){
+        if(e.tick%2===0){
+          e.intent={t:'atk', cells:cellsAround(e.x,e.y).filter(c=>!G.wall[key(c.x,c.y)])}; return;
+        }
+        e.intent={t:'wait'}; return;                                    // 破绽：喘气
+      }
+      const st=stepToward(e);
+      e.intent = st ? {t:'mov',x:st.x,y:st.y} : {t:'wait'}; return;
+    }
+
+    // 头目：璇 —— 出招拍预告突进/爪击，破绽拍只喘气挪步（同样有安全输出窗口）
+    if(p==='dash'){
+      if(e.tick%2===1){                               // 破绽拍
+        if(adjacent(e.x,e.y,G.px,G.py)){ e.intent={t:'wait'}; return; }
+        const st=stepToward(e);
+        e.intent = st ? {t:'mov',x:st.x,y:st.y} : {t:'wait'}; return;
+      }
+      const line=lineToPlayer(e,3);
+      if(line && line.length>=2){
+        const to=line[line.length-2];                 // 停在玩家前一格
+        if(!occupied(to.x,to.y,e)){ e.intent={t:'dash',cells:line,to}; return; }
+      }
+      if(adjacent(e.x,e.y,G.px,G.py)){ e.intent={t:'atk',cells:[{x:G.px,y:G.py}]}; return; }
+      const st=stepToward(e);
+      e.intent = st ? {t:'mov',x:st.x,y:st.y} : {t:'wait'}; return;
+    }
+
+    // 雾蝰：隔着直线两格就吐毒（整条线预告）
+    if(e.range){
+      const line=lineToPlayer(e,e.range);
+      if(line){ e.intent={t:'atk',cells:line}; return; }
+    }
+    // 坚壳：步子慢，隔回合才走
+    if(e.slow && !adjacent(e.x,e.y,G.px,G.py) && e.tick%2===0){ e.intent={t:'wait'}; return; }
+
+  if(adjacent(e.x,e.y,G.px,G.py)){ e.intent={t:'atk',cells:[{x:G.px,y:G.py}]}; return; }
+  const st=stepToward(e);
+  e.intent = st ? {t:'mov',x:st.x,y:st.y} : {t:'wait'};
+}
+function computeIntents(){
+  const old={px:G.px,py:G.py,current:G.classroom?G.classroom.current:null};
+  G.ents.forEach(e=>{
+    let target=null;
+    if(G.classroom){
+      target=classLivingPlayers().slice().sort((a,b)=>
+        (Math.abs(a.px-e.x)+Math.abs(a.py-e.y))-(Math.abs(b.px-e.x)+Math.abs(b.py-e.y))
+        ||a.seat-b.seat)[0]||null;
+      if(target){ G.px=target.px; G.py=target.py; }
+    }
+    computeIntentFor(e);
+    if(target&&e.intent) e.intent.targetSeat=target.seat;
+  });
+  if(G.classroom){
+    classLoadPlayer(old.current);
+  }else{ G.px=old.px; G.py=old.py; }
+}
+function adjacent(ax,ay,bx,by){return Math.abs(ax-bx)+Math.abs(ay-by)===1}
+function occupied(x,y,skip){
+  if(G.classroom){
+    if(classPlayerAt(x,y)) return true;
+  }else if(G.px===x&&G.py===y) return true;
+  return G.ents.some(e=>e!==skip&&e.x===x&&e.y===y);
+}
+function stepToward(e){
+  const dx=G.px-e.x, dy=G.py-e.y;
+  const opts=[];
+  if(Math.abs(dx)>=Math.abs(dy)){
+    if(dx) opts.push({x:e.x+Math.sign(dx),y:e.y});
+    if(dy) opts.push({x:e.x,y:e.y+Math.sign(dy)});
+  }else{
+    if(dy) opts.push({x:e.x,y:e.y+Math.sign(dy)});
+    if(dx) opts.push({x:e.x+Math.sign(dx),y:e.y});
+  }
+  for(const o of opts){
+    if(inb(o.x,o.y)&&!G.wall[key(o.x,o.y)]&&!occupied(o.x,o.y,e)) return o;
+  }
+  return null;
+}
+
+/* ---------- 玩家行动 ---------- */
+function uiBlocked(){
+  // 弹层（三选一/图鉴/教学）开着、或根本不在对局画面时，一律不接输入。
+  // 否则玩家会在看不见棋盘的情况下被键盘走位、白白挨打（夜班查出的真竞态）。
+  if(G && G.headless) return false;          // 自测/模拟局不走 DOM 判定
+  if(document.getElementById('game').classList.contains('hidden')) return true;
+  return ['upgrade','codex','howto','classJudge'].some(id=>!document.getElementById(id).classList.contains('hidden'));
+}
+function act(dir){
+  if(!G||G.over||uiBlocked()) return;
+  if(G.classroom&&G.classroom.phase!=='act') return;
+  let nx=G.px, ny=G.py;
+  if(dir==='u')ny--; else if(dir==='d')ny++; else if(dir==='l')nx--; else if(dir==='r')nx++;
+
+  if(dir!=='w'){
+    if(!inb(nx,ny)||G.wall[key(nx,ny)]) return;      // 撞墙：不消耗回合
+    if(G.classroom&&classPlayerAt(nx,ny,classPlayer())){
+      fnum(nx,ny,'同伴在这里','#6b7391'); return;
+    }
+    const foe=G.ents.find(e=>e.x===nx&&e.y===ny);
+    if(foe){ playerHit(foe); }
+    else{
+      G.px=nx; G.py=ny; sfx('move');
+      pickup();
+      if(key(G.px,G.py)===G.stairs){
+        // 最终层的出口被叶王镇守：她不倒，谁也别想绕过去下楼白捡通关
+        //（夜班模拟局逮出来的真漏洞：bot 曾 55 回合全程避战速通）
+        if(G.fi>=FLOORS.length-1 && G.ents.some(e=>e.type==='ye')){
+          fnum(G.px,G.py,'叶王镇守着出口','#9d72d6');
+        }else{
+          if(G.classroom){ classSaveActive(); descend(); }
+          else{ G.turns++; descend(); }
+          return;
+        }
+      }
+    }
+  }
+  if(G.classroom){
+    if(G.over)return;
+    classUseAction();
+    return;
+  }
+  G.turns++;
+  if(G.over) return;
+  enemiesAct();
+  if(G.over) return;
+  computeIntents();
+  syncHud();
+  saveRun();                 // 回合边界原子存档（断点续玩）
+}
+
+function killFoe(foe){
+  burst(foe.x,foe.y, foe.boss?'#ffcd75':'#ef7d57');
+  G.coin+=foe.coin; G.kills=(G.kills||0)+1;
+  G.ents=G.ents.filter(e=>e!==foe);
+  if(foe.boss && foe.type==='ye'){ sfx('win'); win(); return true; }   // 打倒叶王＝通关
+  sfx(foe.boss?'boss':'hit');
+  return false;
+}
+function damageFoe(foe,dmg,label,color,big){
+  foe.hp-=dmg; foe.flash=performance.now()+220;
+  fnum(foe.x,foe.y,label,color,big);
+  if(foe.hp<=0) return killFoe(foe);
+  return false;
+}
+function berserkBonus(){
+  if(!(G.berserk>0)) return 0;
+  // 血越少加得越多（四舍五入，中血段就有输出）；总加成不超过 berserk 上限
+  return Math.min(G.berserk, Math.round((1-G.hp/G.maxhp)*G.berserk));
+}
+function playerHit(foe){
+  let dmg=G.atk, crit=false;
+  if(G.crit>0 && Math.random()<G.crit){ dmg*=2; crit=true; }
+  dmg += berserkBonus();
+  sfx(crit?'crit':'hit');
+  if(crit) shake();
+
+  // 海的震荡波：先记下旁边的敌人，主目标可能会被打死移出数组
+  const splashFoes = G.splash>0 ? G.ents.filter(o=>o!==foe&&adjacent(o.x,o.y,foe.x,foe.y)) : [];
+
+  if(G.lifesteal>0){
+    const heal=Math.min(G.lifesteal, G.maxhp-G.hp);
+    if(heal>0){ G.hp+=heal; fnum(G.px,G.py,'+'+heal,'#38b764'); }
+  }
+  const ended = damageFoe(foe,dmg,(crit?'暴击 ':'')+'-'+dmg, crit?'#ffcd75':'#ffffff', crit);
+  if(ended) return;
+  splashFoes.forEach(o=>{ if(G.ents.includes(o)) damageFoe(o,G.splash,'-'+G.splash,'#41a6f6'); });
+}
+
+function hurtPlayer(dmg,attacker){
+  G.hp-=dmg;
+  fnum(G.px,G.py,'-'+dmg,'#ef4d4d');
+  sfx('hurt'); shake(); flash('red');
+  // 浩的反弹之墙
+  if(G.reflect>0 && attacker && G.ents.includes(attacker)){
+    damageFoe(attacker,G.reflect,'反弹 -'+G.reflect,'#41a6f6');
+  }
+  if(G.hp<=0){ G.hp=0; sfx('lose'); lose(); }
+}
+function hurtClassPlayer(p,dmg,attacker){
+  if(!p||p.resting)return;
+  p.hp-=dmg;
+  fnum(p.px,p.py,'-'+dmg,'#ef4d4d');
+  sfx('hurt'); shake(); flash('red');
+  if(p.reflect>0&&attacker&&G.ents.includes(attacker)){
+    damageFoe(attacker,p.reflect,'反弹 -'+p.reflect,'#41a6f6');
+  }
+  if(p.hp<=0){
+    p.hp=0; p.resting=true;
+    fnum(p.px,p.py,p.name+'本层休整','#9aa3bd',true);
+  }
+  if(p===classPlayer()) G.hp=p.hp;
+}
+
+function enemiesAct(){
+  G.ents.slice().forEach(e=>{
+    if(!G.ents.includes(e)) return;        // 可能已被反弹/溅射打死
+    if(G.over) return;
+    const it=e.intent;
+    if(!it||it.t==='wait') return;
+
+    if(it.t==='atk'||it.t==='dash'){
+      if(it.t==='dash' && it.to && !occupied(it.to.x,it.to.y,e)){ e.x=it.to.x; e.y=it.to.y; }
+      if(G.classroom){
+        const hits=classLivingPlayers().filter(p=>(it.cells||[]).some(c=>c.x===p.px&&c.y===p.py));
+        hits.forEach(p=>hurtClassPlayer(p,e.atk,e));
+        if(!hits.length){
+          const c=(it.cells||[])[0];
+          if(c) fnum(c.x,c.y,'落空','#6b7391');
+        }
+      }else if((it.cells||[]).some(c=>c.x===G.px&&c.y===G.py)){
+        hurtPlayer(e.atk,e);
+      }else{
+        const c=(it.cells||[])[0];
+        if(c) fnum(c.x,c.y,'落空','#6b7391');
+      }
+    }else if(it.t==='summon'){
+      if(!occupied(it.x,it.y,e) && !G.wall[key(it.x,it.y)]){
+        G.ents.push(mkMob('shade',it.x,it.y));   // 召影卒：8血堆得起来，才是真压力（蛇卒一刀死=白送）
+        fnum(it.x,it.y,'召来影卒','#9d72d6');
+      }
+    }else if(it.t==='mov'){
+      if(!occupied(it.x,it.y,e) && !G.wall[key(it.x,it.y)]){ e.x=it.x; e.y=it.y; }
+    }
+  });
+}
+
+function pickup(){
+  const i=G.items.findIndex(o=>o.x===G.px&&o.y===G.py);
+  if(i<0) return;
+  const it=G.items[i]; G.items.splice(i,1);
+  if(it.type==='potion'){ const h=Math.min(8,G.maxhp-G.hp); G.hp+=h; fnum(G.px,G.py,'+'+h,'#38b764'); }
+  if(it.type==='coin'){ G.coin+=5; fnum(G.px,G.py,'+5 金','#ffcd75'); }
+  if(it.type==='sword'){ G.atk+=1; fnum(G.px,G.py,'攻击 +1','#e8cf95'); flash(); }
+  if(it.type==='armor'){ G.maxhp+=5; G.hp+=5; fnum(G.px,G.py,'血上限 +5','#41a6f6'); flash(); }
+}
+
+function descend(){
+  if(G.fi>=FLOORS.length-1){ win(); return; }
+  flash(); shake(); sfx('stairs');
+  loadFloor(G.fi+1);
+  syncHud();
+  if(G.classroom){ offerClassUpgrades(); }
+  else if(G.sim) simPerk();      // 模拟局：按"普通玩家"偏好自动选强化
+  else{ offerUpgrades(); saveRun(); }   // 每下一层，选一个变强；连同"待选"状态入档
+}
+/* 模拟局的选卡逻辑要贴近真人：同样是随机三张里挑，血少优先回血，否则要攻击 */
+function simPerk(){
+  const pool=UPGRADES.filter(u=>u.ok());
+  shuffle(pool);
+  const hand=pool.slice(0,3);
+  let c=null;
+  if(G.hp<G.maxhp*0.6) c=hand.find(u=>u.id==='heal');
+  if(!c) c=hand.find(u=>u.id==='atk');
+  if(!c) c=hand[0];
+  if(c) c.go();
+}
+
+function bossEntry(){
+  flash('red'); shake(); sfx('boss');
+  const b=G.ents.find(e=>e.boss);
+  if(b) fnum(b.x,b.y,'头目 · '+b.name,'#ffcd75',true);
+}
+
+/* ---------- 结算 ---------- */
+function win(){ if(G.over)return; G.over=true;
+  if(G.sim||G.headless) return; // 模拟与无界面测试只分胜负，不碰结算页
+  if(!G.classroom){ clearRun(); recordRun(true); }
+  endScreen(true); }
+function lose(){ if(G.over)return; G.over=true;
+  if(G.sim||G.headless) return;
+  if(!G.classroom){ clearRun(); recordRun(false); }
+  endScreen(false); }
+function classEndData(){
+  if(!G||!G.classroom)return null;
+  return {
+    players:G.classroom.players.map(p=>({name:p.name,hero:p.hero.name,score:p.score})),
+    floor:G.fi+1,kills:G.kills||0,turns:G.turns||0
+  };
+}
+function endScreen(w,endedEarly){
+  // 同步取值：G 可能在延时期间被重置（换英雄/自测），别在回调里再读 G
+  const s={n:G.hero.name, f:G.fname, coin:G.coin, atk:G.atk, mh:G.maxhp,
+           fl:G.fi+1, k:G.kills||0, t:G.turns||0, classroom:classEndData()};
+  setTimeout(()=>{
+    const big=document.getElementById('overBig');
+    if(!big) return;                       // 页面已被自测/模拟报告替换：静默放弃
+    big.textContent=endedEarly?'本 局 结 束':(w?'通 关':'败 北');
+    big.className='big '+((w||endedEarly)?'win':'lose');
+    if(s.classroom){
+      const rows=s.classroom.players.map(p=>
+        '<b>'+p.name+'</b> · '+p.hero+'　<b>'+p.score+' 分</b>').join('<br>');
+      document.getElementById('overSum').innerHTML=
+        (endedEarly?'本局到这里，成绩已经整理好。':
+          (w?'全队共同打穿了九层地牢。':'全队暂时退回了地牢入口。'))+
+        '<br><br>'+rows+
+        '<br><br>到达 <b>第'+s.classroom.floor+'层</b> · 击杀 <b>'+s.classroom.kills+
+        '</b> · 总回合 <b>'+s.classroom.turns+'</b>';
+      document.getElementById('btnAgain').textContent='同组再来';
+      document.getElementById('btnMenu').textContent='回到主菜单';
+    }else{
+      document.getElementById('overSum').innerHTML=
+        (w? '你带着 <b>'+s.n+'</b> 打穿了九层地牢，斩下了黑域之主<b>叶王</b>。'
+          : '<b>'+s.n+'</b> 倒在了'+s.f+'。')+
+        '<br>到达 <b>第'+s.fl+'层</b> · 击杀 <b>'+s.k+'</b> · 回合 <b>'+s.t+'</b>'+
+        '<br>金币 <b>'+s.coin+'</b> · 攻击 <b>'+s.atk+'</b> · 血上限 <b>'+s.mh+'</b>';
+      document.getElementById('btnAgain').textContent='再来一局';
+      document.getElementById('btnMenu').textContent='换英雄';
+    }
+    show('over');
+  }, w?520:420);
+}
+
+/* ---------- 特效 ---------- */
+function cell2px(x,y){
+  const r=cv.getBoundingClientRect();
+  const s=r.width/N;
+  return {left:(x+0.5)*s, top:(y+0.35)*s};
+}
+function fnum(x,y,txt,color,crit){
+  if(G && G.sim) return;                 // 模拟局：跳过所有 DOM 特效（几百局不卡）
+  const p=cell2px(x,y);
+  const d=document.createElement('div');
+  d.className='fnum'+(crit?' crit':''); d.textContent=txt;
+  d.style.color=color; d.style.left=p.left+'px'; d.style.top=p.top+'px';
+  fxEl.appendChild(d); setTimeout(()=>d.remove(),980);
+}
+function shake(){ if(G&&G.sim)return; stageEl.classList.remove('shaking'); void stageEl.offsetWidth; stageEl.classList.add('shaking'); }
+function flash(kind){
+  if(G && G.sim) return;
+  const f=document.getElementById('flash');
+  f.className=''; void f.offsetWidth;
+  f.className=(kind==='red'?'red go':'go');
+}
+function burst(x,y,color){
+  if(G && G.sim) return;
+  for(let i=0;i<10;i++){
+    const a=Math.random()*Math.PI*2, sp=0.35+Math.random()*0.9;
+    G.parts.push({x:x*TS+8,y:y*TS+8,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,color});
+  }
+}
+
+/* ---------- 绘制 ---------- */
+function drawSpr(name,px,py,flashOn){
+  const s=SPR[name]; if(!s)return;
+  for(let r=0;r<16;r++){
+    const row=s[r];
+    for(let c=0;c<16;c++){
+      const ch=row[c]; if(ch==='.')continue;
+      ctx.fillStyle = flashOn ? '#ffffff' : (PAL[ch]||'#f0f');
+      ctx.fillRect(px+c,py+r,1,1);
+    }
+  }
+}
+function hashCell(x,y){ let h=(x*73856093)^(y*19349663); h=(h^(h>>>13))>>>0; return h; }
+
+function draw(){
+  ctx.fillStyle='#05060b'; ctx.fillRect(0,0,N*TS,N*TS);
+  if(!G){ requestAnimationFrame(draw); return; }
+
+  // 地板 / 墙（每章换配色，一眼看出换地方了；带噪点纹理，军规一：不用纯色）
+  const CH=CHAPTERS[(FLOORS[G.fi]||FLOORS[0]).ch];
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++){
+    const px=x*TS, py=y*TS, isW=G.wall[key(x,y)];
+    const h=hashCell(x,y);
+    if(isW){
+      ctx.fillStyle=CH.wall;     ctx.fillRect(px,py,TS,TS);
+      ctx.fillStyle=CH.wallTop;  ctx.fillRect(px,py,TS,2);
+      ctx.fillStyle=CH.wallDark; ctx.fillRect(px,py+TS-3,TS,3);
+      ctx.fillStyle=CH.dot;
+      ctx.fillRect(px+(h%10)+2,py+((h>>4)%9)+3,2,2);
+    }else{
+      ctx.fillStyle=CH.floor; ctx.fillRect(px,py,TS,TS);
+      ctx.fillStyle=CH.dot;
+      ctx.fillRect(px+(h%12)+1,py+((h>>5)%12)+1,1,1);
+      ctx.fillRect(px+((h>>9)%12)+2,py+((h>>13)%12)+2,1,1);
+    }
+  }
+
+  // 楼梯
+  const sx=(G.stairs%N)*TS, sy=((G.stairs/N)|0)*TS;
+  drawSpr('stairs',sx,sy);
+
+  // 道具
+  G.items.forEach(o=>drawSpr(o.type,o.x*TS,o.y*TS));
+
+  // 移动 / 召唤意图（画在角色下面即可，只是"它要去哪 / 要召什么"的提示）
+  const t=performance.now(), pulse=0.55+0.45*Math.sin(t/240);
+  G.ents.forEach(e=>{
+    const it=e.intent; if(!it)return;
+    if(it.t==='mov'){
+      const px=it.x*TS, py=it.y*TS;
+      ctx.globalAlpha=0.42*pulse+0.2;
+      ctx.fillStyle='#6b7391';
+      ctx.fillRect(px+7,py+7,2,2);
+      ctx.strokeStyle='#4a5170'; ctx.lineWidth=1;
+      ctx.strokeRect(px+3.5,py+3.5,9,9);
+      ctx.globalAlpha=1;
+    }else if(it.t==='summon'){
+      const px=it.x*TS, py=it.y*TS;
+      ctx.globalAlpha=pulse;
+      ctx.strokeStyle='#9d72d6'; ctx.lineWidth=1;
+      ctx.strokeRect(px+2.5,py+2.5,11,11);
+      ctx.beginPath(); ctx.arc(px+8,py+8,3,0,Math.PI*2); ctx.stroke();
+      ctx.globalAlpha=1;
+    }
+  });
+
+  // 敌人 + 血条
+  G.ents.forEach(e=>{
+    if(e.boss){                       // 头目脚下金色光环：一眼看出这是大家伙
+      ctx.globalAlpha=0.35+0.3*Math.sin(t/260);
+      ctx.strokeStyle='#ffcd75'; ctx.lineWidth=1;
+      ctx.strokeRect(e.x*TS+0.5,e.y*TS+0.5,15,15);
+      ctx.globalAlpha=0.16;
+      ctx.fillStyle='#ffcd75'; ctx.fillRect(e.x*TS,e.y*TS,TS,TS);
+      ctx.globalAlpha=1;
+    }
+    drawSpr(e.spr, e.x*TS, e.y*TS, e.flash>t);
+    const w=Math.max(0,Math.round(12*e.hp/e.maxhp));
+    ctx.fillStyle='#000'; ctx.fillRect(e.x*TS+2,e.y*TS+14,12,2);
+    ctx.fillStyle=e.boss?'#ffcd75':'#ef4d4d'; ctx.fillRect(e.x*TS+2,e.y*TS+14,w,2);
+  });
+
+  // 玩家；课堂模式把全队画在同一张图上，当前座位用双层金框明确高亮
+  const drawPlayer=(p,active)=>{
+    ctx.globalAlpha=active ? 0.7+0.3*Math.sin(t/300) : 0.65;
+    ctx.strokeStyle=active?'#e8cf95':'#41a6f6'; ctx.lineWidth=active?2:1;
+    ctx.strokeRect(p.px*TS+1.5,p.py*TS+1.5,13,13);
+    if(active) ctx.strokeRect(p.px*TS+.5,p.py*TS+.5,15,15);
+    ctx.globalAlpha=1;
+    drawSpr(p.hero.spr,p.px*TS,p.py*TS);
+  };
+  if(G.classroom){
+    G.classroom.players.forEach((p,i)=>{ if(!p.resting) drawPlayer(p,i===G.classroom.current); });
+  }else{
+    drawPlayer({px:G.px,py:G.py,hero:G.hero},true);
+  }
+
+  // 攻击意图预告 —— 必须画在所有角色之上：它多半就落在玩家自己脚下，
+  // 画在下面会被玩家精灵盖住，那这套"完美信息"就白做了（第一版就栽在这）。
+  // 支持多格：慧的横扫八格、叶王的十字四格、璇的突进路径、雾蝰的直线都靠它。
+  G.ents.forEach(e=>{
+    const it=e.intent; if(!it||(it.t!=='atk'&&it.t!=='dash'))return;
+    ctx.globalAlpha=pulse;
+    ctx.strokeStyle='#ef4d4d'; ctx.lineWidth=1;
+    (it.cells||[]).forEach(c=>{
+      const px=c.x*TS, py=c.y*TS;
+      ctx.beginPath();
+      ctx.moveTo(px+3.5,py+3.5); ctx.lineTo(px+12.5,py+12.5);
+      ctx.moveTo(px+12.5,py+3.5); ctx.lineTo(px+3.5,py+12.5);
+      ctx.stroke();
+      ctx.strokeRect(px+0.5,py+0.5,15,15);
+    });
+    ctx.globalAlpha=1;
+  });
+
+  // 粒子
+  G.parts=G.parts.filter(p=>{
+    p.x+=p.vx; p.y+=p.vy; p.vy+=0.035; p.life-=0.035;
+    if(p.life<=0)return false;
+    ctx.globalAlpha=Math.max(0,p.life);
+    ctx.fillStyle=p.color; ctx.fillRect(p.x|0,p.y|0,2,2);
+    ctx.globalAlpha=1; return true;
+  });
+
+  requestAnimationFrame(draw);
+}
+
+/* ---------- HUD ---------- */
+function syncHud(){
+  if(!G||G.sim||G.headless)return;
+  document.getElementById('hName').textContent=G.hero.name;
+  document.getElementById('nHp').textContent=G.hp+'/'+G.maxhp;
+  document.getElementById('nAtk').textContent=G.atk;
+  document.getElementById('nCoin').textContent=G.coin;
+  const pct=Math.max(0,G.hp/G.maxhp*100);
+  document.getElementById('hpFill').style.width=pct+'%';
+  document.getElementById('hpBar').classList.toggle('low',pct<=34);
+  const hc=document.getElementById('hudCv').getContext('2d');
+  hc.clearRect(0,0,16,16);
+  const old=ctx; // 借用绘制函数
+  drawSprTo(hc,G.hero.spr);
+  const ch=document.getElementById('classHud');
+  ch.classList.toggle('hidden',!G.classroom);
+  if(G.classroom){
+    if(classEndArmed){
+      classEndArmed=false; clearTimeout(classEndTimer); classEndTimer=null;
+    }
+    const p=classPlayer();
+    document.getElementById('btnBack').textContent='提前结算';
+    document.getElementById('classTurnName').textContent='轮到 '+p.name+' · '+p.hero.name;
+    const dots=document.getElementById('apDots');
+    dots.innerHTML='<span>行动点</span>';
+    for(let i=0;i<3;i++){
+      const d=document.createElement('i');
+      d.className='apdot'+(i<G.classroom.ap?' on':'');
+      dots.appendChild(d);
+    }
+    const roster=document.getElementById('classRoster');
+    roster.innerHTML=G.classroom.players.map((q,i)=>
+      '<div class="rosterseat'+(i===G.classroom.current?' active':'')+(q.resting?' resting':'')+'">'+
+      q.name+' · '+q.hero.name+'<br>'+(q.resting?'本层休整':'血 '+q.hp+'/'+q.maxhp)+' · '+q.score+' 分</div>').join('');
+    document.getElementById('tip').innerHTML='红叉是敌人下回合会打到的格子。<b>全队行动完，敌人才统一行动。</b>';
+  }else{
+    document.getElementById('btnBack').textContent='换英雄';
+    document.getElementById('tip').innerHTML='格子上亮起<b>红叉</b> = 下回合那里会挨打，<b>走开就能躲掉</b>';
+  }
+}
+function drawSprTo(c,name){
+  const s=SPR[name]; if(!s)return;
+  for(let r=0;r<16;r++)for(let i=0;i<16;i++){
+    const ch=s[r][i]; if(ch==='.')continue;
+    c.fillStyle=PAL[ch]||'#f0f'; c.fillRect(i,r,1,1);
+  }
+}
+
+/* ---------- 界面 ---------- */
+function show(id){
+  ['menu','classSetup','game','over'].forEach(s=>document.getElementById(s).classList.toggle('hidden',s!==id));
+  if(id!=='game') document.getElementById('classJudge').classList.add('hidden');
+}
+function buildMenu(){
+  const box=document.getElementById('heroList');
+  box.innerHTML='';
+  const run=loadRun();
+  if(run){
+    const h=HEROES.find(v=>v.id===run.hero);
+    const d=document.createElement('div'); d.className='hcard';
+    d.style.borderColor='var(--gold)';
+    d.innerHTML='<canvas width="16" height="16"></canvas><div class="hinfo">'+
+      '<div class="hname">继续上次远征</div>'+
+      '<div class="hrole">'+h.name+' · '+floorName(run.fi)+'</div>'+
+      '<div class="hstat">血 <b>'+run.hp+'/'+run.maxhp+'</b>　攻 <b>'+run.atk+'</b>　金 <b>'+run.coin+'</b>'+
+      '<span style="float:right;color:var(--gold)">接着打</span></div></div>';
+    drawSprTo(d.querySelector('canvas').getContext('2d'),h.spr);
+    d.onclick=()=>resumeRun();
+    box.appendChild(d);
+  }
+  HEROES.forEach(h=>{
+    const b=META.best[h.id];
+    const rec = b ? (b.win?'已通关':'最深 第'+b.floor+'层') : '还没下过地牢';
+    const d=document.createElement('div'); d.className='hcard';
+    d.innerHTML='<canvas width="16" height="16"></canvas><div class="hinfo">'+
+      '<div class="hname">'+h.name+'　<span style="font-size:11px;color:var(--gold)">'+h.tag+'</span></div>'+
+      '<div class="hrole">'+h.animal+' · '+h.role+'</div>'+
+      '<div class="hskill">'+h.skill+'</div>'+
+      '<div class="hstat">血 <b>'+h.hp+'</b>　攻 <b>'+h.atk+'</b>　'+h.desc+
+      '<span style="float:right;color:var(--gold)">'+rec+'</span></div></div>';
+    drawSprTo(d.querySelector('canvas').getContext('2d'),h.spr);
+    d.onclick=()=>startGame(h.id);
+    box.appendChild(d);
+  });
+}
+
+/* 黑域图鉴：遇到过的点亮，没遇到的留剪影 */
+function buildCodex(){
+  const box=document.getElementById('cxList');
+  box.innerHTML='';
+  Object.keys(MOBS).forEach(k=>{
+    const m=MOBS[k], seen=!!META.seen[k];
+    const d=document.createElement('div');
+    d.className='cxrow'+(seen?'':' dim');
+    d.innerHTML='<canvas width="16" height="16"></canvas><div>'+
+      '<div class="cxn">'+(seen?m.name:'？？？')+(m.boss?'　<span style="font-size:10px">头目</span>':'')+'</div>'+
+      '<div class="cxd">'+(seen?m.lore:'尚未在地牢里遇见。')+'</div></div>';
+    const c=d.querySelector('canvas').getContext('2d');
+    if(seen) drawSprTo(c,m.spr); else drawSprSil(c,m.spr);
+    box.appendChild(d);
+  });
+  document.getElementById('codex').classList.remove('hidden');
+}
+function drawSprSil(c,name){
+  const s=SPR[name]; if(!s)return;
+  for(let r=0;r<16;r++)for(let i=0;i<16;i++){
+    if(s[r][i]==='.')continue;
+    c.fillStyle='#2b3150'; c.fillRect(i,r,1,1);
+  }
+}
+function syncSoundBtn(){
+  const b=document.getElementById('btnSound');
+  if(b) b.textContent='音效 '+(SND.on?'开':'关');
+}
+
+const CLASS_SETUP={count:3,heroes:['jin','wen','xi','hao','hai','jin']};
+function buildClassSetup(count){
+  CLASS_SETUP.count=Math.max(1,Math.min(6,count||CLASS_SETUP.count));
+  const counts=document.getElementById('classCounts');
+  counts.innerHTML='';
+  for(let i=1;i<=6;i++){
+    const b=document.createElement('button');
+    b.className='countbtn'+(i===CLASS_SETUP.count?' active':'');
+    b.textContent=i; b.onclick=()=>buildClassSetup(i); counts.appendChild(b);
+  }
+  const seats=document.getElementById('classSeats');
+  seats.innerHTML='';
+  for(let i=0;i<CLASS_SETUP.count;i++){
+    const chosen=HEROES.find(h=>h.id===CLASS_SETUP.heroes[i])||HEROES[0];
+    const row=document.createElement('div'); row.className='seatpick';
+    row.innerHTML='<div class="seatpicktop"><b>'+SEAT_NAMES[i]+'</b><span>'+
+      chosen.name+' · '+chosen.tag+'</span></div><div class="herochoices"></div>';
+    const choices=row.querySelector('.herochoices');
+    HEROES.forEach(h=>{
+      const b=document.createElement('button');
+      b.className='herochoice'+(h.id===chosen.id?' active':'');
+      b.textContent=h.name; b.title=h.animal+' · '+h.role;
+      b.onclick=()=>{ CLASS_SETUP.heroes[i]=h.id; buildClassSetup(CLASS_SETUP.count); };
+      choices.appendChild(b);
+    });
+    seats.appendChild(row);
+  }
+}
+
+/* ---------- 输入 ---------- */
+const KEYMAP={ArrowUp:'u',ArrowDown:'d',ArrowLeft:'l',ArrowRight:'r',
+  w:'u',s:'d',a:'l',d:'r',W:'u',S:'d',A:'l',D:'r',' ':'w'};
+addEventListener('keydown',ev=>{
+  const dir=KEYMAP[ev.key]; if(!dir)return;
+  ev.preventDefault(); act(dir);
+});
+document.getElementById('pad').addEventListener('click',ev=>{
+  const b=ev.target.closest('[data-d]'); if(!b)return; act(b.dataset.d);
+});
+/* 直接点格子走：只认相邻格（点远处不动，免得误触乱跑） */
+cv.addEventListener('click',ev=>{
+  if(!G||G.over) return;
+  const r=cv.getBoundingClientRect();
+  const gx=Math.floor((ev.clientX-r.left)/(r.width/N));
+  const gy=Math.floor((ev.clientY-r.top )/(r.height/N));
+  if(!inb(gx,gy)) return;
+  const dx=gx-G.px, dy=gy-G.py;
+  if(Math.abs(dx)+Math.abs(dy)!==1) return;
+  act(dx===1?'r':dx===-1?'l':dy===1?'d':'u');
+});
+
+document.getElementById('btnSingle').onclick=()=>{
+  document.getElementById('singlePicker').classList.remove('hidden');
+  document.getElementById('btnSingle').classList.add('active');
+  document.getElementById('btnClass').classList.remove('active');
+  buildMenu();
+};
+document.getElementById('btnClass').onclick=()=>{ buildClassSetup(); show('classSetup'); };
+document.getElementById('btnClassBack').onclick=()=>show('menu');
+document.getElementById('btnClassStart').onclick=()=>
+  startClassGame(CLASS_SETUP.heroes.slice(0,CLASS_SETUP.count));
+document.getElementById('classJudge').addEventListener('click',ev=>{
+  const b=ev.target.closest('[data-score]'); if(b) gradeStudent(Number(b.dataset.score));
+});
+const btnBack=document.getElementById('btnBack');
+btnBack.onclick=()=>{
+  if(G&&G.classroom&&!G.over){
+    if(!classEndArmed){
+      classEndArmed=true;
+      btnBack.textContent='再点一次确认';
+      clearTimeout(classEndTimer);
+      classEndTimer=setTimeout(()=>{
+        classEndArmed=false; classEndTimer=null;
+        if(G&&G.classroom&&!G.over) btnBack.textContent='提前结算';
+      },6000);
+      return;
+    }
+    classEndArmed=false; clearTimeout(classEndTimer); classEndTimer=null;
+    G.over=true; endScreen(false,true);
+  }else{ show('menu'); buildMenu(); }
+};
+document.getElementById('btnMenu').onclick=()=>{show('menu');buildMenu()};
+document.getElementById('btnAgain').onclick=()=>{
+  if(G.classroom) startClassGame(G.classroom.players.map(p=>p.hero.id));
+  else startGame(G.hero.id);
+};
+document.getElementById('btnCodex').onclick=()=>buildCodex();
+document.getElementById('btnCxClose').onclick=()=>document.getElementById('codex').classList.add('hidden');
+document.getElementById('btnSound').onclick=()=>{
+  SND.on=!SND.on; META.sound=SND.on; metaSave(); syncSoundBtn(); if(SND.on) sfx('pickup');
+};
+const howto=document.getElementById('howto');
+document.getElementById('btnHow').onclick=()=>howto.classList.remove('hidden');
+document.getElementById('btnHow2').onclick=()=>howto.classList.remove('hidden');
+document.getElementById('btnHowClose').onclick=()=>howto.classList.add('hidden');
+
+/* ---------- 平衡模拟（#sim）：用"普通玩家"水平的 bot 真实数值跑几百局 ----------
+   注意这不是外挂 bot，是调参工具：会看红叉躲大招、血少找药、优先补刀，
+   模拟一个已经看懂教学卡的普通玩家。数值调整以它的通关率为准。 */
+function simBot(){
+  // 僵局破除：12 步没有"实质进展"（层/敌血/自血/道具都没变——来回横跳不算进展！）就硬拼。
+  // 夜班抓到的现场：6 血玩家被三面包夹，在两格间无限左右横跳躲红叉，位置一直在变骗过了旧检测。
+  const sig=G.fi+':'+G.hp+':'+G.ents.reduce((s,e)=>s+e.hp,0)+':'+G.items.length;
+  if(sig===G._stallSig){ G._stallN=(G._stallN||0)+1; } else { G._stallSig=sig; G._stallN=0; }
+  const reckless=G._stallN>=12;
+  const danger=new Set();
+  if(!reckless)
+  G.ents.forEach(e=>{ const it=e.intent;
+    if(it&&(it.t==='atk'||it.t==='dash')) (it.cells||[]).forEach(c=>danger.add(key(c.x,c.y))); });
+  const here=key(G.px,G.py), inDanger=danger.has(here);
+  if(reckless){                                        // 莽夫模式：相邻就打，否则朝目标硬走
+    const af=G.ents.filter(e=>adjacent(e.x,e.y,G.px,G.py));
+    if(af.length) return af[0].x>G.px?'r':af[0].x<G.px?'l':af[0].y>G.py?'d':'u';
+  }
+  const adjFoes=G.ents.filter(e=>adjacent(e.x,e.y,G.px,G.py));
+  const moves=[['u',0,-1],['d',0,1],['l',-1,0],['r',1,0]]
+    .map(([k,dx,dy])=>({k,x:G.px+dx,y:G.py+dy}))
+    .filter(o=>inb(o.x,o.y)&&!G.wall[key(o.x,o.y)]);
+  const freeMoves=moves.filter(o=>!G.ents.some(e=>e.x===o.x&&e.y===o.y)
+    &&(!G.classroom||!classPlayerAt(o.x,o.y,classPlayer())));
+
+  // 目标：血少先奔药，否则奔楼梯
+  let goal=G.stairs;
+  if(G.hp<=G.maxhp*0.45){
+    const pot=G.items.find(i=>i.type==='potion');
+    if(pot) goal=key(pot.x,pot.y);
+  }
+  const d=bfs(G.wall,goal);
+  const rank=o=>{ const v=d[key(o.x,o.y)]; return v==null||v<0?999:v; };
+  const pickFoe=fs=>fs.slice().sort((a,b)=>a.hp-b.hp)[0];       // 先补刀血最少的
+  const dirTo=f=> f.x>G.px?'r':f.x<G.px?'l':f.y>G.py?'d':'u';
+
+  // 换血判断：真人不会见红叉就跑——小怪贴脸时，血够就换着打死它。
+  // 只有大招（多格红叉）或血亏时才认真躲。
+  const myDmg=G.atk + berserkBonus();
+  const incoming=G.ents.filter(e=>{ const it=e.intent;
+    return it&&(it.t==='atk'||it.t==='dash')&&(it.cells||[]).some(c=>c.x===G.px&&c.y===G.py); })
+    .reduce((s,e)=>s+e.atk,0);
+  if(adjFoes.length){
+    const f=pickFoe(adjFoes);
+    const killNow = f.hp<=myDmg;                                // 这一下就能带走它
+    // 有药可捡就打得保守（掉到 1/4 血先撤）；没药了就背水一战（只要这轮死不了就打）
+    const hasPotion=G.items.some(i=>i.type==='potion');
+    const canTank = hasPotion ? (G.hp-incoming > G.maxhp*0.25) : (G.hp-incoming > 0);
+    if(killNow || canTank || !inDanger) return dirTo(f);
+  }
+  if(inDanger){
+    const safe=freeMoves.filter(o=>!danger.has(key(o.x,o.y)));
+    if(safe.length){ safe.sort((a,b)=>rank(a)-rank(b)); return safe[0].k; }
+    if(adjFoes.length) return dirTo(pickFoe(adjFoes));          // 躲不开就换命
+  }
+  const stepSafe=freeMoves.filter(o=>!danger.has(key(o.x,o.y)));
+  const pool=stepSafe.length?stepSafe:freeMoves;
+  if(pool.length){
+    pool.sort((a,b)=>rank(a)-rank(b));
+    const cur=d[here]==null||d[here]<0?999:d[here];
+    if(rank(pool[0])<cur || inDanger) return pool[0].k;
+  }
+  return 'w';
+}
+function runSim(perHero){
+  const out={};
+  HEROES.forEach(h=>{
+    const r={runs:0,wins:0,deaths:{},turnsSum:0,floorSum:0,timeouts:0,winTurns:0};
+    for(let i=0;i<perHero;i++){
+      startGame(h.id,{sim:true});
+      let guard=0;
+      while(!G.over && guard++<1500) act(simBot());
+      r.runs++; r.turnsSum+=G.turns; r.floorSum+=G.fi+1;
+      if(!G.over){ r.timeouts++;                          // 卡死到步数上限：单独记，不算战死
+        r.toFloor=r.toFloor||{}; r.toFloor[G.fi+1]=(r.toFloor[G.fi+1]||0)+1; }
+      else if(G.hp>0){ r.wins++; r.winTurns+=G.turns; }
+      else r.deaths[G.fi+1]=(r.deaths[G.fi+1]||0)+1;
+    }
+    out[h.id]={hero:h.name, runs:r.runs, wins:r.wins,
+      winRate:Math.round(100*r.wins/r.runs),
+      avgFloor:+(r.floorSum/r.runs).toFixed(2),
+      avgTurns:Math.round(r.turnsSum/r.runs),
+      avgWinTurns:r.wins?Math.round(r.winTurns/r.wins):null,
+      timeouts:r.timeouts, timeoutsByFloor:r.toFloor||{},
+      deathsByFloor:r.deaths};
+  });
+  G=null;
+  return out;
+}
+function runClassSim(perCount){
+  const out={};
+  const grades=[2,2,1,2,3,0,2,1,2,3];
+  for(let count=1;count<=6;count++){
+    const r={runs:0,wins:0,rounds:0,floorSum:0,timeouts:0,deaths:{}};
+    const ids=Array.from({length:count},(_,i)=>HEROES[i%HEROES.length].id);
+    for(let i=0;i<perCount;i++){
+      startClassGame(ids,{sim:true});
+      let guard=0;
+      while(!G.over&&guard++<5000){
+        if(G.classroom.phase==='judge'){
+          gradeStudent(grades[(guard+i+G.classroom.current)%grades.length]);
+        }else if(G.classroom.phase==='act'){
+          act(simBot());
+        }else break;
+      }
+      r.runs++; r.rounds+=G.turns; r.floorSum+=G.fi+1;
+      if(!G.over) r.timeouts++;
+      else if(classLivingPlayers().length) r.wins++;
+      else r.deaths[G.fi+1]=(r.deaths[G.fi+1]||0)+1;
+    }
+    out[count+'人']={runs:r.runs,wins:r.wins,winRate:Math.round(100*r.wins/r.runs),
+      avgFloor:+(r.floorSum/r.runs).toFixed(2),avgRounds:Math.round(r.rounds/r.runs),
+      timeouts:r.timeouts,deathsByFloor:r.deaths};
+  }
+  G=null;
+  return out;
+}
+
+/* ---------- 自测 ---------- */
+function selftest(){
+  // 总快照（查虫队抓的：旧快照拍在污染之后、还原又早于自动试玩段——形同虚设）。
+  // 现在：进门先拍，出门最后还原，整个函数期间随便折腾都伤不到真玩家的档。
+  const __run0=localStorage.getItem(RUN_KEY);
+  const __meta0=JSON.stringify(META);
+  const out=[]; let pass=0,fail=0;
+  const ok=(n,c)=>{ c?pass++:fail++; out.push((c?'[过]':'[败]')+' '+n); };
+  // 精灵图尺寸
+  Object.keys(SPR).forEach(k=>{
+    ok('精灵 '+k+' 是 16 行', SPR[k].length===16);
+    ok('精灵 '+k+' 每行 16 字符', SPR[k].every(r=>r.length===16));
+    ok('精灵 '+k+' 颜色字符全部有定义', SPR[k].every(r=>[...r].every(c=>c in PAL)));
+  });
+  // 地牢生成：连通且楼梯可达
+  for(let f=0;f<FLOORS.length;f++){
+    for(let t=0;t<25;t++){
+      const d=genFloor(f);
+      const dist=bfs(d.wall,key(4,4));
+      ok('第'+(f+1)+'层楼梯可达', dist[d.stairs]>0);
+      ok('第'+(f+1)+'层怪物都在可达地板上', d.ents.every(e=>dist[key(e.x,e.y)]>=0));
+      ok('第'+(f+1)+'层道具都在可达地板上', d.items.every(i=>dist[key(i.x,i.y)]>=0));
+    }
+  }
+  // ── 战斗与躲避 ──
+  const blank=(over)=>Object.assign({hero:HEROES[0],hp:20,maxhp:20,atk:3,coin:0,fi:0,px:4,py:4,
+      crit:0,berserk:0,lifesteal:0,reflect:0,splash:0,over:false,parts:[],kills:0,turns:0,
+      headless:true,
+      wall:new Array(N*N).fill(false),stairs:key(0,0),ents:[],items:[],fname:'测'},over||{});
+
+  G=blank({hero:HEROES[2],hp:18,maxhp:18,lifesteal:2});
+  G.ents=[mkMob('snake',5,4)];
+  computeIntents();
+  ok('相邻时敌人预告"攻击"我当前格',
+     G.ents[0].intent.t==='atk' && G.ents[0].intent.cells.some(c=>c.x===4&&c.y===4));
+  act('l');
+  ok('走开后没有掉血（成功躲掉预告攻击）', G.hp===18);
+
+  // 晰：吸血
+  G=blank({hero:HEROES[2],hp:10,maxhp:16,lifesteal:1});
+  G.ents=[Object.assign(mkMob('snake',5,4),{hp:20,maxhp:20,intent:{t:'wait'}})];
+  playerHit(G.ents[0]);
+  ok('晰打中回 1 血', G.hp===11);
+  ok('晰造成 3 点伤害', G.ents[0].hp===17);
+
+  // 文：背水
+  G=blank({hero:HEROES[1],atk:2,maxhp:24,hp:24,berserk:5});
+  G.ents=[Object.assign(mkMob('snake',5,4),{hp:99,maxhp:99,intent:{t:'wait'}})];
+  playerHit(G.ents[0]); const fullDmg=99-G.ents[0].hp;
+  G.hp=2; G.ents[0].hp=99; playerHit(G.ents[0]); const lowDmg=99-G.ents[0].hp;
+  ok('文残血时伤害更高', lowDmg>fullDmg);
+
+  // 浩：反弹（挨打时打回去）
+  G=blank({hero:HEROES[3],hp:20,maxhp:28,reflect:2});
+  const atk1=Object.assign(mkMob('snake',5,4),{hp:9,maxhp:9,atk:3,intent:{t:'atk',cells:[{x:4,y:4}]}});
+  G.ents=[atk1]; enemiesAct();
+  ok('浩挨打时反弹 2 点', atk1.hp===7);
+  ok('浩确实掉了 3 血', G.hp===17);
+
+  // 海：溅射（打一个，旁边的也挨）
+  G=blank({hero:HEROES[4],splash:1,atk:3});
+  const tgt=Object.assign(mkMob('snake',5,4),{hp:20,maxhp:20,intent:{t:'wait'}});
+  const nb =Object.assign(mkMob('snake',5,5),{hp:20,maxhp:20,intent:{t:'wait'}});
+  const far=Object.assign(mkMob('snake',7,7),{hp:20,maxhp:20,intent:{t:'wait'}});
+  G.ents=[tgt,nb,far]; playerHit(tgt);
+  ok('海主目标吃满伤害', tgt.hp===17);
+  ok('海溅射到相邻敌人', nb.hp===19);
+  ok('海不会溅射到远处敌人', far.hp===20);
+
+  // 雾蝰：隔两格直线预告
+  G=blank({});
+  const vp=mkMob('viper',4,6); G.ents=[vp]; computeIntents();
+  ok('雾蝰隔两格成直线时预告整条线',
+     vp.intent.t==='atk' && vp.intent.cells.length===2 && vp.intent.cells.some(c=>c.x===4&&c.y===4));
+
+  // 慧：玩家进圈才蓄力，横扫八格全预告
+  G=blank({px:5,py:5});
+  const tg=mkMob('tiger',6,6); tg.tick=1; G.ents=[tg]; computeIntents();
+  ok('慧横扫回合预告周围八格', tg.intent.t==='atk' && tg.intent.cells.length===8);
+  computeIntents();
+  ok('慧出招后必歇一拍(破绽)', tg.intent.t==='wait');
+  G.px=2; G.py=2; tg.tick=1; computeIntents();
+  ok('玩家在圈外时慧全速追击不空砍', tg.intent.t==='mov');
+
+  // 叶王：召唤格提前标出
+  G=blank({});
+  const q=mkMob('ye',6,6); q.tick=5; G.ents=[q]; computeIntents();
+  ok('叶王第六回合预告召唤位', q.intent.t==='summon');
+  enemiesAct();
+  ok('叶王召唤出了影卒', G.ents.length===2 && G.ents.some(e=>e.type==='shade'));
+
+  // 璇：出招拍预告突进路径，破绽拍只喘气
+  G=blank({});
+  const xu=mkMob('xuan',4,7); xu.tick=1; G.ents=[xu]; computeIntents();
+  ok('璇出招拍成直线时预告突进路径', xu.intent.t==='dash' && xu.intent.cells.length>=2);
+  computeIntents();
+  ok('璇出招后必歇一拍(破绽)', xu.intent.t==='wait'||xu.intent.t==='mov');
+
+  // 三选一强化真的生效
+  G=blank({atk:3,hp:10,maxhp:20});
+  UPGRADES.find(u=>u.id==='atk').go();  ok('强化「利刃」攻击 +1', G.atk===4);
+  UPGRADES.find(u=>u.id==='body').go(); ok('强化「坚体」血上限 +4', G.maxhp===24 && G.hp===14);
+  UPGRADES.find(u=>u.id==='heal').go(); ok('强化「回春」回满血', G.hp===G.maxhp);
+
+  // 道具效果
+  G=blank({hp:10,maxhp:20,atk:3,px:2,py:2});
+  G.items=[{x:2,y:2,type:'potion'}]; pickup(); ok('药水回 8 血', G.hp===18);
+  G.items=[{x:2,y:2,type:'sword'}];  pickup(); ok('剑 +1 攻击', G.atk===4);
+  G.items=[{x:2,y:2,type:'armor'}];  pickup(); ok('甲 +5 血上限', G.maxhp===25);
+  G.items=[{x:2,y:2,type:'coin'}];   pickup(); ok('金币 +5', G.coin===5);
+
+  // 下楼 / 胜负
+  G.fi=0; descend(); ok('下楼进到第二层', G.fi===1);
+  document.getElementById('upgrade').classList.add('hidden');
+  G.fi=FLOORS.length-1; G.over=false; descend(); ok('最后一层再下楼＝通关', G.over===true);
+  // 注意：descend() 会把玩家重置到 (4,4)，这里必须显式站回被攻击的格子，
+  //   否则攻击会"落空"——那恰恰是躲避机制在正常工作（第一版测试就栽在这）。
+  G=blank({hp:1,px:2,py:2});
+  G.ents=[Object.assign(mkMob('snake',3,2),{hp:99,maxhp:99,atk:5,intent:{t:'atk',cells:[{x:2,y:2}]}})];
+  enemiesAct(); ok('血扣光即败北', G.over===true && G.hp===0);
+  // 反面：站开一格就该躲掉、不死
+  G=blank({hp:1,px:5,py:5});
+  G.ents=[Object.assign(mkMob('snake',3,2),{hp:99,maxhp:99,atk:5,intent:{t:'atk',cells:[{x:2,y:2}]}})];
+  enemiesAct(); ok('站开一格＝躲掉致命一击', G.over===false && G.hp===1);
+  // 最终层楼梯封印：叶王活着时踩楼梯不通关（防绕过 BOSS 速通——模拟局逮出的真漏洞）
+  G=blank({fi:FLOORS.length-1,px:1,py:0});
+  G.stairs=key(0,0);
+  G.ents=[Object.assign(mkMob('ye',5,5),{intent:{t:'wait'}})];
+  act('l');
+  ok('叶王活着时楼梯封印', G.over===false && G.fi===FLOORS.length-1 && G.px===0);
+  G.ents=[]; G.px=1;
+  act('l');
+  ok('叶王不在时楼梯恢复(通关)', G.over===true);
+
+  // 打倒叶王＝通关（打倒前两个头目不算）
+  G=blank({});
+  const midBoss=Object.assign(mkMob('tiger',3,2),{hp:1,intent:{t:'wait'}});
+  G.ents=[midBoss]; playerHit(midBoss);
+  ok('打倒中途头目不算通关', G.over===false);
+  G=blank({});
+  const lastBoss=Object.assign(mkMob('ye',3,2),{hp:1,intent:{t:'wait'}});
+  G.ents=[lastBoss]; playerHit(lastBoss);
+  ok('打倒叶王＝通关', G.over===true);
+
+  // 中途存档：存-读往返一致；坏档拒收；胜负清档
+  const savedRunRaw=localStorage.getItem(RUN_KEY);      // 保护真玩家的档，测完还原
+  const savedMetaRaw=JSON.stringify(META);              // win() 会写战绩，测完还原免污染
+  startGame('jin');
+  G.hp=15; G.coin=7; G.fi=4; G.fname=floorName(4); saveRun();
+  const snapEnts=G.ents.length;
+  G=null; resumeRun();
+  ok('存档往返：血/金/层一致', G && G.hp===15 && G.coin===7 && G.fi===4);
+  ok('存档往返：敌人数量一致', G && G.ents.length===snapEnts);
+  ok('存档往返：敌人意图原样保留', G && G.ents.every(e=>e.intent!==undefined));
+  G.hp=0; G.over=false; clearRun();
+  ok('清档后无法再续', loadRun()===null);
+  try{ localStorage.setItem(RUN_KEY,'{"v":1,"hero":"没这人"}'); }catch(err){}
+  ok('坏档被拒收(英雄不存在)', loadRun()===null);
+  try{ localStorage.setItem(RUN_KEY,'不是JSON'); }catch(err){}
+  ok('坏档被拒收(不是JSON)', loadRun()===null);
+  G={over:false,hero:HEROES[0],hp:5,maxhp:20,atk:3,coin:0,kills:0,turns:0,fi:0,px:4,py:4,
+     crit:0,berserk:0,lifesteal:0,reflect:0,splash:0,parts:[],
+     wall:new Array(N*N).fill(false),stairs:key(0,0),ents:[],items:[],fname:'测'};
+  saveRun(); win();
+  ok('通关后档被清掉(防复活漏洞)', loadRun()===null);
+  META=JSON.parse(savedMetaRaw); metaSave();            // 还原真战绩
+  try{ if(savedRunRaw==null) localStorage.removeItem(RUN_KEY);
+       else localStorage.setItem(RUN_KEY,savedRunRaw); }catch(err){}
+  document.getElementById('upgrade').classList.add('hidden');
+
+  // 模拟局零污染（查虫队抓过：#sim 曾清真档+写假战绩+点亮全图鉴——这里锁死不许复发）
+  const mSnap=JSON.stringify(META);
+  try{ localStorage.setItem(RUN_KEY,'哨兵档'); }catch(err){}
+  runSim(1);
+  ok('模拟局不碰真存档', localStorage.getItem(RUN_KEY)==='哨兵档');
+  ok('模拟局不写真战绩不点亮图鉴', JSON.stringify(META)===mSnap);
+
+  // 坏档深校验（畸形意图曾能冻死画面）
+  const okShell={v:1,hero:'jin',hp:10,maxhp:20,atk:3,crit:0,berserk:0,lifesteal:0,reflect:0,splash:0,
+    coin:0,kills:0,turns:0,fi:0,px:4,py:4,wall:'0'.repeat(N*N),stairs:8,items:[],perk:false};
+  try{ localStorage.setItem(RUN_KEY,JSON.stringify(Object.assign({},okShell,
+    {ents:[{t:'snake',x:1,y:1,hp:5,tick:0,intent:{t:'atk',cells:'畸形'}}]}))); }catch(err){}
+  ok('坏档被拒收(畸形意图cells)', loadRun()===null);
+  try{ localStorage.setItem(RUN_KEY,JSON.stringify(Object.assign({},okShell,
+    {ents:[],items:[{type:'没这道具',x:1,y:1}]}))); }catch(err){}
+  ok('坏档被拒收(未知道具)', loadRun()===null);
+  try{ localStorage.setItem(RUN_KEY,JSON.stringify(Object.assign({},okShell,
+    {ents:[{t:'snake',x:99,y:1,hp:5,tick:0,intent:null}]}))); }catch(err){}
+  ok('坏档被拒收(敌人越界)', loadRun()===null);
+  try{ localStorage.setItem(RUN_KEY,JSON.stringify(Object.assign({},okShell,{ents:[]}))); }catch(err){}
+  ok('完好档正常放行', loadRun()!==null);
+
+  // 三选一定牌：续档回来还是原来那三张，刷新不能重摇
+  G=blank({headless:false,hp:10,maxhp:20});
+  show('game');
+  offerUpgrades(['atk','body']);
+  ok('定牌恢复原样', (G.perkChoices||[]).join()==='atk,body');
+  document.getElementById('upgrade').classList.add('hidden');
+  G.perkPending=false; G.perkChoices=null;
+  show('menu');
+
+  // localStorage 记录读写
+  const savedMeta=JSON.stringify(META);
+  META={best:{},seen:{},sound:true};
+  G=blank({hero:HEROES[0],fi:4,coin:33}); recordRun(false);
+  ok('战绩记下了最深层数', META.best.jin && META.best.jin.floor===5);
+  ok('战绩记下了金币', META.best.jin.coin===33);
+  G=blank({hero:HEROES[0],fi:8,coin:10}); recordRun(true);
+  ok('通关标记生效', META.best.jin.win===true);
+  ok('金币取历史最高不倒退', META.best.jin.coin===33);
+  META=JSON.parse(savedMeta); metaSave();
+
+  // 弹层竞态回归：三选一开着时键盘必须失灵（否则玩家会盲走挨打）
+  G=blank({headless:false});
+  show('game');
+  document.getElementById('upgrade').classList.remove('hidden');
+  act('l');
+  ok('三选一开着时行动被拦截', G.px===4);
+  document.getElementById('upgrade').classList.add('hidden');
+  act('l');
+  ok('关掉弹层后行动恢复', G.px===3);
+  show('menu');
+  act('l');
+  ok('回到菜单后键盘不再操控棋盘', G.px===3);
+
+  // ── 课堂模式：判分、轮转、休整复活、极端人数、独立性 ──
+  ok('课堂判分：答错 0 分仍有 1 行动点', classPoints(0)===1);
+  ok('课堂判分：1 分换 1 行动点', classPoints(1)===1);
+  ok('课堂判分：2 分换 2 行动点', classPoints(2)===2);
+  ok('课堂判分：3 分换 3 行动点', classPoints(3)===3);
+
+  startClassGame(['jin','wen'],{headless:true});
+  G.wall=new Array(N*N).fill(false);
+  const classP0=G.classroom.players[0], classP1=G.classroom.players[1];
+  classP0.px=4; classP0.py=4; classP1.px=4; classP1.py=3; classLoadPlayer(0);
+  G.ents=[mkMob('snake',4,2)]; computeIntents();
+  ok('课堂敌人的红叉预告命中实际目标星徒',
+    G.ents[0].intent.t==='atk'&&G.ents[0].intent.cells.some(c=>c.x===classP1.px&&c.y===classP1.py));
+  gradeStudent(1); act('u');
+  ok('课堂星徒不能走进同伴所在格',
+    G.px===4&&G.py===4&&G.classroom.ap===1&&G.classroom.current===0);
+
+  startClassGame(['jin','wen'],{headless:true});
+  G.wall=new Array(N*N).fill(false); G.stairs=key(0,0);
+  const classFoe=mkMob('snake',8,8); G.ents=[classFoe]; computeIntents();
+  const foeX0=classFoe.x, tick0=classFoe.tick;
+  gradeStudent(1); act('w');
+  ok('课堂行动点用完自动轮到下一人',
+    G.classroom.current===1&&G.classroom.phase==='judge');
+  ok('第一人走完时敌人还没有行动', classFoe.x===foeX0&&classFoe.tick===tick0&&G.turns===0);
+  gradeStudent(2); act('w');
+  ok('第二人还有行动点时仍不触发敌人', G.classroom.current===1&&G.classroom.ap===1&&G.turns===0);
+  act('w');
+  ok('全队一轮走完后敌人才统一行动', G.turns===1&&classFoe.tick===tick0+1);
+
+  startClassGame(['jin','wen'],{headless:true});
+  const rested=G.classroom.players[0], standing=G.classroom.players[1];
+  rested.hp=1; hurtClassPlayer(rested,5,null);
+  ok('星徒倒下只在本层休整', rested.resting===true&&standing.resting===false&&G.over===false);
+  const restedMax=rested.maxhp;
+  loadFloor(1);
+  ok('休整星徒下一层满血归队', rested.resting===false&&rested.hp===restedMax);
+
+  startClassGame(['jin'],{headless:true});
+  ok('课堂模式 1 人能正常开局与生成结算数据',
+    G.classroom.players.length===1&&classEndData().players.length===1);
+  startClassGame(['jin','wen','xi','hao','hai','jin'],{headless:true});
+  const classSpawnKeys=G.classroom.players.map(p=>key(p.px,p.py));
+  const classBlockedKeys=new Set([G.stairs,...G.ents.map(e=>key(e.x,e.y)),...G.items.map(i=>key(i.x,i.y))]);
+  ok('课堂模式 6 人出生格互不重叠且没有敌人道具',
+    new Set(classSpawnKeys).size===6&&classSpawnKeys.every(k=>!classBlockedKeys.has(k)));
+  G.classroom.players.forEach((p,i)=>{ p.score=i; });
+  lose();
+  const sixEnd=classEndData();
+  ok('课堂模式 6 人能正常开局与结算',
+    G.over===true&&sixEnd.players.length===6&&sixEnd.players[5].score===5);
+
+  const classRun0=localStorage.getItem(RUN_KEY), classMeta0=JSON.stringify(META);
+  try{ localStorage.setItem(RUN_KEY,'课堂模式独立性哨兵'); }catch(err){}
+  startClassGame(['jin','xi','hai'],{headless:true});
+  saveRun(); markSeen(); recordRun(true); clearRun();
+  ok('课堂模式不污染单人 RUN', localStorage.getItem(RUN_KEY)==='课堂模式独立性哨兵');
+  ok('课堂模式不污染单人 META', JSON.stringify(META)===classMeta0);
+  try{
+    if(classRun0==null) localStorage.removeItem(RUN_KEY);
+    else localStorage.setItem(RUN_KEY,classRun0);
+  }catch(err){}
+
+  startClassGame(['jin','wen'],{headless:true});
+  G.headless=false; show('game'); showClassJudge();
+  const blockedTurns=G.turns;
+  act('w');
+  ok('课堂判分弹层打开时输入被拦截', G.turns===blockedTurns&&G.classroom.phase==='judge');
+  gradeStudent(1); act('w');
+  ok('课堂判分弹层关闭后行动恢复', G.classroom.current===1);
+  document.getElementById('classJudge').classList.add('hidden');
+  show('menu');
+
+  // 自动试玩：贪心机器人能不能打穿九层（证明这局是可通关的）
+  let wins=0, deepest=0;
+  for(let trial=0;trial<6;trial++){
+    startGame('xi',{sim:true}); G.atk=9; G.maxhp=60; G.hp=60;   // 模拟路径：零落盘、强化走 simPerk
+    let guard=0;
+    while(!G.over && guard++<3000){
+      const foe=G.ents.find(e=>adjacent(e.x,e.y,G.px,G.py));
+      if(foe){ act(foe.x>G.px?'r':foe.x<G.px?'l':foe.y>G.py?'d':'u'); continue; }
+      const d=bfs(G.wall,G.stairs);
+      const opts=[['u',0,-1],['d',0,1],['l',-1,0],['r',1,0]]
+        .map(([k,dx,dy])=>({k,x:G.px+dx,y:G.py+dy}))
+        .filter(o=>inb(o.x,o.y)&&!G.wall[key(o.x,o.y)]&&d[key(o.x,o.y)]>=0);
+      if(!opts.length){ act('w'); continue; }
+      opts.sort((a,b)=>d[key(a.x,a.y)]-d[key(b.x,b.y)]);
+      act(opts[0].k);
+    }
+    deepest=Math.max(deepest,G.fi+1);
+    if(G.over && G.hp>0) wins++;
+  }
+  document.getElementById('upgrade').classList.add('hidden');
+  ok('自动试玩能打穿九层（至少 1/6 次通关）', wins>=1);
+  out.push('　　（机器人 6 次里通关 '+wins+' 次，最深到第 '+deepest+' 层）');
+
+  // 总还原（与函数第一行的总快照配对）
+  try{
+    META=JSON.parse(__meta0); metaSave();
+    if(__run0==null) localStorage.removeItem(RUN_KEY);
+    else localStorage.setItem(RUN_KEY,__run0);
+  }catch(err){}
+
+  G=null;
+  document.body.style.display='block';   // body 默认 flex 居中，长报告会被顶出屏幕
+  document.body.innerHTML='<pre style="padding:20px;font:12px/1.7 monospace;color:#f0ecdf;white-space:pre-wrap">'+
+    '星徒地牢 · 自测\n通过 '+pass+' / 失败 '+fail+'\n\n'+out.join('\n')+'</pre>';
+}
+
+/* ---------- QA 展示局面（截图/目检用，不影响正常游玩） ---------- */
+function mkMob(type,x,y){
+  const t=MOBS[type];
+  return {x,y,type,name:t.name,spr:t.spr,hp:t.hp,maxhp:t.hp,atk:t.atk,
+          coin:t.coin,boss:!!t.boss,pattern:t.pattern||null,range:t.range||0,
+          slow:!!t.slow,tick:0,intent:null,flash:0};
+}
+function qaScene(mode){
+  startGame('jin');
+  document.getElementById('chapter').classList.remove('go');   // 截图时别让过场大字挡住场面
+  const setF=(fi)=>{ G.fi=fi; G.fname=floorName(fi);
+    document.getElementById('hFloor').textContent=G.fname; };
+  if(mode==='xuan'){ setF(2); G.ents=[mkMob('xuan',4,7), mkMob('snake',6,3)]; }
+  else if(mode==='tiger'){ setF(5); const t=mkMob('tiger',5,4); t.tick=1;
+    G.ents=[t, mkMob('viper',4,7), mkMob('shade',2,5)]; }
+  else if(mode==='ye'){ setF(8); const q=mkMob('ye',5,4); q.tick=2;
+    G.ents=[q, mkMob('shell',3,6), mkMob('shade',2,3)]; }
+  else if(mode==='ch2'){ setF(3); G.ents=[mkMob('viper',4,7), mkMob('shade',5,4), mkMob('snake',2,5)]; }
+  else
+  G.ents=[mkMob('snake',5,4), mkMob('crow',4,2), mkMob('shade',2,5)];
+  G.items=[{x:6,y:6,type:'potion'},{x:3,y:6,type:'sword'},{x:6,y:2,type:'coin'}];
+  [[5,4],[4,2],[2,5],[6,6],[3,6],[6,2],[4,4],[4,3],[3,5],[5,5],[5,6],[6,5],[4,5],[5,3],[6,3],[6,4]]
+    .forEach(([x,y])=>{ G.wall[key(x,y)]=false; });
+  G.stairs=key(7,7); G.wall[key(7,7)]=false; G.wall[key(7,6)]=false;
+  computeIntents(); syncHud();
+}
+function qaClass(mode){
+  if(mode==='setup'){
+    buildClassSetup(4); show('classSetup'); return;
+  }
+  startClassGame(['jin','wen','xi','hao']);
+  document.getElementById('chapter').classList.remove('go');
+  if(mode==='turn'){
+    gradeStudent(3);
+    G.ents=[mkMob('snake',6,4),mkMob('viper',4,7),mkMob('shade',2,5)];
+    [[2,5],[3,4],[4,3],[4,4],[4,5],[5,4],[6,4],[4,6],[4,7],[5,5]]
+      .forEach(([x,y])=>{ G.wall[key(x,y)]=false; });
+    computeIntents(); syncHud();
+  }else if(mode==='over'){
+    G.classroom.players.forEach((p,i)=>{ p.score=[8,6,9,7][i]; });
+    G.fi=5; G.fname=floorName(5); G.kills=13; G.turns=7;
+    lose();
+  }
+}
+
+/* ---------- 启动 ---------- */
+metaLoad();
+syncSoundBtn();
+buildMenu();
+if(location.hash==='#selftest'){ selftest(); }
+else{
+  requestAnimationFrame(draw);
+  const h=location.hash;
+  if(h==='#qa') qaScene('');
+  else if(h.startsWith('#qa-class-')) qaClass(h.slice(10));
+  else if(h.startsWith('#qa-')) qaScene(h.slice(4));
+  else if(h.startsWith('#sim')){
+    const per=parseInt(h.slice(5),10)||40;
+    const t0=performance.now();
+    const res={single:runSim(per),classroom:runClassSim(per)};
+    document.body.style.display='block';
+    document.body.innerHTML='<pre id="simout" style="padding:20px;font:12px/1.7 monospace;'+
+      'color:#f0ecdf;white-space:pre-wrap">星徒地牢 · 平衡模拟（单人每英雄、课堂每人数各 '+per+' 局，用时 '+
+      Math.round(performance.now()-t0)+'ms）\n\n'+JSON.stringify(res,null,1)+'</pre>';
+  }
+}
+</script>
+</body>
+</html>
