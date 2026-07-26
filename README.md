@@ -1,11 +1,11 @@
 # 星徒地牢
 
-MYSKME 世界观下的单文件像素战术地牢 v2.0。含单人九层远征与一至六人课堂模式，
-支持 5／6 题批次答题、一屏全员判分、自由选人行动、自定义命名、双存档、本机榜和 Cloudflare 云榜。
+MYSKME 世界观下的单文件像素战术地牢 v3.0。含单人九层远征与一至六人课堂模式，
+支持行动倍率判分、自由选人行动、挑战契约、星币商店、双存档、本机多维榜与云端榜。
 
 - 在线地址：https://myskme.github.io/myskme-star-dungeon/
-- 源提交：`0b0d9bca138885b75df239cc701a96fbbab77a10`（`myskme/myskme-expedition` 的 `像素地牢/星徒地牢.html`）
-- 云榜后端：`myskme/myskme-game-api` 的 Cloudflare Worker
+- 源提交：`0de6d3a7a8950f33aa96bb9464198924a1f4a38a`（`myskme/myskme-expedition` 的 `像素地牢/星徒地牢.html`）
+- 云端榜只公开个人昵称或队名，不公开课堂成员姓名
 
 ## 本地打开
 

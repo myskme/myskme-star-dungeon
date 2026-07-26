@@ -101,6 +101,12 @@ body{
 .questionbtn b{display:block;color:var(--ink);font-size:16px;letter-spacing:.12em;margin-bottom:3px}
 .questionbtn.active{border-color:var(--gold);background:#211d1b;box-shadow:var(--glow-gold)}
 .questionbtn.active b{color:var(--gold2)}
+.heatgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.heatbtn{min-height:64px;padding:7px;border:2px solid #303750;background:#10131f;color:var(--ink3);
+  font:700 9px/1.5 var(--px);cursor:pointer;text-align:left}
+.heatbtn b{display:block;color:var(--ink);font-size:11px;margin-bottom:3px}
+.heatbtn.active{border-color:var(--gold);background:#211d1b;color:var(--gold2)}
+.heatbtn.active b{color:var(--gold2)}
 .setupnote{font-size:10px;line-height:1.6;color:var(--ink3);text-align:center;margin-top:-4px}
 .scenemodegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
 .scenemodebtn,.eggbtn{min-height:72px;padding:10px;border:3px solid #2b3150;background:#111522;color:var(--ink2);
@@ -153,8 +159,8 @@ body{
   color:var(--gold2);font:700 10px var(--px);cursor:pointer}
 .apbox{display:flex;align-items:center;gap:6px;flex:none}
 .apbox span:first-child{font-size:10px;color:var(--ink2);letter-spacing:.08em;margin-right:2px}
-.apdot{width:15px;height:15px;border:3px solid #48506d;background:#111522}
-.apdot.on{border-color:var(--gold2);background:var(--gold);box-shadow:0 0 8px rgba(232,207,149,.5)}
+.apvalue{min-width:40px;padding:5px 7px;border:2px solid var(--gold3);background:#211d1b;
+  color:var(--gold2);font-size:16px;text-align:center}
 .classroster{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:9px}
 .rosterseat{padding:6px;border:2px solid #2b3150;background:#111522;color:var(--ink2);font:700 10px/1.55 var(--px);
   line-height:1.55;min-width:0;text-align:left}
@@ -166,9 +172,8 @@ body{
 .rosterseat:disabled{cursor:default}
 .rostername{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rosterline{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-top:2px}
-.miniap{display:flex;gap:2px;flex:none}
-.miniap i{display:block;width:7px;height:7px;border:1px solid #48506d;background:#111522}
-.miniap i.on{border-color:var(--gold2);background:var(--gold)}
+.miniap{flex:none;border:1px solid #48506d;background:#090b12;padding:2px 4px;
+  color:var(--gold2);font-size:9px;white-space:nowrap}
 .rosterstate{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* ── 舞台 ── */
@@ -225,7 +230,8 @@ body{
 
 /* ── 教学卡 ── */
 #howto{position:fixed;inset:0;z-index:60;background:rgba(5,6,11,.94);
-  display:flex;align-items:center;justify-content:center;padding:20px}
+  display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow:auto}
+#howto>.box{margin:auto 0}
 #howto .box{max-width:400px;border:3px solid var(--gold);background:var(--bg2);padding:20px}
 #howto h2{font-size:17px;color:var(--gold2);letter-spacing:.24em;text-align:center;margin-bottom:16px}
 #howto li{list-style:none;font-size:13px;line-height:1.9;color:var(--ink);margin-bottom:10px;
@@ -233,9 +239,10 @@ body{
 #howto li s{color:var(--gold2);text-decoration:none;flex:none}
 #howto b{color:var(--red)}
 
-/* 课堂答题：先停在静态地图上思考，作答结束后才进入判分 */
+/* 课堂答题：整轮只停在一张静态地图上，同屏完成全员行动倍率判定 */
 #classThink,#classJudge,#classAction{position:fixed;inset:0;z-index:75;background:rgba(5,6,11,.97);
-  display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
+  display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow:auto}
+#classThink>*,#classJudge>*,#classAction>*{margin:auto 0}
 .thinkbox{width:100%;max-width:480px;border:3px solid var(--gold);background:#10131f;padding:18px}
 .thinkeyebrow{font-size:10px;color:var(--ink3);letter-spacing:.24em;text-align:center;margin-bottom:9px}
 .thinkbox h2{font-size:22px;line-height:1.4;color:var(--gold2);letter-spacing:.12em;text-align:center}
@@ -268,7 +275,11 @@ body{
 .thinkgo{width:100%;min-height:60px;border:3px solid var(--gold);background:#211d1b;color:var(--gold2);
   font:700 15px var(--px);letter-spacing:.1em;cursor:pointer}
 .thinkgo:active{transform:translateY(1px) scale(.99)}
-.judgebox{width:100%;max-width:620px;border:3px solid var(--gold);background:var(--bg2);padding:18px}
+.judgebox{width:100%;max-width:760px;border:3px solid var(--gold);background:var(--bg2);padding:18px}
+.judgeworld{display:grid;grid-template-columns:minmax(230px,.9fr) minmax(330px,1.25fr);gap:14px;align-items:start}
+.judgescene .thinkscene{margin:0 0 8px}
+.judgeworldcopy{font-size:10px;line-height:1.65;color:var(--ink3);margin:8px 1px}
+.judgeworldcopy b{color:var(--gold2)}
 .judgewho{display:flex;align-items:center;gap:14px;padding-bottom:14px;border-bottom:1px solid var(--line)}
 .judgecrest{width:62px;height:62px;display:flex;align-items:center;justify-content:center;flex:none;
   border:3px solid var(--gold3);background:#15130f;color:var(--gold2);font:700 24px var(--px)}
@@ -279,15 +290,16 @@ body{
 .gradequick button{min-height:38px;border:2px solid #343b58;background:#111522;color:var(--ink2);
   font:700 10px var(--px);cursor:pointer}
 .groupgrade{display:flex;flex-direction:column;gap:7px}
-.gradeplayer{display:grid;grid-template-columns:122px 1fr 82px;gap:8px;align-items:center;
+.gradeplayer{display:grid;grid-template-columns:132px 1fr 98px;gap:8px;align-items:center;
   border:2px solid #2b3150;background:#10131f;padding:8px}
 .gradeidentity{display:flex;align-items:center;gap:7px;min-width:0}
 .gradeidentity canvas{width:34px;height:34px;image-rendering:pixelated;flex:none}
 .gradeidentity b{display:block;color:var(--gold2);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gradeidentity span{display:block;color:var(--ink3);font-size:8px;margin-top:3px}
 .correctchoices{display:grid;gap:4px}
-.correctbtn{min-height:34px;border:2px solid #343b58;background:#151a2a;color:var(--ink2);
-  font:700 12px var(--px);cursor:pointer}
+.correctbtn{min-height:44px;border:2px solid #343b58;background:#151a2a;color:var(--ink2);
+  font:700 10px/1.45 var(--px);cursor:pointer;padding:4px}
+.correctbtn b{display:block;color:var(--gold2);font-size:12px}
 .correctbtn.active{border-color:var(--gold);background:#292116;color:var(--gold2)}
 .gradestate{font-size:9px;line-height:1.55;color:var(--ink3);text-align:right}
 .gradestate b{display:block;color:var(--gold2);font-size:12px}
@@ -317,11 +329,12 @@ body{
 .actionplayer span{display:block;color:var(--ink3);margin-top:3px}
 .actionplayer.active{border-color:var(--gold);background:#211d1b}
 .actionplayer.spent,.actionplayer.resting{opacity:.55;cursor:default}
-.actionremain{display:flex;gap:3px;margin-top:5px}
-.actionremain i{width:10px;height:10px;border:2px solid #48506d;background:#111522}
+.actionplayer .actionremain{display:flex;gap:3px;margin-top:5px}
+.actionremain i{display:block;height:7px;flex:1;border:1px solid #48506d;background:#111522}
 .actionremain i.on{border-color:var(--gold2);background:var(--gold)}
 .actionclose{width:100%;min-height:48px;margin-top:10px;border:2px solid #343b58;background:#111522;
   color:var(--ink2);font:700 12px var(--px);cursor:pointer}
+.actionclose.danger{border-color:#714345;color:#efb1a6;background:#201316}
 
 /* 方向键里的像素箭头（不用 emoji/箭头字符） */
 .pbtn svg{width:22px;height:22px;display:block;margin:0 auto;fill:currentColor;
@@ -338,10 +351,11 @@ body{
   72%{opacity:1}100%{opacity:0}}
 
 /* 层间三选一 */
-#upgrade,#codex,#archive,#leaderboard{position:fixed;inset:0;z-index:70;background:rgba(5,6,11,.94);
-  display:flex;align-items:center;justify-content:center;padding:18px;overflow:auto}
-.upbox,.cxbox,.archivebox,.rankbox{width:100%;max-width:460px;border:3px solid var(--gold);background:var(--bg2);padding:18px}
-.upbox h2,.cxbox h2,.archivebox h2,.rankbox h2{font-size:16px;color:var(--gold2);letter-spacing:.28em;text-align:center;
+#upgrade,#shop,#codex,#archive,#leaderboard{position:fixed;inset:0;z-index:70;background:rgba(5,6,11,.94);
+  display:flex;align-items:flex-start;justify-content:center;padding:18px;overflow:auto}
+#upgrade>*,#shop>*,#codex>*,#archive>*,#leaderboard>*{margin:auto 0}
+.upbox,.shopbox,.cxbox,.archivebox,.rankbox{width:100%;max-width:460px;border:3px solid var(--gold);background:var(--bg2);padding:18px}
+.upbox h2,.shopbox h2,.cxbox h2,.archivebox h2,.rankbox h2{font-size:16px;color:var(--gold2);letter-spacing:.28em;text-align:center;
   margin-bottom:15px;text-indent:.28em}
 .upcard{border:3px solid #2b3150;background:linear-gradient(180deg,var(--bg3),var(--bg2));
   padding:13px;margin-bottom:10px;cursor:pointer;
@@ -350,6 +364,14 @@ body{
 .upcard:active{transform:translateY(1px) scale(.98);transition-duration:.05s}
 .upname{font-size:17px;color:var(--gold2);letter-spacing:.2em}
 .updesc{font-size:12px;color:var(--ink2);margin-top:6px;letter-spacing:.06em}
+.shopgold{text-align:center;color:var(--ink2);font-size:11px;margin:-5px 0 12px}
+.shopgold b{color:var(--gold2);font-size:18px}
+.shoplist{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.shopcard{min-height:95px;border:2px solid #303750;background:#10131f;padding:10px;color:var(--ink2);
+  font:700 9px/1.6 var(--px);cursor:pointer;text-align:left}
+.shopcard b{display:block;color:var(--gold2);font-size:13px;margin-bottom:4px}
+.shopcard em{display:block;color:var(--gold);font-style:normal;margin-top:5px}
+.shopcard:disabled{opacity:.45;cursor:default}
 
 /* 图鉴 */
 .cxrow{display:flex;align-items:center;gap:11px;padding:9px 0;
@@ -387,6 +409,10 @@ body{
 .ranktab{min-height:46px;border:2px solid #343b58;background:#111522;color:var(--ink2);
   font:700 12px var(--px);cursor:pointer}
 .ranktab.active{border-color:var(--gold);background:#211d1b;color:var(--gold2)}
+.rankmetrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:-3px 0 10px}
+.rankmetric{min-height:34px;border:2px solid #2e344d;background:#0d101a;color:var(--ink3);
+  font:700 9px var(--px);cursor:pointer}
+.rankmetric.active{border-color:var(--gold3);background:#191713;color:var(--gold2)}
 .ranksources{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:-2px 0 10px}
 .ranksource{min-height:38px;border:2px solid #2e344d;background:#0d101a;color:var(--ink3);
   font:700 10px var(--px);cursor:pointer}
@@ -430,6 +456,7 @@ body{
   .menuutils{grid-template-columns:1fr 1fr}
   .rhythmgrid{grid-template-columns:1fr}
   .questiongrid{grid-template-columns:1fr}
+  .heatgrid{grid-template-columns:1fr 1fr}
   .namefield{grid-template-columns:1fr;gap:6px}
   .scenemodegrid{grid-template-columns:1fr}
   .scenepicker{grid-template-columns:repeat(2,1fr)}
@@ -444,6 +471,7 @@ body{
   .classroster{grid-template-columns:repeat(2,1fr)}
   .gradeplayer{grid-template-columns:1fr 72px}
   .correctchoices{grid-column:1/-1;grid-row:2}
+  .judgeworld{grid-template-columns:1fr}
   .summarylist{grid-template-columns:1fr}
   .judgecrest{width:52px;height:52px;font-size:20px}
   .judgewho h2{font-size:19px}
@@ -452,6 +480,7 @@ body{
   .thinkbox h2{font-size:19px}
   .thinkpips i{width:22px}
   .archivebox,.rankbox{padding:13px}
+  .shoplist{grid-template-columns:1fr}
   .rankrow{grid-template-columns:28px 1fr auto;padding:7px 5px;gap:5px}
 }
 </style>
@@ -477,6 +506,8 @@ body{
         <label for="personalName">个人昵称<span>本机存档；开启云榜后公开</span></label>
         <input class="nameinput" id="personalName" maxlength="12" value="星徒旅人" autocomplete="off">
       </div>
+      <div class="sectionhead" style="margin-top:10px">选 择 挑 战 契 约</div>
+      <div class="heatgrid" id="singleHeat"></div>
       <div class="heroes" id="heroList" style="margin-top:10px"></div>
     </div>
     <div class="menuutils">
@@ -506,10 +537,12 @@ body{
     </div>
     <div class="sectionhead">每 轮 先 攒 几 道 题</div>
     <div class="questiongrid" id="classQuestions">
-      <button class="questionbtn" data-questions="5"><b>5 道题</b>更紧凑，适合短课或五人桌。</button>
-      <button class="questionbtn" data-questions="6"><b>6 道题</b>默认推荐，思考与行动分成两整段。</button>
+      <button class="questionbtn" data-questions="5"><b>5 道题 · 推荐</b>标准一局约 15～20 题，节奏最紧凑。</button>
+      <button class="questionbtn" data-questions="6"><b>6 道题 · 加长</b>行动要求更高，适合更长课时。</button>
     </div>
-    <div class="setupnote">五或六道题由全员共同作答；一轮只打开一次判分板，每位学生只点一次答对数。</div>
+    <div class="setupnote">五或六道题由全员共同作答；整轮只停在一张风景图，每位玩家只点一次行动倍率。</div>
+    <div class="sectionhead">挑 战 契 约 · 越 险 分 越 高</div>
+    <div class="heatgrid" id="classHeat"></div>
     <div class="sectionhead">思 考 时 看 哪 些 风 景</div>
     <div class="scenemodegrid" id="classSceneModes">
       <button class="scenemodebtn" data-scene-mode="chapter"><b>随章节走</b>场景跟着当前地牢章节变化，推荐第一次使用。</button>
@@ -573,6 +606,7 @@ body{
 
     <div class="row">
       <button class="btn" id="btnBack">换英雄</button>
+      <button class="btn" id="btnShop">星币商店</button>
       <button class="btn" id="btnSound">音效 开</button>
       <button class="btn" id="btnHow2">怎么玩</button>
     </div>
@@ -583,6 +617,17 @@ body{
     <div class="upbox">
       <h2>选 一 个 变 强</h2>
       <div id="upList"></div>
+    </div>
+  </div>
+
+  <!-- 可选星币商店：不打断行动，金币在这里转化为策略 -->
+  <div id="shop" class="hidden">
+    <div class="shopbox">
+      <h2>星 币 商 店</h2>
+      <div class="shopgold">现有金币 <b id="shopGold">0</b> · 每层每件限购一次</div>
+      <div class="shoplist" id="shopList"></div>
+      <div class="panelmsg" id="shopMsg"></div>
+      <button class="btn" id="btnShopClose">继续远征</button>
     </div>
   </div>
 
@@ -614,7 +659,7 @@ body{
     </div>
   </div>
 
-  <!-- 本机与 Cloudflare 联网排行榜 -->
+  <!-- 本机与联网排行榜 -->
   <div id="leaderboard" class="hidden">
     <div class="rankbox">
       <h2>远 征 榜 单</h2>
@@ -623,9 +668,14 @@ body{
         <button class="ranktab active" data-rank-tab="personal">个人远征</button>
         <button class="ranktab" data-rank-tab="classroom">课堂小队</button>
       </div>
+      <div class="rankmetrics" id="rankMetrics">
+        <button class="rankmetric active" data-rank-metric="overall">黑域综合分</button>
+        <button class="rankmetric" data-rank-metric="speed">九层速通</button>
+        <button class="rankmetric" data-rank-metric="hunt">猎王战利</button>
+      </div>
       <div class="ranksources">
         <button class="ranksource active" data-rank-source="local">本机榜</button>
-        <button class="ranksource" data-rank-source="cloud">Cloudflare 云榜</button>
+        <button class="ranksource" data-rank-source="cloud">云端榜</button>
       </div>
       <div class="cloudpanel">
         <div class="cloudline">
@@ -656,44 +706,40 @@ body{
   </div>
 </div>
 
-<div id="classThink" class="hidden">
-  <div class="thinkbox">
-    <div class="thinkeyebrow">答 题 阶 段 · 地 图 静 止</div>
-    <h2 id="thinkTitle">第 1 / 6 题</h2>
-    <div class="thinkscene"><canvas id="thinkCv" width="288" height="162"></canvas></div>
-    <div class="thinkcaption">
-      <div><b id="thinkSceneName">旧课堂</b><span id="thinkSceneRealm">学院谷地 · 世界景册</span></div>
-      <button class="thinksecret hidden" id="thinkSecret">轻触地图寻找异闻</button>
-    </div>
-    <div class="thinkmeta"><b id="thinkSeat">本题 · 全员作答</b><span id="thinkChapter">第一章 · 旧课堂</span></div>
-    <div class="thinkpips" id="thinkPips"></div>
-    <div class="thinknote" id="thinkNote">老师出题，学生先思考。地图保持静止，不催促作答。</div>
-    <div class="thinklore" id="thinkLore"><b>景册札记</b>　窗里留着一盏很晚才熄的灯。</div>
-    <button class="thinkgo" id="thinkReveal">本题完成 · 下一题</button>
-  </div>
-</div>
+<div id="classThink" class="hidden"></div>
 
 <div id="classJudge" class="hidden">
   <div class="judgebox">
-    <div class="judgewho">
-      <div class="judgecrest">全</div>
-      <div><p id="judgePrompt">五或六道题已经全部完成</p><h2 id="judgeName">全员一屏判分</h2></div>
-    </div>
-    <div class="judgehint" id="judgeHint">每位学生只点一次本轮答对数；全部选完后统一生成行动点。</div>
-    <div id="judgeButtons">
-      <div class="gradequick">
-        <button id="judgeAllCorrect">全员全对</button>
-        <button id="judgeClearAll">全部清空重填</button>
+    <div class="thinkeyebrow">答 题 阶 段 · 地 图 静 止 · 全 员 同 屏</div>
+    <h2 id="thinkTitle">第 1 轮 · 共 6 题</h2>
+    <div class="judgeworld">
+      <div class="judgescene">
+        <div class="thinkscene"><canvas id="thinkCv" width="288" height="162"></canvas></div>
+        <div class="thinkcaption">
+          <div><b id="thinkSceneName">旧课堂</b><span id="thinkSceneRealm">学院谷地 · 世界景册</span></div>
+          <button class="thinksecret hidden" id="thinkSecret">轻触地图寻找异闻</button>
+        </div>
+        <div class="thinkmeta"><b id="thinkSeat">全员共同作答</b><span id="thinkChapter">第一章 · 旧课堂</span></div>
+        <div class="thinkpips" id="thinkPips"></div>
+        <div class="thinklore" id="thinkLore"><b>景册札记</b>　窗里留着一盏很晚才熄的灯。</div>
+        <div class="judgeworldcopy" id="thinkNote">五或六道题攒成一轮；出题时地图保持静止，不需要逐题确认。</div>
       </div>
-      <div class="groupgrade" id="groupGradeBoard"></div>
-      <button class="gradeconfirm" id="judgeConfirmGrades" disabled>还需完成全员判分</button>
+      <div>
+        <div class="judgewho">
+          <div class="judgecrest">全</div>
+          <div><p id="judgePrompt">本轮题目由全员共同完成</p><h2 id="judgeName">直接选择行动倍率</h2></div>
+        </div>
+        <div class="judgehint" id="judgeHint">每位玩家点一次 ×1、×2 或 ×3；最后一人选完自动开行动板。</div>
+        <div id="judgeButtons">
+          <div class="gradequick">
+            <button id="judgeAllCorrect">全员行动 ×3</button>
+            <button id="judgeClearAll">全部清空重填</button>
+          </div>
+          <div class="groupgrade" id="groupGradeBoard"></div>
+        </div>
+        <div class="judgenote" id="judgeNote">行动步数会按课堂人数与角色协同强度自动补正。</div>
+      </div>
     </div>
-    <div class="judgesummary hidden" id="judgeSummary">
-      <h3>本 轮 行 动 点</h3>
-      <div class="summarylist" id="judgeSummaryList"></div>
-      <button class="judgego" id="judgeStartActions">打开全队行动板</button>
-    </div>
-    <div class="judgenote" id="judgeNote">答对数用于课堂积分；行动点最多 3 点，答错也仍有 1 点。</div>
   </div>
 </div>
 
@@ -704,6 +750,7 @@ body{
     <div class="actionnote" id="actionNote">直接点任意还有行动点的星徒。可以随时换人，行动总量不会增加。</div>
     <div class="actionplayers" id="actionPlayers"></div>
     <button class="actionclose" id="btnActionClose">回到地图</button>
+    <button class="actionclose danger" id="btnEndActions">放弃剩余行动 · 敌人行动</button>
   </div>
 </div>
 
@@ -716,7 +763,7 @@ body{
       <li><s>三</s><div>格子上的<b>红叉</b>＝下回合那里会挨打。<b>站开就躲掉了</b>，头目的大招也一样。</div></li>
       <li><s>四</s><div>走到<b>金色楼梯</b>下一层，每层可以<b>选一个变强</b>。共九层，三个头目。</div></li>
       <li><s>五</s><div>打不过就<b>绕开</b>——「等一回合」让它先动，往往比硬拼划算。</div></li>
-      <li><s>六</s><div>课堂模式先由<b>全员共同完成五或六题</b>，再在一张判分板填写每人答对数。推荐使用自由选人行动，直接点任意星徒换人；行动点用完后敌人才动。</div></li>
+      <li><s>六</s><div>课堂模式把<b>五或六题攒成一轮</b>，同一张风景图下给每人选行动 ×1 / ×2 / ×3；最后一人选完自动行动。推荐自由选人，直接点任意星徒切换。</div></li>
     </ul>
     <div class="row" style="margin-top:14px"><button class="btn" id="btnHowClose">知道了</button></div>
   </div>
@@ -981,6 +1028,78 @@ tiger:[
 '.ooowwwwwwwwooo.',
 '.oo.ooo..ooo.oo.',
 '................'],
+/* 雾织者 · 黑域远程术士 */
+witch:[
+'................',
+'......pppp......',
+'.....pppppp.....',
+'....ppyyyypp....',
+'....pykppkyp....',
+'....pppppppp....',
+'.....ppwwpp.....',
+'....pppppppp....',
+'...pppppppppp...',
+'...pppssssppp...',
+'....ppsssspp....',
+'....ppsssspp....',
+'.....pssssp.....',
+'.....p.pp.p.....',
+'....pp....pp....',
+'................'],
+/* 镜甲卫 · 正面减伤的灰塔守卫 */
+guard:[
+'................',
+'.....mmmmmm.....',
+'....mddddddm....',
+'....mdyddydm....',
+'....mddddddm....',
+'.....mddddm.....',
+'...mmmmmmmmmm...',
+'...mddddddddm...',
+'...mddmddmddm...',
+'...mddddddddm...',
+'....mddddddm....',
+'....mddddddm....',
+'.....m....m.....',
+'....mm....mm....',
+'................',
+'................'],
+/* 贪匣 · 宝箱拟态怪 */
+mimic:[
+'................',
+'................',
+'...mmmmmmmmmm...',
+'..mmccccccccmm..',
+'..mckcccccckcm..',
+'..mccccccccccm..',
+'..mcrrrrrrrrcm..',
+'..mccccccccccm..',
+'..mmmmmmmmmmmm..',
+'...mm......mm...',
+'....m......m....',
+'....m......m....',
+'...mm......mm...',
+'................',
+'................',
+'................'],
+/* 星鸦残影 · 来自 MYSKME 黑域档案的稀有游影 */
+wisp:[
+'................',
+'.......w........',
+'....d..w..d.....',
+'.....ddwdd......',
+'...ddddwddddd...',
+'....dddkdddd....',
+'.....dddddd.....',
+'..wddddddddddw..',
+'....dddddddd....',
+'.....dddddd.....',
+'......dddd......',
+'.......dd.......',
+'......d..d......',
+'................',
+'................',
+'................'],
 /* 药水 */
 potion:[
 '................',
@@ -1053,6 +1172,96 @@ armor:[
 '................',
 '................',
 '................'],
+/* 宝匣 */
+chest:[
+'................',
+'................',
+'...mmmmmmmmmm...',
+'..mmccccccccmm..',
+'..mccccccccccm..',
+'..mmmmmmmmmmmm..',
+'..mccccmmccccm..',
+'..mccccmmccccm..',
+'..mccccccccccm..',
+'..mccccccccccm..',
+'..mmmmmmmmmmmm..',
+'................',
+'................',
+'................',
+'................',
+'................'],
+/* 尖刺机关 */
+spike:[
+'................',
+'................',
+'................',
+'................',
+'................',
+'.......e........',
+'...e...e...e....',
+'...e..eee..e....',
+'..eee.eee.eee...',
+'..eee.eee.eee...',
+'.eeeeeeeeeeeeee.',
+'..ssssssssssss..',
+'................',
+'................',
+'................',
+'................'],
+/* 双生裂隙 */
+rift:[
+'................',
+'................',
+'.....pppppp.....',
+'...ppbbbbbbpp...',
+'..pbbppppppbbp..',
+'..pbpbbbbbbpbp..',
+'.pbpbb....bbpbp.',
+'.pbpb..pp..bpbp.',
+'.pbpb..pp..bpbp.',
+'.pbpbb....bbpbp.',
+'..pbpbbbbbbpbp..',
+'..pbbppppppbbp..',
+'...ppbbbbbbpp...',
+'.....pppppp.....',
+'................',
+'................'],
+/* 星图祭坛 */
+shrine:[
+'................',
+'.......y........',
+'....y..y..y.....',
+'.....yyyyy......',
+'......yyy.......',
+'...mmmmmmmmmm...',
+'...mttttttttm...',
+'....mttttttm....',
+'.....mttttm.....',
+'......mttm......',
+'.....mmmmmm.....',
+'....mm....mm....',
+'...mm......mm...',
+'................',
+'................',
+'................'],
+/* 爆裂符 */
+bomb:[
+'................',
+'................',
+'.......y........',
+'......yyy.......',
+'......mym.......',
+'.....mmmmmm.....',
+'....mmkkkkmm....',
+'....mkkkkkkm....',
+'...mmkkrrkkmm...',
+'...mkkrrrrkkm...',
+'...mkkrrrrkkm...',
+'....mkkkkkkm....',
+'....mmmmmmmm....',
+'................',
+'................',
+'................'],
 /* 楼梯（下一层） */
 stairs:[
 '................',
@@ -1101,6 +1310,14 @@ const MOBS={
          lore:'隔着两格就能吐出毒雾，站成一条直线最危险。'},
   shell:{name:'坚壳', spr:'shell', hp:14, atk:3, coin:4, slow:true,
          lore:'壳厚步子慢，硬碰硬很吃亏，绕开它更省事。'},
+  witch:{name:'雾织者',spr:'witch',hp:7,atk:3,coin:5,range:3,
+         lore:'隔三格编织雾线。它很脆，却会逼你研究墙角与视线。'},
+  guard:{name:'镜甲卫',spr:'guard',hp:11,atk:4,coin:6,armor:1,
+         lore:'灰塔镜甲会抵消每次伤害 1 点。单次重击比反复轻击更有效。'},
+  mimic:{name:'贪匣',spr:'mimic',hp:10,atk:4,coin:12,
+         lore:'有些宝箱会长出牙。先找退路再开匣，往往能保住战利品。'},
+  wisp:{name:'星鸦残影',spr:'wisp',hp:5,atk:2,coin:8,range:2,rare:true,
+         lore:'取自 MYSKME 黑域星鸦档案的稀有游影；击破后留下额外星币。'},
   xuan: {name:'璇',  spr:'xuan', hp:20, atk:4, coin:15, boss:true, pattern:'dash',
          lore:'黑域头目。狞猫的耳簇一竖，就是要扑过来了。'},
   tiger:{name:'慧',  spr:'tiger', hp:26, atk:6, coin:25, boss:true, pattern:'sweep',
@@ -1120,15 +1337,15 @@ const CHAPTERS=[
    floor:'#11141f', dot:'#161a28'}
 ];
 const FLOORS=[
-  {ch:0, mobs:['snake','snake','crow'],              items:['potion','coin']},
-  {ch:0, mobs:['snake','crow','crow','snake'],       items:['potion','sword','coin']},
-  {ch:0, mobs:['xuan','snake','crow'],               items:['potion','potion','coin']},
-  {ch:1, mobs:['snake','shade','viper'],             items:['potion','coin','armor']},
-  {ch:1, mobs:['shade','viper','crow','snake'],      items:['potion','sword','coin']},
-  {ch:1, mobs:['tiger','shade','viper'],             items:['potion','potion','coin']},
-  {ch:2, mobs:['shell','shade','shade','viper','crow'], items:['potion','coin','armor']},
-  {ch:2, mobs:['shell','shell','shade','viper','crow'], items:['potion','sword','coin']},
-  {ch:2, mobs:['ye','shell','shade'],                items:['potion','potion','coin']}
+  {ch:0, mobs:['snake','snake','crow'],                    items:['potion','coin','chest','spike']},
+  {ch:0, mobs:['snake','crow','witch','snake'],            items:['potion','sword','coin','bomb']},
+  {ch:0, mobs:['xuan','snake','crow'],                     items:['potion','chest','rift','rift']},
+  {ch:1, mobs:['snake','shade','viper','wisp'],            items:['potion','coin','armor','spike']},
+  {ch:1, mobs:['shade','viper','witch','snake'],           items:['potion','sword','chest','shrine']},
+  {ch:1, mobs:['tiger','shade','viper','guard'],           items:['potion','bomb','rift','rift']},
+  {ch:2, mobs:['shell','guard','shade','viper','crow'],    items:['potion','coin','armor','spike']},
+  {ch:2, mobs:['shell','guard','witch','viper','wisp'],    items:['potion','sword','chest','shrine']},
+  {ch:2, mobs:['ye','shell','guard','shade'],              items:['potion','bomb','rift','rift']}
 ];
 function floorName(fi){ return CHAPTERS[FLOORS[fi].ch].name+' · 第'+(fi+1)+'层'; }
 
@@ -1140,6 +1357,15 @@ const BATTLE_FIELDS=['hp','maxhp','atk','crit','berserk','lifesteal','reflect','
 const CLASS_RHYTHM_BATCH='batch', CLASS_RHYTHM_RELAY='relay';
 const CLASS_SCENE_CHAPTER='chapter', CLASS_SCENE_WANDER='wander', CLASS_SCENE_FIXED='fixed';
 const CLASS_EGGS_QUIET='quiet', CLASS_EGGS_NORMAL='normal', CLASS_EGGS_RICH='rich';
+const HEATS=[
+  {id:0,name:'标准远征',short:'标准',mult:1,desc:'完整世界，适合初见'},
+  {id:1,name:'机关契约',short:'机关',mult:1.35,desc:'更多机关与宝匣'},
+  {id:2,name:'追猎契约',short:'追猎',mult:1.7,desc:'追加敌人与机关'},
+  {id:3,name:'黑域契约',short:'黑域',mult:2.05,desc:'精英敌人，最高榜分'}
+];
+let SINGLE_HEAT=0;
+function normalizeHeat(v){return Math.max(0,Math.min(3,Number(v)||0))|0;}
+function heatData(v){return HEATS[normalizeHeat(v)];}
 function normalizeClassRhythm(v){ return v===CLASS_RHYTHM_RELAY?CLASS_RHYTHM_RELAY:CLASS_RHYTHM_BATCH; }
 function normalizeClassQuestions(v){ return Number(v)===5?5:6; }
 function normalizeClassSceneMode(v){
@@ -1158,6 +1384,18 @@ function classCorrectPoints(correct,total){
   if(!(total>0))return 1;
   const ratio=Math.max(0,correct)/total;
   return ratio>=.8?3:ratio>=.4?2:1;
+}
+function classActionBase(count){
+  return [0,330,180,96,48,18,12][Math.max(1,Math.min(6,Number(count)||1))];
+}
+function classActionSteps(band,count){
+  return classActionBase(count)*Math.max(1,Math.min(3,Number(band)||1));
+}
+function classBandRange(band,total){
+  total=normalizeClassQuestions(total);
+  if(band===1)return '0–1 题';
+  if(band===2)return total===5?'2–3 题':'2–4 题';
+  return total===5?'4–5 题':'5–6 题';
 }
 function classPlayer(){
   return G&&G.classroom ? G.classroom.players[G.classroom.current] : null;
@@ -1270,18 +1508,18 @@ function classThinkScene(){
   const c=G.classroom;
   if(c.sceneMode===CLASS_SCENE_FIXED)return thinkSceneById(c.fixedScene);
   if(c.sceneMode===CLASS_SCENE_WANDER){
-    const at=((c.roundNumber-1)*c.questionTotal+c.questionIndex)%THINK_SCENES.length;
+    const at=(c.roundNumber-1)%THINK_SCENES.length;
     return THINK_SCENES[at];
   }
   const chapter=(FLOORS[G.fi]||FLOORS[0]).ch;
   const deck=THINK_CHAPTER_DECKS[chapter]||THINK_CHAPTER_DECKS[0];
-  return thinkSceneById(deck[(c.roundNumber-1+c.questionIndex)%deck.length]);
+  return thinkSceneById(deck[(c.roundNumber-1)%deck.length]);
 }
 function classThinkEgg(scene){
   if(!G||!G.classroom||!scene||G.classroom.eggLevel===CLASS_EGGS_QUIET)return null;
   const c=G.classroom;
-  if(c.eggLevel===CLASS_EGGS_NORMAL&&(c.roundNumber+c.questionIndex)%2===0)return null;
-  return scene.eggs[(c.roundNumber+c.questionIndex+scene.id.length)%scene.eggs.length];
+  if(c.eggLevel===CLASS_EGGS_NORMAL&&c.roundNumber%2===0)return null;
+  return scene.eggs[(c.roundNumber+scene.id.length)%scene.eggs.length];
 }
 
 /* ---------- 8-bit 音效（WebAudio 程序合成，零音频文件） ---------- */
@@ -1320,7 +1558,7 @@ function sfx(name){
   }catch(err){ /* 音频不可用就静默，不影响游戏 */ }
 }
 
-/* ---------- 玩家称呼与 Cloudflare 云榜身份 ----------
+/* ---------- 玩家称呼与云端榜身份 ----------
    名称允许中文、英文、数字、空格、点和短横；课堂成员名绝不上传。 */
 const IDENTITY_KEY='starDungeon_identity_v1';
 const CLOUD_QUEUE_KEY='starDungeon_cloud_queue_v1';
@@ -1394,12 +1632,16 @@ function validPersonalRank(r){
   return r&&HEROES.some(h=>h.id===r.hero)&&typeof r.won==='boolean'&&
     validRankNumber(r.floor)&&validRankNumber(r.kills)&&validRankNumber(r.turns)&&
     validRankNumber(r.coin)&&validRankNumber(r.ts)&&
+    (r.score===undefined||validRankNumber(r.score))&&(r.heat===undefined||normalizeHeat(r.heat)===r.heat)&&
+    (r.spent===undefined||validRankNumber(r.spent))&&
     (r.name===undefined||validDisplayName(r.name,12));
 }
 function validClassRank(r){
   return r&&typeof r.won==='boolean'&&typeof r.endedEarly==='boolean'&&
     validRankNumber(r.floor)&&validRankNumber(r.kills)&&validRankNumber(r.turns)&&
     validRankNumber(r.total)&&validRankNumber(r.avg)&&validRankNumber(r.discoveries)&&
+    (r.score===undefined||validRankNumber(r.score))&&(r.heat===undefined||normalizeHeat(r.heat)===r.heat)&&
+    (r.spent===undefined||validRankNumber(r.spent))&&
     (r.teamName===undefined||validDisplayName(r.teamName,16))&&
     validRankNumber(r.ts)&&Array.isArray(r.players)&&r.players.length>=1&&r.players.length<=6&&
     r.players.every((p,i)=>p&&p.seat===i&&HEROES.some(h=>h.id===p.hero)&&validRankNumber(p.score)&&
@@ -1410,12 +1652,23 @@ function validRankData(d){
     d.personal.length<=50&&d.classroom.length<=50&&
     d.personal.every(validPersonalRank)&&d.classroom.every(validClassRank);
 }
+function personalRankScore(r){
+  if(validRankNumber(r.score))return Math.floor(r.score);
+  return Math.max(0,Math.round((((r.floor-1)*900+r.floor*350+r.kills*125+
+    r.coin*12+(r.spent||0)*7-r.turns*4+(r.won?6500:0))*heatData(r.heat).mult)));
+}
+function classRankScore(r){
+  if(validRankNumber(r.score))return Math.floor(r.score);
+  return Math.max(0,Math.round((((r.floor-1)*900+r.floor*350+r.kills*110+
+    r.avg*360+r.discoveries*260+(r.spent||0)*5-r.turns*18+
+    (r.won?6500:0))*heatData(r.heat).mult)));
+}
 function rankPersonalCompare(a,b){
-  return Number(b.won)-Number(a.won)||b.floor-a.floor||b.kills-a.kills||
+  return personalRankScore(b)-personalRankScore(a)||Number(b.won)-Number(a.won)||b.floor-a.floor||b.kills-a.kills||
     a.turns-b.turns||b.coin-a.coin||b.ts-a.ts;
 }
 function rankClassCompare(a,b){
-  return Number(b.won)-Number(a.won)||b.floor-a.floor||b.avg-a.avg||
+  return classRankScore(b)-classRankScore(a)||Number(b.won)-Number(a.won)||b.floor-a.floor||b.avg-a.avg||
     b.kills-a.kills||a.turns-b.turns||b.ts-a.ts;
 }
 function rankLoad(){
@@ -1431,10 +1684,12 @@ function rankSave(){
   try{localStorage.setItem(RANK_KEY,JSON.stringify(RANKS));}catch(err){}
 }
 function cloudScorePersonal(r){
+  if(validRankNumber(r.score))return 10000000+Math.min(8999999,Math.floor(r.score));
   return (r.won?5000000:0)+Math.min(9,r.floor)*100000+
     Math.min(99,r.kills)*1000+Math.max(0,999-Math.min(999,r.turns));
 }
 function cloudScoreClassroom(r){
+  if(validRankNumber(r.score))return 10000000+Math.min(8999999,Math.floor(r.score));
   return (r.won?5000000:0)+Math.min(9,r.floor)*100000+
     Math.min(9999,r.total)*10+Math.min(9,r.discoveries);
 }
@@ -1507,6 +1762,18 @@ function cloudShareBestLocal(){
   if(RANKS.classroom[0])jobs.push(cloudSubmitRecord('classroom',RANKS.classroom[0]));
   Promise.all(jobs).then(flushCloudQueue);
 }
+function calculateRunScore(won){
+  if(!G)return 0;
+  const mult=heatData(G.heat).mult;
+  if(G.classroom){
+    const ps=G.classroom.players,total=ps.reduce((n,p)=>n+p.score,0);
+    const avg=total/Math.max(1,ps.length),discoveries=Object.keys(G.classroom.discovered||{}).length;
+    return Math.max(0,Math.round((G.fi*900+(G.fi+1)*350+(G.kills||0)*110+
+      avg*360+discoveries*260+(G.spent||0)*5-(G.turns||0)*18+(won?6500:0))*mult));
+  }
+  return Math.max(0,Math.round((G.fi*900+(G.fi+1)*350+(G.kills||0)*125+
+    (G.coin||0)*12+(G.spent||0)*7-(G.turns||0)*4+(won?6500:0))*mult));
+}
 function recordRanking(won,endedEarly){
   if(!G||G.sim||G.headless)return;
   const ts=Date.now();
@@ -1517,13 +1784,15 @@ function recordRanking(won,endedEarly){
     record={ts,won:!!won,endedEarly:!!endedEarly,teamName:G.classroom.teamName,floor:G.fi+1,
       kills:G.kills||0,turns:G.turns||0,total,
       avg:Math.round(total/players.length*10)/10,
-      discoveries:Object.keys(G.classroom.discovered||{}).length,players};
+      discoveries:Object.keys(G.classroom.discovered||{}).length,players,
+      score:calculateRunScore(won),heat:normalizeHeat(G.heat),spent:G.spent||0};
     RANKS.classroom.push(record);
     RANKS.classroom.sort(rankClassCompare);RANKS.classroom=RANKS.classroom.slice(0,50);
     type='classroom';
   }else{
     record={ts,won:!!won,name:IDENTITY.playerName,hero:G.hero.id,floor:G.fi+1,
-      kills:G.kills||0,turns:G.turns||0,coin:G.coin||0};
+      kills:G.kills||0,turns:G.turns||0,coin:G.coin||0,
+      score:calculateRunScore(won),heat:normalizeHeat(G.heat),spent:G.spent||0};
     RANKS.personal.push(record);
     RANKS.personal.sort(rankPersonalCompare);RANKS.personal=RANKS.personal.slice(0,50);
     type='personal';
@@ -1537,7 +1806,8 @@ function recordRanking(won,endedEarly){
    胜负一出立即清档，绝不出现阵亡或通关后还能复活续玩的漏洞。 */
 const RUN_KEY='starDungeon_run_v1';
 const CLASS_RUN_KEY='starDungeon_classroom_run_v1';
-function savedEntity(e){return {t:e.type,x:e.x,y:e.y,hp:e.hp,tick:e.tick,intent:e.intent};}
+function savedEntity(e){return {t:e.type,x:e.x,y:e.y,hp:e.hp,tick:e.tick,intent:e.intent,
+  elite:!!e.elite,maxhp:e.maxhp,atk:e.atk,coin:e.coin};}
 function validCellData(c){return c&&Number.isInteger(c.x)&&Number.isInteger(c.y)&&inb(c.x,c.y);}
 function validIntentData(it){
   return it==null||(typeof it.t==='string'&&
@@ -1551,7 +1821,8 @@ function validEntitiesData(a){
     inb(o.x,o.y)&&Number.isInteger(o.hp)&&o.hp>0&&validIntentData(o.intent));
 }
 function validItemsData(a){
-  return Array.isArray(a)&&a.every(o=>o&&['potion','coin','sword','armor'].includes(o.type)&&
+  return Array.isArray(a)&&a.every(o=>o&&
+    ['potion','coin','sword','armor','chest','spike','rift','shrine','bomb'].includes(o.type)&&
     Number.isInteger(o.x)&&Number.isInteger(o.y)&&inb(o.x,o.y));
 }
 function validMapData(d){
@@ -1565,8 +1836,10 @@ function validSingleRunData(d){
     Number.isInteger(d.px)&&Number.isInteger(d.py)&&inb(d.px,d.py)&&
     Number.isInteger(d.hp)&&d.hp>0&&Number.isInteger(d.maxhp)&&d.maxhp>=d.hp&&
     Number.isFinite(d.atk)&&d.atk>0&&
-    ['crit','berserk','lifesteal','reflect','splash','coin','kills','turns']
-      .every(k=>d[k]===undefined||validRankNumber(d[k]));
+    ['crit','berserk','lifesteal','reflect','splash','coin','kills','turns','spent','smoke','luck']
+      .every(k=>d[k]===undefined||validRankNumber(d[k]))&&
+    (d.heat===undefined||normalizeHeat(d.heat)===d.heat)&&
+    (d.shopBought===undefined||(d.shopBought&&typeof d.shopBought==='object'&&!Array.isArray(d.shopBought)));
 }
 function saveRun(){
   if(!G||G.sim||G.headless||G.classroom||G.over) return;
@@ -1574,7 +1847,8 @@ function saveRun(){
     localStorage.setItem(RUN_KEY, JSON.stringify({v:1,savedAt:Date.now(),
       hero:G.hero.id, hp:G.hp, maxhp:G.maxhp, atk:G.atk,
       crit:G.crit, berserk:G.berserk, lifesteal:G.lifesteal, reflect:G.reflect, splash:G.splash,
-      coin:G.coin, kills:G.kills, turns:G.turns, fi:G.fi, px:G.px, py:G.py,
+      coin:G.coin, kills:G.kills, turns:G.turns,spent:G.spent,smoke:G.smoke,luck:G.luck,
+      heat:G.heat,shopBought:G.shopBought,fi:G.fi, px:G.px, py:G.py,
       wall:G.wall.map(w=>w?1:0).join(''), stairs:G.stairs,
       ents:G.ents.map(savedEntity),
       items:G.items, perk:!!G.perkPending, perkIds:G.perkChoices||null}));
@@ -1597,10 +1871,13 @@ function resumeRun(){
   G={hero:h, hp:d.hp, maxhp:d.maxhp, atk:d.atk,
      crit:d.crit||0, berserk:d.berserk||0, lifesteal:d.lifesteal||0,
      reflect:d.reflect||0, splash:d.splash||0,
-     coin:d.coin||0, kills:d.kills||0, turns:d.turns||0,
+     coin:d.coin||0, kills:d.kills||0, turns:d.turns||0,spent:d.spent||0,smoke:d.smoke||0,
+     luck:d.luck||0,shopBought:Object.assign({},d.shopBought||{}),
+     heat:normalizeHeat(d.heat),scoreMult:heatData(d.heat).mult,
      fi:d.fi, px:d.px, py:d.py, over:false, parts:[],
      wall:[...d.wall].map(c=>c==='1'), stairs:d.stairs,
-     ents:d.ents.map(o=>Object.assign(mkMob(o.t,o.x,o.y),{hp:o.hp,tick:o.tick||0,intent:o.intent||null})),
+     ents:d.ents.map(o=>Object.assign(mkMob(o.t,o.x,o.y),{hp:o.hp,tick:o.tick||0,intent:o.intent||null,
+       elite:!!o.elite,maxhp:o.maxhp||o.hp,atk:o.atk||MOBS[o.t].atk,coin:o.coin||MOBS[o.t].coin})),
      items:d.items||[], fname:floorName(d.fi), perkPending:!!d.perk};
   document.getElementById('hFloor').textContent=G.fname;
   show('game'); syncHud();
@@ -1617,9 +1894,11 @@ function classRunSnapshot(){
   if(!G||!G.classroom)return null;
   classSaveActive();
   const c=G.classroom;
-  return {v:1,savedAt:Date.now(),coin:G.coin||0,kills:G.kills||0,turns:G.turns||0,fi:G.fi,
+  return {v:1,savedAt:Date.now(),coin:G.coin||0,kills:G.kills||0,turns:G.turns||0,
+    spent:G.spent||0,smoke:G.smoke||0,luck:G.luck||0,heat:G.heat||0,
+    shopBought:Object.assign({},G.shopBought||{}),fi:G.fi,
     wall:G.wall.map(w=>w?1:0).join(''),stairs:G.stairs,ents:G.ents.map(savedEntity),items:G.items,
-    classroom:{teamName:c.teamName,players:c.players.map(classPlayerSaveData),current:c.current,ap:c.ap,phase:c.phase,flowVersion:2,
+    classroom:{teamName:c.teamName,players:c.players.map(classPlayerSaveData),current:c.current,ap:c.ap,phase:c.phase,flowVersion:3,
       rhythm:c.rhythm,questionsPerRound:c.questionsPerRound,sceneMode:c.sceneMode,
       fixedScene:c.fixedScene,eggLevel:c.eggLevel,questionTotal:c.questionTotal,
       questionIndex:c.questionIndex,roundStartSeat:c.roundStartSeat,roundNumber:c.roundNumber,
@@ -1630,7 +1909,7 @@ function validClassPlayerData(p,i){
     HEROES.some(h=>h.id===p.hero)&&Number.isInteger(p.score)&&p.score>=0&&
     typeof p.resting==='boolean'&&typeof p.judged==='boolean'&&
     Number.isInteger(p.roundScore)&&p.roundScore>=0&&Number.isInteger(p.roundAnswers)&&p.roundAnswers>=0&&
-    Number.isInteger(p.roundAp)&&p.roundAp>=0&&p.roundAp<=3&&
+    Number.isInteger(p.roundAp)&&p.roundAp>=0&&p.roundAp<=10000&&
     Number.isInteger(p.hp)&&p.hp>=0&&Number.isInteger(p.maxhp)&&p.maxhp>0&&p.hp<=p.maxhp&&
     Number.isFinite(p.atk)&&p.atk>0&&Number.isInteger(p.px)&&Number.isInteger(p.py)&&inb(p.px,p.py)&&
     ['crit','berserk','lifesteal','reflect','splash'].every(k=>validRankNumber(p[k]));
@@ -1638,12 +1917,15 @@ function validClassPlayerData(p,i){
 function validClassRunData(d){
   if(!d||d.v!==1||!validMapData(d)||!d.classroom)return false;
   if(!['coin','kills','turns'].every(k=>validRankNumber(d[k])))return false;
+  if(!['spent','smoke','luck'].every(k=>d[k]===undefined||validRankNumber(d[k])))return false;
+  if(d.heat!==undefined&&normalizeHeat(d.heat)!==d.heat)return false;
+  if(d.shopBought!==undefined&&(!d.shopBought||typeof d.shopBought!=='object'||Array.isArray(d.shopBought)))return false;
   const c=d.classroom,phases=['think','judge','ready','act','upgrade'];
   if(!Array.isArray(c.players)||c.players.length<1||c.players.length>6||
      !c.players.every(validClassPlayerData))return false;
   if(c.teamName!==undefined&&!validDisplayName(c.teamName,16))return false;
   if(!Number.isInteger(c.current)||c.current<0||c.current>=c.players.length||
-     !Number.isInteger(c.ap)||c.ap<0||c.ap>3||!phases.includes(c.phase))return false;
+     !Number.isInteger(c.ap)||c.ap<0||c.ap>10000||!phases.includes(c.phase))return false;
   if(normalizeClassRhythm(c.rhythm)!==c.rhythm||normalizeClassQuestions(c.questionsPerRound)!==c.questionsPerRound||
      normalizeClassSceneMode(c.sceneMode)!==c.sceneMode||
      normalizeClassFixedScene(c.fixedScene)!==c.fixedScene||normalizeClassEggs(c.eggLevel)!==c.eggLevel)return false;
@@ -1678,19 +1960,23 @@ function resumeClassRun(){
       roundScore:p.roundScore,roundAnswers:p.roundAnswers,roundAp:p.roundAp};
     BATTLE_FIELDS.forEach(k=>{out[k]=p[k];});return out;
   });
-  if(c.flowVersion!==2&&(c.phase==='think'||c.phase==='judge')){
-    c.phase='think';c.questionIndex=0;c.ap=0;
+  if(c.flowVersion!==3&&(c.phase==='think'||c.phase==='judge'||c.phase==='ready')){
+    c.phase='judge';c.questionIndex=c.questionTotal;c.ap=0;
     players.forEach(p=>{p.judged=false;p.roundScore=0;p.roundAnswers=0;p.roundAp=0;});
   }
   G={hero:players[0].hero,hp:players[0].hp,maxhp:players[0].maxhp,atk:players[0].atk,
     crit:players[0].crit||0,berserk:players[0].berserk||0,lifesteal:players[0].lifesteal||0,
     reflect:players[0].reflect||0,splash:players[0].splash||0,
-    coin:d.coin||0,kills:d.kills||0,turns:d.turns||0,fi:d.fi,px:players[0].px,py:players[0].py,
+    coin:d.coin||0,kills:d.kills||0,turns:d.turns||0,spent:d.spent||0,smoke:d.smoke||0,
+    luck:d.luck||0,shopBought:Object.assign({},d.shopBought||{}),
+    heat:normalizeHeat(d.heat),scoreMult:heatData(d.heat).mult,
+    fi:d.fi,px:players[0].px,py:players[0].py,
     over:false,parts:[],wall:[...d.wall].map(v=>v==='1'),stairs:d.stairs,
-    ents:d.ents.map(o=>Object.assign(mkMob(o.t,o.x,o.y),{hp:o.hp,tick:o.tick||0,intent:o.intent||null})),
+    ents:d.ents.map(o=>Object.assign(mkMob(o.t,o.x,o.y),{hp:o.hp,tick:o.tick||0,intent:o.intent||null,
+      elite:!!o.elite,maxhp:o.maxhp||o.hp,atk:o.atk||MOBS[o.t].atk,coin:o.coin||MOBS[o.t].coin})),
     items:d.items||[],fname:floorName(d.fi),
     classroom:{teamName:cleanDisplayName(c.teamName,'星徒小队',16),
-      players,current:c.current,ap:c.ap,phase:c.phase,flowVersion:2,rhythm:c.rhythm,
+      players,current:c.current,ap:c.ap,phase:c.phase,flowVersion:3,rhythm:c.rhythm,
       questionsPerRound:c.questionsPerRound,sceneMode:c.sceneMode,fixedScene:c.fixedScene,
       eggLevel:c.eggLevel,questionTotal:c.questionTotal,questionIndex:c.questionIndex,
       roundStartSeat:c.roundStartSeat,roundNumber:c.roundNumber,
@@ -1700,8 +1986,7 @@ function resumeClassRun(){
   document.getElementById('classThink').classList.add('hidden');
   document.getElementById('classJudge').classList.add('hidden');
   show('game');syncHud();
-  if(c.phase==='think')showClassThink();
-  else if(c.phase==='judge')showClassJudge();
+  if(c.phase==='think'||c.phase==='judge')showClassJudge();
   else if(c.phase==='ready')showClassRoundReady();
   else if(c.phase==='act'&&c.ap<=0&&c.rhythm===CLASS_RHYTHM_BATCH)showClassActionBoard();
   else if(c.phase==='upgrade')offerClassUpgrades();
@@ -1726,7 +2011,7 @@ function currentPrefData(){
     questions:normalizeClassQuestions(CLASS_SETUP.questions),
     sceneMode:normalizeClassSceneMode(CLASS_SETUP.sceneMode),
     fixedScene:normalizeClassFixedScene(CLASS_SETUP.fixedScene),
-    eggLevel:normalizeClassEggs(CLASS_SETUP.eggLevel)};
+    eggLevel:normalizeClassEggs(CLASS_SETUP.eggLevel),heat:normalizeHeat(CLASS_SETUP.heat)};
 }
 function makeBackupPayload(){
   return {v:1,product:'star-dungeon',exportedAt:Date.now(),
@@ -1761,7 +2046,8 @@ function applyBackupCode(code){
     names:Array.from({length:6},(_,i)=>cleanDisplayName((prefs.names||[])[i],SEAT_NAMES[i],12)),
     rhythm:normalizeClassRhythm(prefs.rhythm),
     questions:normalizeClassQuestions(prefs.questions),sceneMode:normalizeClassSceneMode(prefs.sceneMode),
-    fixedScene:normalizeClassFixedScene(prefs.fixedScene),eggLevel:normalizeClassEggs(prefs.eggLevel)};
+    fixedScene:normalizeClassFixedScene(prefs.fixedScene),eggLevel:normalizeClassEggs(prefs.eggLevel),
+    heat:normalizeHeat(prefs.heat)};
   if(p.run===null)localStorage.removeItem(RUN_KEY);
   else localStorage.setItem(RUN_KEY,JSON.stringify(p.run));
   if(p.classRun===null)localStorage.removeItem(CLASS_RUN_KEY);
@@ -1777,7 +2063,8 @@ function applyBackupCode(code){
     classroom:p.rankings.classroom.slice().sort(rankClassCompare)};
   CLASS_SETUP.rhythm=normalizedPrefs.rhythm;CLASS_SETUP.questions=normalizedPrefs.questions;
   CLASS_SETUP.sceneMode=normalizedPrefs.sceneMode;CLASS_SETUP.fixedScene=normalizedPrefs.fixedScene;
-  CLASS_SETUP.eggLevel=normalizedPrefs.eggLevel;CLASS_SETUP.teamName=normalizedPrefs.teamName;
+  CLASS_SETUP.eggLevel=normalizedPrefs.eggLevel;CLASS_SETUP.heat=normalizedPrefs.heat;
+  CLASS_SETUP.teamName=normalizedPrefs.teamName;
   CLASS_SETUP.names=normalizedPrefs.names.slice();SND.on=META.sound;
   return true;
 }
@@ -1821,6 +2108,25 @@ function genFloor(fi){
     ents.push(mkMob(m, c%N, (c/N)|0)); });
   cfg.items.forEach(it=>{ const c=pool.pop(); if(c==null)return;
     items.push({x:c%N,y:(c/N)|0,type:it}); });
+  const heat=normalizeHeat(G&&G.heat);
+  if(heat>=1){
+    const hazards=heat>=3?['spike','bomb','chest']:['spike','chest'];
+    hazards.forEach(it=>{const c=pool.pop();if(c!=null)items.push({x:c%N,y:(c/N)|0,type:it});});
+  }
+  if(heat>=2){
+    const regular=cfg.mobs.filter(t=>!MOBS[t].boss);
+    const c=pool.pop(),type=regular[rnd(Math.max(1,regular.length))]||'snake';
+    if(c!=null)ents.push(mkMob(type,c%N,(c/N)|0));
+  }
+  if(heat>=3){
+    const c=pool.pop();
+    if(c!=null)ents.push(mkMob(fi>=6?'guard':'witch',c%N,(c/N)|0));
+    const elite=ents.find(e=>!e.boss);
+    if(elite){
+      elite.elite=true;elite.maxhp=Math.ceil(elite.maxhp*1.35);elite.hp=elite.maxhp;
+      elite.atk+=1;elite.coin+=4;
+    }
+  }
 
   return {wall,stairs:far,ents,items,name:floorName(fi)};
 }
@@ -1847,7 +2153,8 @@ function startGame(heroId,opts){
   G={hero:h, hp:h.hp, maxhp:h.hp, atk:h.atk, coin:0, fi:0, px:4, py:4,
      crit:h.crit||0, berserk:h.berserk||0, lifesteal:h.lifesteal||0,
      reflect:h.reflect||0, splash:h.splash||0,
-     over:false, parts:[], kills:0, turns:0};
+     over:false, parts:[], kills:0, turns:0,spent:0,smoke:0,luck:0,shopBought:{},
+     heat:normalizeHeat(opts&&opts.heat),scoreMult:heatData(opts&&opts.heat).mult};
   if(opts && opts.sim){ G.sim=true; G.headless=true; }
   loadFloor(0);
   if(!G.sim){ show('game'); syncHud(); saveRun(); }
@@ -1868,8 +2175,10 @@ function startClassGame(heroIds,opts){
   G={hero:h,hp:h.hp,maxhp:h.hp,atk:h.atk,coin:0,fi:0,px:4,py:4,
     crit:h.crit||0,berserk:h.berserk||0,lifesteal:h.lifesteal||0,
     reflect:h.reflect||0,splash:h.splash||0,over:false,parts:[],kills:0,turns:0,
+    spent:0,smoke:0,luck:0,shopBought:{},
+    heat:normalizeHeat(opts&&opts.heat),scoreMult:heatData(opts&&opts.heat).mult,
     classroom:{teamName:cleanDisplayName(opts&&opts.teamName,CLASS_SETUP.teamName||'星徒小队',16),
-      players,current:0,ap:0,phase:'between',flowVersion:2,
+      players,current:0,ap:0,phase:'between',flowVersion:3,
       rhythm:normalizeClassRhythm(opts&&opts.rhythm!==undefined?opts.rhythm:CLASS_SETUP.rhythm),
       questionsPerRound:normalizeClassQuestions(opts&&opts.questions!==undefined?opts.questions:CLASS_SETUP.questions),
       sceneMode:normalizeClassSceneMode(opts&&opts.sceneMode!==undefined?opts.sceneMode:CLASS_SETUP.sceneMode),
@@ -1886,9 +2195,9 @@ function startClassGame(heroIds,opts){
 function classDifficulty(count,boss){
   const n=Math.max(1,Math.min(6,count||1));
   return {
-    hp:(boss?1.25:1)*n,
-    atk:Math.ceil(n/2),
-    extra:Math.min(5,n)
+    hp:(boss?1.1:1)*(.65+(n-1)*.12),
+    atk:Math.floor((n-1)/3),
+    extra:Math.floor(n/4)
   };
 }
 function scaleClassFloor(f){
@@ -1922,8 +2231,10 @@ function placeClassPlayers(fi){
     const c=cells[i]===undefined?key(4,4):cells[i];
     p.px=c%N; p.py=(c/N)|0;
   });
+  const current=G.classroom.current;
   const first=G.classroom.players.findIndex(p=>!p.resting);
-  classLoadPlayer(first<0?0:first);
+  const active=G.classroom.players[current]&&!G.classroom.players[current].resting?current:(first<0?0:first);
+  classLoadPlayer(active);
 }
 function loadFloor(fi){
   const newChapter = fi===0 || FLOORS[fi].ch!==FLOORS[fi-1].ch;
@@ -1947,13 +2258,13 @@ function classBeginRound(){
   if(!ps.some(p=>!p.resting)){ lose(); return; }
   if(c.roundNumber>0) c.roundStartSeat=(c.roundStartSeat+1)%ps.length;
   c.questionTotal=c.questionsPerRound;
-  c.questionIndex=0; c.roundNumber++;
+  c.questionIndex=c.questionTotal; c.roundNumber++;
   ps.forEach(p=>{ p.judged=false; p.roundScore=0; p.roundAnswers=0; p.roundAp=0; });
   const first=ps.findIndex(p=>!p.resting);
   classLoadPlayer(first<0?0:first);
-  c.ap=0; c.phase='think';
+  c.ap=0; c.phase='judge';
   syncHud();
-  showClassThink();
+  showClassJudge();
 }
 function classQuestionOwner(){
   return G&&G.classroom?G.classroom.current:0;
@@ -1961,8 +2272,8 @@ function classQuestionOwner(){
 function classPrepareNextQuestion(){
   if(!G||!G.classroom||G.over)return;
   const c=G.classroom;
-  c.ap=0; c.phase='think';
-  syncHud(); showClassThink();
+  c.ap=0; c.phase='judge';c.questionIndex=c.questionTotal;
+  syncHud(); showClassJudge();
 }
 function psRect(t,color,x,y,w,h){ t.fillStyle=color; t.fillRect(x|0,y|0,w|0,h|0); }
 function psPoly(t,color,pts){
@@ -2213,26 +2524,28 @@ function drawThinkScene(){
   tc.drawImage(low,0,0,c.width,c.height);
 }
 function revealThinkEgg(){
-  if(!G||!G.classroom||G.classroom.phase!=='think')return;
+  if(!G||!G.classroom||!['think','judge'].includes(G.classroom.phase))return;
   const scene=classThinkScene(),egg=classThinkEgg(scene);if(!egg)return;
   G.classroom.discovered[scene.id+':'+egg.id]=true;
   saveClassRun();
-  if(!G.headless){sfx('pickup');showClassThink();}
+  if(!G.headless){sfx('pickup');showClassJudge();}
 }
 function showClassThink(){
+  showClassJudge();
+}
+function prepareClassScenePanel(){
   if(!G||!G.classroom||G.headless)return;
-  const c=G.classroom,n=c.questionIndex+1;
+  const c=G.classroom;
   const scene=classThinkScene(),egg=classThinkEgg(scene),eggKey=egg?scene.id+':'+egg.id:'';
   const found=!!(eggKey&&c.discovered[eggKey]);
-  document.getElementById('thinkTitle').textContent='第 '+n+' / '+c.questionTotal+' 题';
+  document.getElementById('thinkTitle').textContent='第 '+c.roundNumber+' 轮 · 共 '+c.questionTotal+' 题';
   document.getElementById('thinkSeat').textContent=c.teamName+' · 全员一起作答';
   document.getElementById('thinkChapter').textContent=CHAPTERS[(FLOORS[G.fi]||FLOORS[0]).ch].name;
   document.getElementById('thinkSceneName').textContent=scene.name;
   document.getElementById('thinkSceneRealm').textContent=scene.realm+' · MYSKME 世界景册';
-  document.getElementById('thinkPips').innerHTML=Array.from({length:c.questionTotal},(_,i)=>
-    '<i class="'+(i<c.questionIndex?'done':i===c.questionIndex?'current':'')+'"></i>').join('');
+  document.getElementById('thinkPips').innerHTML=Array.from({length:c.questionTotal},()=>'<i class="done"></i>').join('');
   document.getElementById('thinkNote').textContent=
-    '老师出题，全员共同作答。这里不逐人跳页，本轮题目全部完成后再一屏判分。';
+    '老师连续出完本轮 '+c.questionTotal+' 题，期间地图保持静止；不需要逐题点击任何确认。';
   const lore=document.getElementById('thinkLore'),secret=document.getElementById('thinkSecret');
   const frame=document.querySelector('.thinkscene');
   frame.classList.toggle('has-secret',!!egg&&!found);
@@ -2243,107 +2556,79 @@ function showClassThink(){
   lore.innerHTML=found
     ?'<b>地图异闻 · '+egg.name+'</b>　'+egg.text
     :'<b>景册札记</b>　'+scene.note;
-  document.getElementById('classJudge').classList.add('hidden');
-  document.getElementById('classThink').classList.remove('hidden');
-  document.getElementById('thinkReveal').textContent=n<c.questionTotal
-    ?'本题完成 · 下一题'
-    :'本轮题目完成 · 全员一屏判分';
   drawThinkScene();
 }
 function beginClassJudge(){
-  if(!G||!G.classroom||G.classroom.phase!=='think'||G.over)return;
+  if(!G||!G.classroom||G.over)return;
   const c=G.classroom;
-  c.questionIndex++;
-  if(c.questionIndex<c.questionTotal){
-    classPrepareNextQuestion();
-    return;
-  }
-  c.phase='judge';c.ap=0;
+  c.phase='judge';c.ap=0;c.questionIndex=c.questionTotal;
   if(!G.headless)document.getElementById('classThink').classList.add('hidden');
   syncHud();showClassJudge();
 }
 function renderGroupGradeBoard(){
   if(!G||!G.classroom||G.headless)return;
-  const c=G.classroom,total=c.questionTotal,box=document.getElementById('groupGradeBoard');
+  const c=G.classroom,total=c.questionTotal,count=c.players.length,base=classActionBase(count);
+  const box=document.getElementById('groupGradeBoard');
   box.innerHTML=c.players.map((p,i)=>{
-    const choices=Array.from({length:total+1},(_,n)=>
-      '<button class="correctbtn'+(p.judged&&p.roundScore===n?' active':'')+
-      '" data-player="'+i+'" data-correct="'+n+'">'+n+'</button>').join('');
-    const ap=p.judged?classCorrectPoints(p.roundScore,total):0;
+    const choices=[1,2,3].map(band=>
+      '<button class="correctbtn'+(p.judged&&p.roundScore===band?' active':'')+
+      '" data-player="'+i+'" data-correct="'+band+'"><b>行动 ×'+band+'</b>'+
+      classBandRange(band,total)+' · '+classActionSteps(band,count)+' 步</button>').join('');
+    const ap=p.judged?classActionSteps(p.roundScore,count):0;
     return '<div class="gradeplayer"><div class="gradeidentity"><canvas width="16" height="16"></canvas>'+
-      '<div><b>'+htmlSafe(p.name)+' · '+p.hero.name+'</b><span>'+(p.resting?'本层休整，仍照常记分':'本轮答对几题')+
-      '</span></div></div><div class="correctchoices" style="grid-template-columns:repeat('+(total+1)+
-      ',1fr)">'+choices+'</div><div class="gradestate">'+
-      (p.judged?'<b>'+p.roundScore+' / '+total+'</b>'+ap+' 点行动':'尚未选择')+'</div></div>';
+      '<div><b>'+htmlSafe(p.name)+' · '+p.hero.name+'</b><span>'+(p.resting?'本层休整，仍获得行动星':'选择本轮答题档位')+
+      '</span></div></div><div class="correctchoices" style="grid-template-columns:repeat(3,1fr)">'+
+      choices+'</div><div class="gradestate">'+
+      (p.judged?'<b>行动 ×'+p.roundScore+'</b>'+ap+' 步':'尚未选择')+'</div></div>';
   }).join('');
   box.querySelectorAll('canvas').forEach((canvas,i)=>drawSprTo(canvas.getContext('2d'),c.players[i].hero.spr));
-  const done=c.players.filter(p=>p.judged).length,confirm=document.getElementById('judgeConfirmGrades');
-  confirm.disabled=done<c.players.length;
-  confirm.textContent=done<c.players.length
-    ?'已判 '+done+' / '+c.players.length+' 人'
-    :'确认全员成绩 · 生成行动点';
+  const done=c.players.filter(p=>p.judged).length;
+  document.getElementById('judgeNote').textContent='已完成 '+done+' / '+c.players.length+
+    ' 人 · 本班每个“×1”价值 '+base+' 步；最后一人选完自动开行动板。';
 }
 function setClassGrade(index,correct){
   if(!G||!G.classroom||G.classroom.phase!=='judge'||G.over)return;
   const c=G.classroom,p=c.players[index];if(!p)return;
-  p.roundScore=Math.max(0,Math.min(c.questionTotal,Number(correct)||0));
-  p.roundAnswers=c.questionTotal;p.roundAp=classCorrectPoints(p.roundScore,c.questionTotal);p.judged=true;
+  p.roundScore=Math.max(1,Math.min(3,Number(correct)||1));
+  p.roundAnswers=c.questionTotal;p.roundAp=classActionSteps(p.roundScore,c.players.length);p.judged=true;
   syncHud();renderGroupGradeBoard();
+  if(c.players.every(q=>q.judged))confirmClassGrades();
 }
 function setAllClassGrades(correct){
   if(!G||!G.classroom||G.classroom.phase!=='judge'||G.over)return;
   const c=G.classroom;
   c.players.forEach(p=>{
-    p.roundScore=Math.max(0,Math.min(c.questionTotal,Number(correct)||0));
-    p.roundAnswers=c.questionTotal;p.roundAp=classCorrectPoints(p.roundScore,c.questionTotal);p.judged=true;
+    p.roundScore=Math.max(1,Math.min(3,Number(correct)||1));
+    p.roundAnswers=c.questionTotal;p.roundAp=classActionSteps(p.roundScore,c.players.length);p.judged=true;
   });
-  syncHud();renderGroupGradeBoard();
+  syncHud();renderGroupGradeBoard();confirmClassGrades();
 }
 function showClassJudge(){
   if(!G||!G.classroom||G.headless)return;
   const c=G.classroom;
   c.questionIndex=c.questionTotal;
-  document.getElementById('judgeName').textContent='全员一屏判分';
-  document.getElementById('judgePrompt').textContent='本轮 '+c.questionTotal+' 道题已经全部完成';
+  document.getElementById('judgeName').textContent='直接选择行动倍率';
+  document.getElementById('judgePrompt').textContent='本轮 '+c.questionTotal+' 题 · 全员共同完成';
   document.getElementById('judgeHint').textContent=
-    '每位学生只需点一次答对题数；可任意顺序修改，全部完成后再统一确认。';
-  document.getElementById('judgeButtons').classList.remove('hidden');
-  document.getElementById('judgeSummary').classList.add('hidden');
-  document.getElementById('judgeNote').textContent=
-    '答对数进入课堂积分；按答对比例折算 1 至 3 点行动，答错也仍有 1 点。';
+    '每位玩家点一次 ×1、×2 或 ×3；最后一人选完自动进入行动，不再出现确认页。';
+  prepareClassScenePanel();
+  document.getElementById('classThink').classList.add('hidden');
   document.getElementById('classJudge').classList.remove('hidden');
   renderGroupGradeBoard();
 }
 function showClassRoundReady(){
-  if(!G||!G.classroom||G.headless)return;
-  document.getElementById('classThink').classList.add('hidden');
-  document.getElementById('judgePrompt').textContent='本轮 '+G.classroom.questionTotal+' 题全部判完';
-  document.getElementById('judgeName').textContent='确认本轮行动点';
-  document.getElementById('judgeHint').textContent='行动点总量已经锁定；改变出场顺序不会增加行动次数。';
-  document.getElementById('judgeButtons').classList.add('hidden');
-  document.getElementById('judgeSummaryList').innerHTML=G.classroom.players.map(p=>
-    '<div class="summaryrow'+(p.resting?' resting':'')+'"><b>'+htmlSafe(p.name)+' · '+p.hero.name+'</b>'+
-    '答对 '+p.roundScore+' / '+p.roundAnswers+' · '+p.roundAp+' 点行动'+
-    (p.resting?'<br>本层休整，不参与行动':'')+'</div>').join('');
-  document.getElementById('judgeSummary').classList.remove('hidden');
-  const found=Object.keys(G.classroom.discovered||{}).length;
-  document.getElementById('judgeStartActions').textContent=G.classroom.rhythm===CLASS_RHYTHM_BATCH
-    ?'打开全队行动板'
-    :'按固定座位顺序开始';
-  document.getElementById('judgeNote').textContent=(G.classroom.rhythm===CLASS_RHYTHM_BATCH
-    ?'进入地图后可直接点击任意还有行动点的星徒。'
-    :'进入地图后会自动按座位顺序轮换。')+
-    (found?' 本局已经发现 '+found+' 处地图异闻。':'');
-  document.getElementById('classJudge').classList.remove('hidden');
+  classBeginActions();
 }
 function confirmClassGrades(){
   if(!G||!G.classroom||G.classroom.phase!=='judge'||G.over)return;
   const c=G.classroom;if(!c.players.every(p=>p.judged))return;
   c.players.forEach(p=>{
     p.score+=p.roundScore;
-    p.roundAp=classCorrectPoints(p.roundScore,c.questionTotal);
+    p.roundAp=classActionSteps(p.roundScore,c.players.length);
   });
-  c.phase='ready';c.ap=0;syncHud();showClassRoundReady();
+  c.phase='ready';c.ap=0;
+  if(!G.headless)document.getElementById('classJudge').classList.add('hidden');
+  syncHud();classBeginActions();
 }
 function classReadyPlayers(){
   return G.classroom.players.filter(p=>!p.resting&&p.roundAp>0);
@@ -2379,7 +2664,9 @@ function showClassActionBoard(){
   const box=document.getElementById('actionPlayers');
   box.innerHTML=c.players.map((p,i)=>{
     const active=i===c.current&&c.ap>0,state=p.resting?'本层休整':p.roundAp<=0?'本轮已行动':'血 '+p.hp+'/'+p.maxhp;
-    const dots='<span class="actionremain">'+[0,1,2].map(n=>'<i class="'+(n<p.roundAp?'on':'')+'"></i>').join('')+'</span>';
+    const chunks=Math.min(12,Math.max(1,Math.ceil(p.roundAp/4)));
+    const dots='<span class="actionremain">'+Array.from({length:12},(_,n)=>
+      '<i class="'+(n<chunks?'on':'')+'"></i>').join('')+'</span>';
     return '<button class="actionplayer'+(active?' active':'')+(p.resting?' resting':p.roundAp<=0?' spent':'')+
       '" data-action-player="'+i+'" '+(p.resting||p.roundAp<=0?'disabled':'')+'><b>'+htmlSafe(p.name)+' · '+p.hero.name+
       '</b>'+state+'<span>'+p.roundAp+' 点行动剩余</span>'+dots+'</button>';
@@ -2399,15 +2686,12 @@ function classBeginActions(){
   if(G.headless||c.rhythm===CLASS_RHYTHM_RELAY)selectClassActionPlayer(first);
   else{syncHud();showClassActionBoard();}
 }
-/* 兼容模拟与旧测试入口：把 0—3 档换成本轮答对数，依次填入尚未判分的学生。 */
+/* 兼容模拟与旧测试入口：直接填写行动 ×1—×3 档。 */
 function gradeStudent(score){
   if(!G||!G.classroom||G.classroom.phase!=='judge'||G.over)return;
-  const c=G.classroom,n=Math.max(0,Math.min(3,Number(score)||0));
+  const c=G.classroom,n=Math.max(1,Math.min(3,Number(score)||1));
   const i=c.players.findIndex(p=>!p.judged);if(i<0)return;
-  const correct=n===3?c.questionTotal:n===2?Math.ceil(c.questionTotal*.6):
-    n===1?Math.max(1,Math.floor(c.questionTotal*.25)):0;
-  setClassGrade(i,correct);
-  if(c.players.every(p=>p.judged))confirmClassGrades();
+  setClassGrade(i,n);
 }
 function classUseAction(){
   classSaveActive();
@@ -2433,6 +2717,12 @@ function classEnemyTurn(){
   if(!classLivingPlayers().length){ lose(); return; }
   computeIntents();
   classBeginRound();
+}
+function finishClassActionsEarly(){
+  if(!G||!G.classroom||G.classroom.phase!=='act'||G.over)return;
+  G.classroom.players.forEach(p=>{p.roundAp=0;});
+  G.classroom.ap=0;
+  classEnemyTurn();
 }
 /* 章节过场大字 */
 function chapterCard(txt){
@@ -2491,7 +2781,7 @@ function applyClassUpgrade(id){
 function offerClassUpgrades(){
   G.classroom.phase='upgrade';
   if(G.headless){
-    applyClassUpgrade('atk'); classBeginRound(); return;
+    applyClassUpgrade('atk');resumeClassAfterUpgrade();return;
   }
   saveClassRun();
   const box=document.getElementById('upList');
@@ -2502,12 +2792,78 @@ function offerClassUpgrades(){
     d.onclick=()=>{
       applyClassUpgrade(u.id); sfx('pickup');
       document.getElementById('upgrade').classList.add('hidden');
-      classBeginRound();
+      resumeClassAfterUpgrade();
     };
     box.appendChild(d);
   });
   document.querySelector('#upgrade h2').textContent='选 一 个 全 队 强 化';
   document.getElementById('upgrade').classList.remove('hidden');
+}
+function resumeClassAfterUpgrade(){
+  if(!G||!G.classroom||G.over)return;
+  const c=G.classroom;
+  c.phase='act';
+  const p=classPlayer();c.ap=p&&!p.resting?p.roundAp:0;
+  if(c.ap>0){syncHud();return;}
+  if(classReadyPlayers().length){
+    const next=classReadyIndexFrom((c.current+1)%c.players.length);
+    if(G.headless||c.rhythm===CLASS_RHYTHM_RELAY)selectClassActionPlayer(next);
+    else{syncHud();showClassActionBoard();}
+    return;
+  }
+  classEnemyTurn();
+}
+
+/* ---------- 星币商店：击杀与探索所得金币转化为可研究的长期路线 ---------- */
+const SHOP_ITEMS=[
+  {id:'bandage',name:'星尘绷带',cost:8,desc:'当前星徒回复 10 血',
+    use:()=>{const h=Math.min(10,G.maxhp-G.hp);G.hp+=h;fnum(G.px,G.py,'回复 +'+h,'#38b764');}},
+  {id:'edge',name:'磨刃石',cost:18,desc:'当前星徒攻击永久 +1',
+    use:()=>{G.atk+=1;fnum(G.px,G.py,'攻击 +1','#e8cf95',true);}},
+  {id:'plate',name:'守心甲片',cost:16,desc:'血上限 +4，并回复 4 血',
+    use:()=>{G.maxhp+=4;G.hp+=4;fnum(G.px,G.py,'血上限 +4','#41a6f6',true);}},
+  {id:'smoke',name:'灰塔烟幕',cost:14,desc:'下一次敌人阶段全部落空',
+    use:()=>{G.smoke=(G.smoke||0)+1;fnum(G.px,G.py,'烟幕已备','#94b0c2',true);}},
+  {id:'bell',name:'共鸣行动铃',cost:12,desc:'课堂当前星徒额外获得 1 个基础行动包',classOnly:true,
+    use:()=>{const bonus=classActionBase(G.classroom.players.length);
+      G.classroom.ap+=bonus;const p=classPlayer();p.roundAp=G.classroom.ap;
+      fnum(G.px,G.py,'行动 +'+bonus,'#ffcd75',true);}},
+  {id:'compass',name:'星图罗盘',cost:15,desc:'宝匣更安全，奖励更多',
+    use:()=>{G.luck=(G.luck||0)+1;fnum(G.px,G.py,'星运 +1','#ffcd75',true);}}
+];
+function shopMessage(text,kind){
+  const el=document.getElementById('shopMsg');el.textContent=text||'';
+  el.className='panelmsg'+(kind?' '+kind:'');
+}
+function shopKey(id){return G.fi+':'+id;}
+function buildShop(){
+  if(!G||G.over)return;
+  if(G.classroom&&G.classroom.phase!=='act'){
+    fnum(G.px,G.py,'行动阶段才能购物','#9aa3bd');return;
+  }
+  document.getElementById('shopGold').textContent=G.coin;
+  const box=document.getElementById('shopList');box.innerHTML='';
+  SHOP_ITEMS.forEach(it=>{
+    if(it.classOnly&&!G.classroom)return;
+    const bought=!!G.shopBought[shopKey(it.id)],poor=G.coin<it.cost;
+    const b=document.createElement('button');b.className='shopcard';b.disabled=bought||poor;
+    b.innerHTML='<b>'+it.name+'</b>'+it.desc+'<em>'+(
+      bought?'本层已购':poor?'需要 '+it.cost+' 金':'花费 '+it.cost+' 金')+'</em>';
+    b.onclick=()=>buyShopItem(it.id);box.appendChild(b);
+  });
+  shopMessage('商店完全可选；留着金币也会计入战利榜。');
+  document.getElementById('shop').classList.remove('hidden');
+}
+function buyShopItem(id){
+  const it=SHOP_ITEMS.find(x=>x.id===id);if(!G||!it||G.over)return false;
+  if(it.classOnly&&!G.classroom)return false;
+  const k=shopKey(id);if(G.shopBought[k]||G.coin<it.cost)return false;
+  G.coin-=it.cost;G.spent=(G.spent||0)+it.cost;G.shopBought[k]=true;
+  it.use();
+  if(G.classroom)classSaveActive();
+  sfx('pickup');flash();syncHud();
+  if(G.classroom)saveClassRun();else saveRun();
+  buildShop();shopMessage(it.name+'已收入行囊。','good');return true;
 }
 
 /* ---------- 敌人意图（Into the Breach 式完美信息）
@@ -2648,7 +3004,7 @@ function uiBlocked(){
   // 否则玩家会在看不见棋盘的情况下被键盘走位、白白挨打（夜班查出的真竞态）。
   if(G && G.headless) return false;          // 自测/模拟局不走 DOM 判定
   if(document.getElementById('game').classList.contains('hidden')) return true;
-  return ['upgrade','codex','archive','leaderboard','howto','classThink','classJudge','classAction']
+  return ['upgrade','shop','codex','archive','leaderboard','howto','classThink','classJudge','classAction']
     .some(id=>!document.getElementById(id).classList.contains('hidden'));
 }
 function act(dir){
@@ -2677,7 +3033,12 @@ function act(dir){
         if(G.fi>=FLOORS.length-1 && G.ents.some(e=>e.type==='ye')){
           fnum(G.px,G.py,'叶王镇守着出口','#9d72d6');
         }else{
-          if(G.classroom){ classSaveActive(); descend(); }
+          if(G.classroom){
+            classSaveActive();
+            G.classroom.ap=Math.max(0,G.classroom.ap-1);
+            const active=classPlayer();if(active)active.roundAp=G.classroom.ap;
+            descend();
+          }
           else{ G.turns++; descend(); }
           return;
         }
@@ -2707,8 +3068,9 @@ function killFoe(foe){
   return false;
 }
 function damageFoe(foe,dmg,label,color,big){
-  foe.hp-=dmg; foe.flash=performance.now()+220;
-  fnum(foe.x,foe.y,label,color,big);
+  const dealt=Math.max(1,Math.round(dmg)-(foe.armor||0));
+  foe.hp-=dealt; foe.flash=performance.now()+220;
+  fnum(foe.x,foe.y,foe.armor&&dealt<dmg?'镜甲 -'+dealt:label,color,big);
   if(foe.hp<=0) return killFoe(foe);
   return false;
 }
@@ -2761,7 +3123,24 @@ function hurtClassPlayer(p,dmg,attacker){
   if(p===classPlayer()) G.hp=p.hp;
 }
 
+function triggerEnemyHazard(e){
+  const i=G.items.findIndex(o=>o.x===e.x&&o.y===e.y&&(o.type==='spike'||o.type==='bomb'));
+  if(i<0)return false;
+  const it=G.items[i];G.items.splice(i,1);
+  if(it.type==='spike'){
+    fnum(e.x,e.y,'踩中尖刺','#ef7d57');
+    damageFoe(e,4,'机关 -4','#ef7d57');
+  }else{
+    const targets=G.ents.filter(o=>Math.max(Math.abs(o.x-e.x),Math.abs(o.y-e.y))<=1);
+    burst(e.x,e.y,'#ffcd75');shake();
+    targets.forEach(o=>{if(G.ents.includes(o))damageFoe(o,6,'爆裂 -6','#ffcd75',true);});
+  }
+  return !G.ents.includes(e);
+}
 function enemiesAct(){
+  if(G.smoke>0){
+    G.smoke--;fnum(G.px,G.py,'烟幕 · 敌人落空','#94b0c2',true);return;
+  }
   G.ents.slice().forEach(e=>{
     if(!G.ents.includes(e)) return;        // 可能已被反弹/溅射打死
     if(G.over) return;
@@ -2769,7 +3148,9 @@ function enemiesAct(){
     if(!it||it.t==='wait') return;
 
     if(it.t==='atk'||it.t==='dash'){
-      if(it.t==='dash' && it.to && !occupied(it.to.x,it.to.y,e)){ e.x=it.to.x; e.y=it.to.y; }
+      if(it.t==='dash' && it.to && !occupied(it.to.x,it.to.y,e)){
+        e.x=it.to.x; e.y=it.to.y;if(triggerEnemyHazard(e))return;
+      }
       if(G.classroom){
         const hits=classLivingPlayers().filter(p=>(it.cells||[]).some(c=>c.x===p.px&&c.y===p.py));
         hits.forEach(p=>hurtClassPlayer(p,e.atk,e));
@@ -2789,7 +3170,9 @@ function enemiesAct(){
         fnum(it.x,it.y,'召来影卒','#9d72d6');
       }
     }else if(it.t==='mov'){
-      if(!occupied(it.x,it.y,e) && !G.wall[key(it.x,it.y)]){ e.x=it.x; e.y=it.y; }
+      if(!occupied(it.x,it.y,e) && !G.wall[key(it.x,it.y)]){
+        e.x=it.x; e.y=it.y;triggerEnemyHazard(e);
+      }
     }
   });
 }
@@ -2797,11 +3180,55 @@ function enemiesAct(){
 function pickup(){
   const i=G.items.findIndex(o=>o.x===G.px&&o.y===G.py);
   if(i<0) return;
-  const it=G.items[i]; G.items.splice(i,1);
+  const it=G.items[i];
+  if(it.type==='rift'){
+    const mate=G.items.find((o,j)=>j!==i&&o.type==='rift');
+    if(mate){
+      G.px=mate.x;G.py=mate.y;
+      fnum(G.px,G.py,'裂隙跃迁','#7e75d6',true);sfx('stairs');flash();
+    }
+    return;
+  }
+  G.items.splice(i,1);
   if(it.type==='potion'){ const h=Math.min(8,G.maxhp-G.hp); G.hp+=h; fnum(G.px,G.py,'+'+h,'#38b764'); }
   if(it.type==='coin'){ G.coin+=5; fnum(G.px,G.py,'+5 金','#ffcd75'); }
   if(it.type==='sword'){ G.atk+=1; fnum(G.px,G.py,'攻击 +1','#e8cf95'); flash(); }
   if(it.type==='armor'){ G.maxhp+=5; G.hp+=5; fnum(G.px,G.py,'血上限 +5','#41a6f6'); flash(); }
+  if(it.type==='spike'){
+    const dmg=3;G.hp-=dmg;fnum(G.px,G.py,'尖刺 -'+dmg,'#ef4d4d');shake();
+    if(G.classroom){
+      const p=classPlayer();p.hp=Math.max(0,G.hp);
+      if(p.hp<=0){p.resting=true;fnum(p.px,p.py,p.name+'本层休整','#9aa3bd',true);}
+    }
+    if(G.hp<=0&&!G.classroom)lose();
+  }
+  if(it.type==='bomb'){
+    const targets=G.ents.filter(o=>Math.max(Math.abs(o.x-G.px),Math.abs(o.y-G.py))<=1);
+    burst(G.px,G.py,'#ffcd75');shake();
+    targets.forEach(o=>{if(G.ents.includes(o))damageFoe(o,6,'爆裂 -6','#ffcd75',true);});
+  }
+  if(it.type==='chest'){
+    const risk=Math.max(.08,.28-(G.luck||0)*.08);
+    if(Math.random()<risk){
+      const cells=[[1,0],[-1,0],[0,1],[0,-1]].map(([dx,dy])=>({x:G.px+dx,y:G.py+dy}))
+        .filter(c=>inb(c.x,c.y)&&!G.wall[key(c.x,c.y)]&&!occupied(c.x,c.y));
+      if(cells.length){
+        const c=cells[rnd(cells.length)];G.ents.push(mkMob('mimic',c.x,c.y));
+        fnum(c.x,c.y,'宝匣醒了','#ef7d57',true);computeIntents();
+      }else{G.coin+=10;fnum(G.px,G.py,'+10 金','#ffcd75');}
+    }else{
+      const gold=8+(G.luck||0)*2;G.coin+=gold;
+      if(Math.random()<.35){G.atk+=1;fnum(G.px,G.py,'星刃 +1','#e8cf95',true);}
+      else fnum(G.px,G.py,'宝匣 +'+gold+' 金','#ffcd75',true);
+    }
+  }
+  if(it.type==='shrine'){
+    const roll=rnd(3);
+    if(roll===0){G.atk+=1;fnum(G.px,G.py,'星图赐刃 +1','#e8cf95',true);}
+    else if(roll===1){G.maxhp+=4;G.hp+=4;fnum(G.px,G.py,'星图护心 +4','#41a6f6',true);}
+    else{G.coin+=12;G.luck=(G.luck||0)+1;fnum(G.px,G.py,'星运 +1 · 金 +12','#ffcd75',true);}
+    flash();
+  }
 }
 
 function descend(){
@@ -2856,7 +3283,8 @@ function classEndData(){
 function endScreen(w,endedEarly){
   // 同步取值：G 可能在延时期间被重置（换英雄/自测），别在回调里再读 G
   const s={n:G.hero.name, f:G.fname, coin:G.coin, atk:G.atk, mh:G.maxhp,
-           fl:G.fi+1, k:G.kills||0, t:G.turns||0, classroom:classEndData()};
+           fl:G.fi+1, k:G.kills||0, t:G.turns||0,score:calculateRunScore(w),
+           heat:heatData(G.heat),spent:G.spent||0,classroom:classEndData()};
   setTimeout(()=>{
     const big=document.getElementById('overBig');
     if(!big) return;                       // 页面已被自测/模拟报告替换：静默放弃
@@ -2864,14 +3292,16 @@ function endScreen(w,endedEarly){
     big.className='big '+((w||endedEarly)?'win':'lose');
     if(s.classroom){
       const rows=s.classroom.players.map(p=>
-        '<b>'+htmlSafe(p.name)+'</b> · '+p.hero+'　<b>'+p.score+' 分</b>').join('<br>');
+        '<b>'+htmlSafe(p.name)+'</b> · '+p.hero+'　<b>'+p.score+' 行动星</b>').join('<br>');
       document.getElementById('overSum').innerHTML=
         (endedEarly?'本局到这里，成绩已经整理好。':
           (w?'全队共同打穿了九层地牢。':'全队暂时退回了地牢入口。'))+
         '<br><b>'+htmlSafe(s.classroom.teamName)+'</b><br><br>'+rows+
         '<br><br>到达 <b>第'+s.classroom.floor+'层</b> · 击杀 <b>'+s.classroom.kills+
         '</b> · 总回合 <b>'+s.classroom.turns+'</b>'+
-        '<br>本局发现地图异闻 <b>'+s.classroom.discoveries+' 处</b>';
+        '<br>本局发现地图异闻 <b>'+s.classroom.discoveries+' 处</b>'+
+        '<br><b>'+s.heat.name+'</b> · 黑域综合分 <b>'+s.score+'</b>'+
+        '<br>下次可以争夺：综合分、九层速通、猎王战利三张榜。';
       document.getElementById('btnAgain').textContent='同组再来';
       document.getElementById('btnMenu').textContent='回到主菜单';
     }else{
@@ -2879,7 +3309,9 @@ function endScreen(w,endedEarly){
         (w? '你带着 <b>'+s.n+'</b> 打穿了九层地牢，斩下了黑域之主<b>叶王</b>。'
           : '<b>'+s.n+'</b> 倒在了'+s.f+'。')+
         '<br>到达 <b>第'+s.fl+'层</b> · 击杀 <b>'+s.k+'</b> · 回合 <b>'+s.t+'</b>'+
-        '<br>金币 <b>'+s.coin+'</b> · 攻击 <b>'+s.atk+'</b> · 血上限 <b>'+s.mh+'</b>';
+        '<br>金币 <b>'+s.coin+'</b> · 已消费 <b>'+s.spent+'</b> · 攻击 <b>'+s.atk+'</b> · 血上限 <b>'+s.mh+'</b>'+
+        '<br><b>'+s.heat.name+'</b> · 黑域综合分 <b>'+s.score+'</b>'+
+        '<br>失败也会入榜；下一局可以换契约冲综合、速通或猎王榜。';
       document.getElementById('btnAgain').textContent='再来一局';
       document.getElementById('btnMenu').textContent='换英雄';
     }
@@ -3023,6 +3455,11 @@ function draw(){
       ctx.globalAlpha=0.16;
       ctx.fillStyle='#ffcd75'; ctx.fillRect(e.x*TS,e.y*TS,TS,TS);
       ctx.globalAlpha=1;
+    }else if(e.elite){
+      ctx.globalAlpha=0.55+0.35*Math.sin(t/210);
+      ctx.strokeStyle='#9d72d6';ctx.lineWidth=1;
+      ctx.strokeRect(e.x*TS+0.5,e.y*TS+0.5,15,15);
+      ctx.globalAlpha=1;
     }
     drawSpr(e.spr, e.x*TS, e.y*TS, e.flash>t);
     const w=Math.max(0,Math.round(12*e.hp/e.maxhp));
@@ -3097,10 +3534,8 @@ function syncHud(){
     }
     const p=classPlayer();
     document.getElementById('btnBack').textContent='提前结算';
-    const phaseName=G.classroom.teamName+' · '+(G.classroom.phase==='think'
-      ?'第 '+(G.classroom.questionIndex+1)+' / '+G.classroom.questionTotal+' 题 · 思考中'
-      :G.classroom.phase==='judge'
-        ?'全员一屏判分'
+    const phaseName=G.classroom.teamName+' · '+(G.classroom.phase==='think'||G.classroom.phase==='judge'
+        ?'第 '+G.classroom.roundNumber+' 轮 · '+G.classroom.questionTotal+' 题 · 选行动倍率'
       :G.classroom.phase==='ready'?'全员判分完成'
       :G.classroom.phase==='enemy'?'敌人行动'
       :G.classroom.ap>0?'轮到 '+p.name+' · '+p.hero.name+' 行动'
@@ -3109,21 +3544,15 @@ function syncHud(){
     document.getElementById('btnActionBoard').classList.toggle('hidden',
       G.classroom.phase!=='act'||G.classroom.rhythm!==CLASS_RHYTHM_BATCH);
     const dots=document.getElementById('apDots');
-    dots.innerHTML='<span>当前行动点</span>';
-    for(let i=0;i<3;i++){
-      const d=document.createElement('i');
-      d.className='apdot'+(i<G.classroom.ap?' on':'');
-      dots.appendChild(d);
-    }
+    dots.innerHTML='<span>当前行动</span><b class="apvalue">'+G.classroom.ap+'</b>';
     const roster=document.getElementById('classRoster');
     roster.innerHTML=G.classroom.players.map((q,i)=>{
-      const ap=(G.classroom.phase==='think'?0:q.roundAp);
-      const mini='<span class="miniap">'+[0,1,2].map(n=>'<i class="'+(n<ap?'on':'')+'"></i>').join('')+'</span>';
-      const state=G.classroom.phase==='think'?'全员答题中'
-        :G.classroom.phase==='judge'?(q.judged?'答对 '+q.roundScore+' / '+G.classroom.questionTotal:'等待判分')
+      const ap=q.roundAp;
+      const mini='<span class="miniap">'+ap+' 步</span>';
+      const state=G.classroom.phase==='think'||G.classroom.phase==='judge'?(q.judged?'行动 ×'+q.roundScore:'等待选择')
         :q.resting?'本层休整'
         :G.classroom.phase==='act'?(q.roundAp>0?'剩余 '+q.roundAp+' 点':'本轮已行动')
-        :'答对 '+q.roundScore+' / '+q.roundAnswers+' · '+q.roundAp+' 点';
+        :'行动 ×'+q.roundScore+' · '+q.roundAp+' 步';
       const selectable=G.classroom.phase==='act'&&G.classroom.rhythm===CLASS_RHYTHM_BATCH&&
         !q.resting&&q.roundAp>0;
       return '<button class="rosterseat'+(i===G.classroom.current&&G.classroom.ap>0?' active':'')+
@@ -3153,14 +3582,22 @@ function drawSprTo(c,name){
 function show(id){
   ['menu','classSetup','game','over'].forEach(s=>document.getElementById(s).classList.toggle('hidden',s!==id));
   if(id!=='game'){
+    document.getElementById('shop').classList.add('hidden');
     document.getElementById('classThink').classList.add('hidden');
     document.getElementById('classJudge').classList.add('hidden');
     document.getElementById('classAction').classList.add('hidden');
   }
 }
+function renderHeatPicker(id,current,onpick){
+  const box=document.getElementById(id);if(!box)return;
+  box.innerHTML=HEATS.map(h=>'<button class="heatbtn'+(h.id===normalizeHeat(current)?' active':'')+
+    '" data-heat="'+h.id+'"><b>'+h.name+' · ×'+h.mult.toFixed(2)+'</b>'+h.desc+'</button>').join('');
+  box.querySelectorAll('[data-heat]').forEach(b=>b.onclick=()=>onpick(normalizeHeat(b.dataset.heat)));
+}
 function buildMenu(){
   const personal=document.getElementById('personalName');
   if(personal)personal.value=IDENTITY.playerName;
+  renderHeatPicker('singleHeat',SINGLE_HEAT,v=>{SINGLE_HEAT=v;buildMenu();});
   const box=document.getElementById('heroList');
   box.innerHTML='';
   HEROES.forEach(h=>{
@@ -3174,7 +3611,7 @@ function buildMenu(){
       '<div class="hstat">血 <b>'+h.hp+'</b>　攻 <b>'+h.atk+'</b>　'+h.desc+
       '<span style="float:right;color:var(--gold)">'+rec+'</span></div></div>';
     drawSprTo(d.querySelector('canvas').getContext('2d'),h.spr);
-    d.onclick=()=>startGame(h.id);
+    d.onclick=()=>startGame(h.id,{heat:SINGLE_HEAT});
     box.appendChild(d);
   });
   buildContinueHub();
@@ -3256,13 +3693,16 @@ function buildArchive(){
 }
 let ACTIVE_RANK_TAB='personal';
 let ACTIVE_RANK_SOURCE='local';
+let ACTIVE_RANK_METRIC='overall';
 const CLOUD_ROWS={personal:null,classroom:null};
 const CLOUD_LOADING={personal:false,classroom:false};
 function rankDate(ts){
   const d=new Date(ts);return (d.getMonth()+1)+'/'+d.getDate();
 }
 function decodeCloudScore(type,score){
-  let n=Math.max(0,Math.floor(Number(score)||0)),won=n>=5000000;
+  let n=Math.max(0,Math.floor(Number(score)||0));
+  if(n>=10000000)return {v3:true,score:n-10000000};
+  const won=n>=5000000;
   if(won)n-=5000000;
   const floor=Math.floor(n/100000);n%=100000;
   return type==='personal'
@@ -3273,7 +3713,7 @@ function renderCloudLeaderboard(type){
   const list=document.getElementById('rankList'),data=CLOUD_ROWS[type];
   list.innerHTML='';
   if(data===null){
-    list.innerHTML='<div class="rankempty">正在连接 Cloudflare 云榜……</div>';return;
+    list.innerHTML='<div class="rankempty">正在连接云端榜……</div>';return;
   }
   if(!data.length){
     list.innerHTML='<div class="rankempty">云榜还没有成绩。<br>开启公开后，真实结算局会自动参与。</div>';return;
@@ -3281,6 +3721,12 @@ function renderCloudLeaderboard(type){
   data.slice(0,50).forEach((r,i)=>{
     const d=decodeCloudScore(type,r.score),row=document.createElement('div');
     row.className='rankrow'+(i<3?' top':'');
+    if(d.v3){
+      row.innerHTML='<div class="rankno">'+(i+1)+'</div><div class="rankmain"><b>'+
+        htmlSafe(r.name)+' · 黑域综合挑战</b><span>'+rankDate(r.t)+
+        ' · 新版契约积分</span></div><div class="rankscore">综合分<br>'+d.score+'</div>';
+      list.appendChild(row);return;
+    }
     if(type==='personal'){
       row.innerHTML='<div class="rankno">'+(i+1)+'</div><div class="rankmain"><b>'+
         htmlSafe(r.name)+' · '+(d.won?'九层通关':'到达第 '+d.floor+' 层')+'</b><span>'+
@@ -3299,7 +3745,7 @@ async function loadCloudLeaderboard(type,force){
   if(CLOUD_LOADING[type]||(!force&&CLOUD_ROWS[type]!==null))return;
   CLOUD_LOADING[type]=true;CLOUD_ROWS[type]=null;
   if(ACTIVE_RANK_SOURCE==='cloud'&&ACTIVE_RANK_TAB===type)renderCloudLeaderboard(type);
-  setCloudStatus('正在连接 Cloudflare……');
+  setCloudStatus('正在连接云端榜……');
   try{
     const data=await cloudPost({action:'sdtop',kind:type});
     CLOUD_ROWS[type]=Array.isArray(data.top)?data.top:[];
@@ -3312,7 +3758,7 @@ async function loadCloudLeaderboard(type,force){
   }finally{
     CLOUD_LOADING[type]=false;
     if(ACTIVE_RANK_SOURCE==='cloud'&&ACTIVE_RANK_TAB===type){
-      document.getElementById('rankSummary').textContent='Cloudflare 公开榜 · 展示前 50 名';
+      document.getElementById('rankSummary').textContent='云端公开榜 · 展示前 50 名';
       renderCloudLeaderboard(type);
     }
   }
@@ -3324,22 +3770,37 @@ function buildLeaderboard(tab,source){
     b.classList.toggle('active',b.dataset.rankTab===ACTIVE_RANK_TAB));
   document.querySelectorAll('[data-rank-source]').forEach(b=>
     b.classList.toggle('active',b.dataset.rankSource===ACTIVE_RANK_SOURCE));
+  document.querySelectorAll('[data-rank-metric]').forEach(b=>
+    b.classList.toggle('active',b.dataset.rankMetric===ACTIVE_RANK_METRIC));
+  document.getElementById('rankMetrics').classList.toggle('hidden',ACTIVE_RANK_SOURCE==='cloud');
   document.getElementById('btnRankClear').classList.toggle('hidden',ACTIVE_RANK_SOURCE!=='local');
   document.getElementById('btnCloudRefresh').classList.toggle('hidden',ACTIVE_RANK_SOURCE!=='cloud');
   document.getElementById('rankNote').textContent=ACTIVE_RANK_SOURCE==='local'
     ?'本机榜保留完整个人与课堂成员成绩；模拟、自测和未结算续玩档不会入榜。'
-    :'云榜由 Cloudflare Worker + D1 提供；只展示公开昵称或队名，不含课堂成员姓名。';
+    :'云端榜只展示公开昵称或队名，不含课堂成员姓名。';
   if(ACTIVE_RANK_SOURCE==='cloud'){
-    document.getElementById('rankSummary').textContent='Cloudflare 公开榜 · 展示前 50 名';
+    document.getElementById('rankSummary').textContent='云端公开榜 · 展示前 50 名';
     renderCloudLeaderboard(ACTIVE_RANK_TAB);
     loadCloudLeaderboard(ACTIVE_RANK_TAB,false);
     return;
   }
-  const data=RANKS[ACTIVE_RANK_TAB],list=document.getElementById('rankList');
+  const metricCompare=(a,b)=>{
+    if(ACTIVE_RANK_METRIC==='speed')
+      return Number(b.won)-Number(a.won)||(a.won?a.turns-b.turns:b.floor-a.floor)||
+        (ACTIVE_RANK_TAB==='personal'?personalRankScore(b)-personalRankScore(a):
+          classRankScore(b)-classRankScore(a));
+    if(ACTIVE_RANK_METRIC==='hunt')
+      return b.kills-a.kills||(b.spent||0)-(a.spent||0)||
+        (ACTIVE_RANK_TAB==='personal'?personalRankScore(b)-personalRankScore(a):
+          classRankScore(b)-classRankScore(a));
+    return ACTIVE_RANK_TAB==='personal'?rankPersonalCompare(a,b):rankClassCompare(a,b);
+  };
+  const data=RANKS[ACTIVE_RANK_TAB].slice().sort(metricCompare),list=document.getElementById('rankList');
   const wins=data.filter(r=>r.won).length;
-  document.getElementById('rankSummary').textContent=ACTIVE_RANK_TAB==='personal'
-    ?'共 '+data.length+' 次已结算远征 · '+wins+' 次通关 · 展示前 20 名'
-    :'共 '+data.length+' 次已结算课堂局 · '+wins+' 次通关 · 展示前 20 名';
+  const metricName=ACTIVE_RANK_METRIC==='speed'?'九层速通':ACTIVE_RANK_METRIC==='hunt'?'猎王战利':'黑域综合分';
+  document.getElementById('rankSummary').textContent=(ACTIVE_RANK_TAB==='personal'
+    ?'共 '+data.length+' 次已结算远征 · '+wins+' 次通关'
+    :'共 '+data.length+' 次已结算课堂局 · '+wins+' 次通关')+' · '+metricName+' 前 20';
   list.innerHTML='';
   if(!data.length){
     list.innerHTML='<div class="rankempty">这里还没有成绩。<br>完整结算一局后，记录会自动出现。</div>';return;
@@ -3350,17 +3811,20 @@ function buildLeaderboard(tab,source){
       const h=HEROES.find(v=>v.id===r.hero);
       row.innerHTML='<div class="rankno">'+(i+1)+'</div><div class="rankmain"><b>'+
         htmlSafe(r.name||'未命名星徒')+' · '+h.name+
-        ' · '+(r.won?'九层通关':'到达第 '+r.floor+' 层')+'</b><span>'+rankDate(r.ts)+
-        ' · 击杀 '+r.kills+' · '+r.turns+' 回合</span></div><div class="rankscore">'+
-        (r.won?'通关':'第 '+r.floor+' 层')+'<br>'+r.coin+' 金</div>';
+        ' · '+heatData(r.heat).short+'契约 · '+(r.won?'九层通关':'到达第 '+r.floor+' 层')+
+        '</b><span>'+rankDate(r.ts)+
+        ' · 击杀 '+r.kills+' · '+r.turns+' 回合 · 花费 '+(r.spent||0)+' 金</span></div><div class="rankscore">'+
+        (ACTIVE_RANK_METRIC==='speed'?r.turns+' 回合':ACTIVE_RANK_METRIC==='hunt'?r.kills+' 击杀':
+          personalRankScore(r)+' 分')+'<br>'+r.coin+' 金</div>';
     }else{
       const seats=r.players.slice(0,3).map(p=>htmlSafe(p.name||SEAT_NAMES[p.seat])+' '+p.score+'分').join(' · ');
       row.innerHTML='<div class="rankno">'+(i+1)+'</div><div class="rankmain"><b>'+
         htmlSafe(r.teamName||'未命名小队')+' · '+r.players.length+
         ' 人 · '+(r.won?'九层通关':r.endedEarly?'提前结算':'到达第 '+r.floor+' 层')+
         '</b><span>'+rankDate(r.ts)+' · '+seats+(r.players.length>3?' 等':'')+
-        ' · 异闻 '+r.discoveries+'</span></div><div class="rankscore">总分 '+r.total+
-        '<br>均分 '+Number(r.avg).toFixed(1)+'</div>';
+        ' · 异闻 '+r.discoveries+' · '+heatData(r.heat).short+'契约</span></div><div class="rankscore">'+
+        (ACTIVE_RANK_METRIC==='speed'?r.turns+' 轮':ACTIVE_RANK_METRIC==='hunt'?r.kills+' 击杀':
+          classRankScore(r)+' 分')+'<br>行动星 '+r.total+'</div>';
     }
     list.appendChild(row);
   });
@@ -3404,8 +3868,8 @@ function syncCloudControl(){
 const CLASS_PREF_KEY='starDungeon_classroom_prefs_v1';
 const CLASS_SETUP={count:3,heroes:['jin','wen','xi','hao','hai','jin'],
   teamName:'星徒小队',names:SEAT_NAMES.slice(),
-  rhythm:CLASS_RHYTHM_BATCH,questions:6,sceneMode:CLASS_SCENE_CHAPTER,
-  fixedScene:'classroom',eggLevel:CLASS_EGGS_NORMAL};
+  rhythm:CLASS_RHYTHM_BATCH,questions:5,sceneMode:CLASS_SCENE_CHAPTER,
+  fixedScene:'classroom',eggLevel:CLASS_EGGS_NORMAL,heat:0};
 function classPrefLoad(){
   try{
     const raw=localStorage.getItem(CLASS_PREF_KEY); if(!raw)return;
@@ -3419,6 +3883,7 @@ function classPrefLoad(){
       CLASS_SETUP.sceneMode=normalizeClassSceneMode(d.sceneMode);
       CLASS_SETUP.fixedScene=normalizeClassFixedScene(d.fixedScene);
       CLASS_SETUP.eggLevel=normalizeClassEggs(d.eggLevel);
+      CLASS_SETUP.heat=normalizeHeat(d.heat);
     }
   }catch(err){}
 }
@@ -3431,7 +3896,7 @@ function classPrefSave(){
     questions:normalizeClassQuestions(CLASS_SETUP.questions),
     sceneMode:normalizeClassSceneMode(CLASS_SETUP.sceneMode),
     fixedScene:normalizeClassFixedScene(CLASS_SETUP.fixedScene),
-    eggLevel:normalizeClassEggs(CLASS_SETUP.eggLevel)})); }
+    eggLevel:normalizeClassEggs(CLASS_SETUP.eggLevel),heat:normalizeHeat(CLASS_SETUP.heat)})); }
   catch(err){}
 }
 function buildClassSetup(count){
@@ -3446,6 +3911,9 @@ function buildClassSetup(count){
     b.classList.toggle('active',b.dataset.sceneMode===CLASS_SETUP.sceneMode));
   document.querySelectorAll('#classEggs [data-eggs]').forEach(b=>
     b.classList.toggle('active',b.dataset.eggs===CLASS_SETUP.eggLevel));
+  renderHeatPicker('classHeat',CLASS_SETUP.heat,v=>{
+    CLASS_SETUP.heat=v;classPrefSave();buildClassSetup(CLASS_SETUP.count);
+  });
   const scenePicker=document.getElementById('classScenePicker');
   scenePicker.classList.toggle('hidden',CLASS_SETUP.sceneMode!==CLASS_SCENE_FIXED);
   scenePicker.innerHTML=THINK_SCENES.map(s=>
@@ -3562,11 +4030,11 @@ document.getElementById('btnClassStart').onclick=()=>
   startClassGame(CLASS_SETUP.heroes.slice(0,CLASS_SETUP.count),
     {teamName:CLASS_SETUP.teamName,names:CLASS_SETUP.names.slice(0,CLASS_SETUP.count),
      rhythm:CLASS_SETUP.rhythm,questions:CLASS_SETUP.questions,
-     sceneMode:CLASS_SETUP.sceneMode,fixedScene:CLASS_SETUP.fixedScene,eggLevel:CLASS_SETUP.eggLevel});
-document.getElementById('thinkReveal').onclick=()=>beginClassJudge();
+     sceneMode:CLASS_SETUP.sceneMode,fixedScene:CLASS_SETUP.fixedScene,eggLevel:CLASS_SETUP.eggLevel,
+     heat:CLASS_SETUP.heat});
 document.getElementById('thinkSecret').onclick=()=>revealThinkEgg();
 document.getElementById('thinkCv').addEventListener('click',ev=>{
-  if(!G||!G.classroom||G.classroom.phase!=='think')return;
+  if(!G||!G.classroom||!['think','judge'].includes(G.classroom.phase))return;
   const scene=classThinkScene(),egg=classThinkEgg(scene);if(!egg)return;
   const r=ev.currentTarget.getBoundingClientRect();
   const x=(ev.clientX-r.left)*144/r.width,y=(ev.clientY-r.top)*81/r.height;
@@ -3577,14 +4045,12 @@ document.getElementById('classJudge').addEventListener('click',ev=>{
   if(b)setClassGrade(Number(b.dataset.player),Number(b.dataset.correct));
 });
 document.getElementById('judgeAllCorrect').onclick=()=>
-  setAllClassGrades(G&&G.classroom?G.classroom.questionTotal:0);
+  setAllClassGrades(3);
 document.getElementById('judgeClearAll').onclick=()=>{
   if(!G||!G.classroom||G.classroom.phase!=='judge')return;
   G.classroom.players.forEach(p=>{p.judged=false;p.roundScore=0;p.roundAnswers=0;p.roundAp=0;});
   syncHud();renderGroupGradeBoard();
 };
-document.getElementById('judgeConfirmGrades').onclick=()=>confirmClassGrades();
-document.getElementById('judgeStartActions').onclick=()=>classBeginActions();
 document.getElementById('actionPlayers').addEventListener('click',ev=>{
   const b=ev.target.closest('[data-action-player]');
   if(b)selectClassActionPlayer(Number(b.dataset.actionPlayer));
@@ -3592,6 +4058,9 @@ document.getElementById('actionPlayers').addEventListener('click',ev=>{
 document.getElementById('btnActionBoard').onclick=()=>showClassActionBoard();
 document.getElementById('btnActionClose').onclick=()=>
   document.getElementById('classAction').classList.add('hidden');
+document.getElementById('btnEndActions').onclick=()=>finishClassActionsEarly();
+document.getElementById('btnShop').onclick=()=>buildShop();
+document.getElementById('btnShopClose').onclick=()=>document.getElementById('shop').classList.add('hidden');
 document.getElementById('classRoster').addEventListener('click',ev=>{
   const b=ev.target.closest('[data-roster-player]');
   if(b&&!b.disabled)selectClassActionPlayer(Number(b.dataset.rosterPlayer));
@@ -3618,11 +4087,12 @@ document.getElementById('btnAgain').onclick=()=>{
   if(G.classroom){
     const rhythm=G.classroom.rhythm,questions=G.classroom.questionsPerRound;
     const sceneMode=G.classroom.sceneMode,fixedScene=G.classroom.fixedScene,eggLevel=G.classroom.eggLevel;
+    const heat=G.heat;
     startClassGame(G.classroom.players.map(p=>p.hero.id),
       {teamName:G.classroom.teamName,names:G.classroom.players.map(p=>p.name),
-       rhythm,questions,sceneMode,fixedScene,eggLevel});
+       rhythm,questions,sceneMode,fixedScene,eggLevel,heat});
   }
-  else startGame(G.hero.id);
+  else startGame(G.hero.id,{heat:G.heat});
 };
 document.getElementById('btnCodex').onclick=()=>buildCodex();
 document.getElementById('btnCxClose').onclick=()=>document.getElementById('codex').classList.add('hidden');
@@ -3657,7 +4127,9 @@ document.getElementById('leaderboard').addEventListener('click',ev=>{
   const tab=ev.target.closest('[data-rank-tab]');
   if(tab){buildLeaderboard(tab.dataset.rankTab);return;}
   const source=ev.target.closest('[data-rank-source]');
-  if(source)buildLeaderboard(ACTIVE_RANK_TAB,source.dataset.rankSource);
+  if(source){buildLeaderboard(ACTIVE_RANK_TAB,source.dataset.rankSource);return;}
+  const metric=ev.target.closest('[data-rank-metric]');
+  if(metric){ACTIVE_RANK_METRIC=metric.dataset.rankMetric;buildLeaderboard(ACTIVE_RANK_TAB);}
 });
 document.getElementById('btnCloudRefresh').onclick=()=>
   loadCloudLeaderboard(ACTIVE_RANK_TAB,true);
@@ -3779,18 +4251,16 @@ function runSim(perHero){
 }
 function runClassSim(perCount,rhythm,questions){
   const out={};
-  const grades=[2,2,1,2,3,0,2,1,2,3];
+  const grades=[2,2,1,2,3,1,2,1,2,3];
   for(let count=1;count<=6;count++){
-    const r={runs:0,wins:0,rounds:0,floorSum:0,timeouts:0,deaths:{}};
+    const r={runs:0,wins:0,rounds:0,winRounds:0,floorSum:0,timeouts:0,deaths:{}};
     const ids=Array.from({length:count},(_,i)=>HEROES[i%HEROES.length].id);
     for(let i=0;i<perCount;i++){
       startClassGame(ids,{sim:true,rhythm,questions:normalizeClassQuestions(questions)});
       let gradeCursor=i;
       let guard=0;
       while(!G.over&&guard++<5000){
-        if(G.classroom.phase==='think'){
-          beginClassJudge();
-        }else if(G.classroom.phase==='judge'){
+        if(G.classroom.phase==='judge'){
           gradeStudent(grades[gradeCursor++%grades.length]);
         }else if(G.classroom.phase==='ready'){
           classBeginActions();
@@ -3800,11 +4270,14 @@ function runClassSim(perCount,rhythm,questions){
       }
       r.runs++; r.rounds+=G.turns; r.floorSum+=G.fi+1;
       if(!G.over) r.timeouts++;
-      else if(classLivingPlayers().length) r.wins++;
+      else if(classLivingPlayers().length){r.wins++;r.winRounds+=G.turns;}
       else r.deaths[G.fi+1]=(r.deaths[G.fi+1]||0)+1;
     }
     out[count+'人']={runs:r.runs,wins:r.wins,winRate:Math.round(100*r.wins/r.runs),
       avgFloor:+(r.floorSum/r.runs).toFixed(2),avgRounds:Math.round(r.rounds/r.runs),
+      avgQuestions:Math.round(r.rounds/r.runs)*normalizeClassQuestions(questions),
+      avgWinRounds:r.wins?+(r.winRounds/r.wins).toFixed(1):null,
+      avgWinQuestions:r.wins?Math.round(r.winRounds/r.wins*normalizeClassQuestions(questions)):null,
       timeouts:r.timeouts,deathsByFloor:r.deaths};
   }
   G=null;
@@ -3830,6 +4303,7 @@ function selftest(){
   const __sceneMode0=CLASS_SETUP.sceneMode;
   const __fixedScene0=CLASS_SETUP.fixedScene;
   const __eggLevel0=CLASS_SETUP.eggLevel;
+  const __heat0=CLASS_SETUP.heat;
   const out=[]; let pass=0,fail=0;
   const ok=(n,c)=>{ c?pass++:fail++; out.push((c?'[过]':'[败]')+' '+n); };
   // 精灵图尺寸
@@ -4052,11 +4526,13 @@ function selftest(){
   act('l');
   ok('回到菜单后键盘不再操控棋盘', G.px===3);
 
-  // ── 课堂模式：全员共同答题、一屏判分、自由选人行动 ──
-  ok('答对数折算：全错仍有 1 行动点', classCorrectPoints(0,6)===1);
-  ok('答对数折算：两成正确仍为 1 点', classCorrectPoints(1,5)===1);
-  ok('答对数折算：四成正确换 2 点', classCorrectPoints(2,5)===2);
-  ok('答对数折算：八成正确换 3 点', classCorrectPoints(4,5)===3);
+  // ── 课堂模式：整轮静态场景、行动倍率、按人数归一步数 ──
+  ok('1—6 人每个行动倍率依次折算为 330/180/96/48/18/12 步',
+    [1,2,3,4,5,6].map(classActionBase).join(',')==='330,180,96,48,18,12');
+  ok('小队人数越少，缺少英雄协作时获得越高步数补正',
+    classActionSteps(2,1)===660&&classActionSteps(2,3)===192&&classActionSteps(2,6)===24);
+  ok('五题与六题的行动倍率区间明确',
+    classBandRange(2,5)==='2–3 题'&&classBandRange(3,6)==='5–6 题');
   ok('世界景册：至少十二处正典场景', THINK_SCENES.length>=12);
   ok('世界景册：场景编号互不重复', new Set(THINK_SCENE_IDS).size===THINK_SCENES.length);
   ok('世界景册：每处至少两枚异闻彩蛋',
@@ -4064,12 +4540,10 @@ function selftest(){
   ok('自定义名称清洗危险标签且保留中英文',
     cleanDisplayName('<b>星徒 Alpha</b>','失败',12)==='b星徒 Alphab');
   const finishClassQuestions=()=>{
-    let guard=0;
-    while(G.classroom.phase==='think'&&guard++<10)beginClassJudge();
+    if(G.classroom.phase==='think')beginClassJudge();
   };
   const gradeClassRound=corrects=>{
     corrects.forEach((n,i)=>setClassGrade(i,n));
-    confirmClassGrades();
   };
 
   startClassGame(['jin','wen'],{headless:true,rhythm:CLASS_RHYTHM_BATCH,questions:5,
@@ -4080,8 +4554,9 @@ function selftest(){
     G.classroom.players[1].name==='文同学');
   ok('课堂节奏：默认推荐自由选人行动', G.classroom.rhythm===CLASS_RHYTHM_BATCH);
   ok('全员答题：人数不改变本轮 5 题', G.classroom.questionTotal===5);
-  ok('答题开始先进入静态思考阶段', G.classroom.phase==='think');
-  ok('随章节场景：第一题从旧课堂开始', classThinkScene().id==='classroom');
+  ok('开局直接进入静态场景与行动倍率同屏页',
+    G.classroom.phase==='judge'&&G.classroom.questionIndex===5);
+  ok('随章节场景：第一轮从旧课堂开始', classThinkScene().id==='classroom');
   G.wall=new Array(N*N).fill(false);
   const classP0=G.classroom.players[0], classP1=G.classroom.players[1];
   classP0.px=4; classP0.py=4; classP1.px=4; classP1.py=3; classLoadPlayer(0);
@@ -4089,52 +4564,62 @@ function selftest(){
   ok('课堂敌人的红叉预告命中实际目标星徒',
     G.ents[0].intent.t==='atk'&&G.ents[0].intent.cells.some(c=>c.x===classP1.px&&c.y===classP1.py));
   const thinkPos=G.px+','+G.py; act('w');
-  ok('静态思考阶段不能误操作地图', G.classroom.phase==='think'&&(G.px+','+G.py)===thinkPos);
-  beginClassJudge();
-  ok('第一题完成只推进题号，不逐人打开判分页',
-    G.classroom.phase==='think'&&G.classroom.questionIndex===1&&
-    classP0.roundAnswers===0&&classP1.roundAnswers===0);
-  ok('随章节场景：第二题切到学府长桥', classThinkScene().id==='academy');
+  ok('静态答题判分页不能误操作地图', G.classroom.phase==='judge'&&(G.px+','+G.py)===thinkPos);
   const beforeBlocked=G.px+','+G.py;
   act('w');
-  ok('批次未答完时行动输入失效',
-    G.classroom.phase==='think'&&(G.px+','+G.py)===beforeBlocked);
+  ok('倍率未选完时行动输入失效',
+    G.classroom.phase==='judge'&&(G.px+','+G.py)===beforeBlocked);
   finishClassQuestions();
   ok('五题完成后只打开一次全员判分板',
     G.classroom.phase==='judge'&&G.classroom.questionIndex===5&&
     G.classroom.players.every(p=>!p.judged));
   setClassGrade(1,2);
   ok('判分板可任意顺序先填二号', classP1.judged&&classP1.roundScore===2&&!classP0.judged);
-  setClassGrade(0,5);confirmClassGrades();
-  ok('全员确认后统一生成行动点',
-    G.classroom.phase==='ready'&&classP0.score===5&&classP0.roundAp===3&&
-    classP1.score===2&&classP1.roundAp===2);
-  classBeginActions();selectClassActionPlayer(1);
+  setClassGrade(0,3);
+  ok('最后一人选完自动生成步数并进入行动',
+    G.classroom.phase==='act'&&classP0.score===3&&classP0.roundAp===540&&
+    classP1.score===2&&classP1.roundAp===360);
+  selectClassActionPlayer(1);
   ok('自由行动可直接先选二号星徒',
-    G.classroom.current===1&&G.classroom.ap===2&&classP0.roundAp===3);
+    G.classroom.current===1&&G.classroom.ap===360&&classP0.roundAp===540);
   selectClassActionPlayer(0);act('u');
   ok('课堂星徒不能走进同伴所在格',
-    G.px===4&&G.py===4&&G.classroom.ap===3&&G.classroom.current===0);
+    G.px===4&&G.py===4&&G.classroom.ap===540&&G.classroom.current===0);
   ok('自由换人不会增加行动点总量',
-    G.classroom.players.reduce((n,p)=>n+p.roundAp,0)===5);
+    G.classroom.players.reduce((n,p)=>n+p.roundAp,0)===900);
+  G.coin=12;
+  const beforeBell=G.classroom.ap;
+  const boughtBell=buyShopItem('bell');
+  ok('金币可兑换共鸣行动包',
+    boughtBell&&G.coin===0&&G.spent===12&&G.classroom.ap===beforeBell+180);
+  document.getElementById('shop').classList.add('hidden');
+  const beforeEarlyTurn=G.turns;
+  finishClassActionsEarly();
+  ok('老师可主动结束剩余行动并进入下一轮',
+    G.turns===beforeEarlyTurn+1&&G.classroom.phase==='judge'&&
+    G.classroom.players.every(p=>p.roundAp===0));
 
   startClassGame(['jin','wen'],{headless:true,rhythm:CLASS_RHYTHM_BATCH,questions:5});
   G.wall=new Array(N*N).fill(false); G.stairs=key(0,0);
   const classFoe=mkMob('snake',8,8); G.ents=[classFoe]; computeIntents();
   const foeX0=classFoe.x, tick0=classFoe.tick;
-  finishClassQuestions();gradeClassRound([0,0]);classBeginActions();act('w');
+  finishClassQuestions();gradeClassRound([1,1]);
+  G.classroom.players[0].roundAp=1;G.classroom.players[1].roundAp=1;G.classroom.ap=1;
+  act('w');
   ok('无界面流程：第一人用完自动接上下一位',
     G.classroom.current===1&&G.classroom.phase==='act'&&G.classroom.ap===1);
   ok('第一人走完时敌人还没有行动', classFoe.x===foeX0&&classFoe.tick===tick0&&G.turns===0);
   act('w');
-  ok('全队行动完敌人才行动并开启下一轮思考',
-    G.turns===1&&classFoe.tick===tick0+1&&G.classroom.phase==='think');
-  ok('下一轮仍从全员共同答题开始', G.classroom.questionIndex===0&&G.classroom.questionTotal===5);
+  ok('全队行动完敌人才行动并开启下一轮静态判分页',
+    G.turns===1&&classFoe.tick===tick0+1&&G.classroom.phase==='judge');
+  ok('下一轮仍是五题一批且无需逐题确认',
+    G.classroom.questionIndex===5&&G.classroom.questionTotal===5);
 
   startClassGame(['jin'],{headless:true,rhythm:CLASS_RHYTHM_BATCH,questions:6,
     sceneMode:CLASS_SCENE_WANDER,eggLevel:CLASS_EGGS_RICH});
-  const wander0=classThinkScene().id; beginClassJudge(); const wander1=classThinkScene().id;
-  ok('六域巡游：相邻题目会更换风景', wander0==='classroom'&&wander1==='academy');
+  const wander0=classThinkScene().id;
+  G.classroom.roundNumber++;const wander1=classThinkScene().id;
+  ok('六域巡游：相邻轮次会更换风景', wander0!==wander1);
   startClassGame(['jin'],{headless:true,rhythm:CLASS_RHYTHM_BATCH,questions:6,
     sceneMode:CLASS_SCENE_FIXED,fixedScene:'abyss',eggLevel:CLASS_EGGS_RICH});
   ok('固定一景：老师选择海渊后保持海渊', classThinkScene().id==='abyss');
@@ -4149,10 +4634,10 @@ function selftest(){
   ok('固定顺序模式仍使用全员一屏判分', G.classroom.rhythm===CLASS_RHYTHM_RELAY);
   G.wall=new Array(N*N).fill(false); G.stairs=key(0,0);
   G.ents=[mkMob('snake',8,8)]; computeIntents();
-  finishClassQuestions();
   ok('固定顺序也要完成整轮题目后才判分', G.classroom.phase==='judge');
-  gradeClassRound([0,0]);classBeginActions();
+  gradeClassRound([1,1]);
   ok('固定顺序从轮值起始座位自动开始', G.classroom.current===0&&G.classroom.phase==='act');
+  G.classroom.players[0].roundAp=1;G.classroom.players[1].roundAp=1;G.classroom.ap=1;
   act('w');
   ok('固定顺序第一位走完自动轮到第二位行动',
     G.classroom.current===1&&G.classroom.phase==='act');
@@ -4161,10 +4646,9 @@ function selftest(){
   const rested=G.classroom.players[0], standing=G.classroom.players[1];
   rested.hp=1; hurtClassPlayer(rested,5,null);
   ok('星徒倒下只在本层休整', rested.resting===true&&standing.resting===false&&G.over===false);
-  finishClassQuestions();gradeClassRound([5,3]);
-  ok('休整星徒仍在同一页面判分并累计答对数',
-    rested.judged&&rested.roundAnswers===5&&rested.roundScore===5&&rested.roundAp===3&&rested.score===5);
-  classBeginActions();
+  finishClassQuestions();gradeClassRound([3,2]);
+  ok('休整星徒仍在同一页面获得行动星',
+    rested.judged&&rested.roundAnswers===5&&rested.roundScore===3&&rested.roundAp===540&&rested.score===3);
   ok('休整星徒本层不能行动', G.classroom.current===1&&G.classroom.phase==='act');
   const restedMax=rested.maxhp;
   loadFloor(1);
@@ -4193,8 +4677,8 @@ function selftest(){
   G.headless=false;G.classroom.players[0].score=4;saveClassRun();
   const savedClass=loadClassRun();
   ok('课堂存档往返：人数/阶段/题号一致',
-    savedClass&&savedClass.classroom.players.length===2&&savedClass.classroom.phase==='think'&&
-    savedClass.classroom.questionIndex===0&&savedClass.classroom.players[0].score===4);
+    savedClass&&savedClass.classroom.players.length===2&&savedClass.classroom.phase==='judge'&&
+    savedClass.classroom.questionIndex===5&&savedClass.classroom.players[0].score===4);
   ok('课堂存档保留队名与成员自定义名',
     savedClass&&savedClass.classroom.teamName==='存档测试队'&&
     savedClass.classroom.players[0].name==='存档甲');
@@ -4211,8 +4695,8 @@ function selftest(){
   ok('坏课堂档被拒收(英雄不存在)', loadClassRun()===null);
   try{localStorage.setItem(CLASS_RUN_KEY,JSON.stringify(savedClass));}catch(err){}
   G=null;resumeClassRun();
-  ok('课堂续玩回到原来的思考步骤',
-    G&&G.classroom&&G.classroom.phase==='think'&&G.classroom.players[0].score===4);
+  ok('课堂续玩回到同一轮静态倍率页',
+    G&&G.classroom&&G.classroom.phase==='judge'&&G.classroom.players[0].score===4);
   document.getElementById('classThink').classList.add('hidden');
   show('menu');
 
@@ -4236,15 +4720,19 @@ function selftest(){
   ok('本机榜记录个人昵称、队名与成员名',
     RANKS.personal[0].name==='测试旅人'&&RANKS.classroom[0].teamName==='银河七组'&&
     RANKS.classroom[0].players[1].name==='文同学');
+  ok('旧个人榜记录会自动补算综合分',
+    personalRankScore({won:true,floor:9,kills:24,turns:67,coin:58})===20278);
+  ok('旧课堂榜记录会自动补算综合分',
+    classRankScore({won:true,floor:9,kills:31,turns:18,avg:10.5,discoveries:7})===25536);
   const cloudPersonal=cloudEntry('personal',RANKS.personal[0]);
   const cloudClass=cloudEntry('classroom',RANKS.classroom[0]);
   ok('云榜个人仅带昵称与复合成绩',
     cloudPersonal.name==='测试旅人'&&cloudPersonal.action==='sdsub'&&cloudPersonal.kind==='personal'&&
     Number.isInteger(cloudPersonal.score)&&!('players' in cloudPersonal)&&
-    decodeCloudScore('personal',cloudPersonal.score).turns===54);
+    decodeCloudScore('personal',cloudPersonal.score).v3===true);
   ok('云榜课堂只带队名，不含成员名单',
     cloudClass.name==='银河七组'&&cloudClass.kind==='classroom'&&!('players' in cloudClass)&&
-    decodeCloudScore('classroom',cloudClass.score).total===14);
+    decodeCloudScore('classroom',cloudClass.score).v3===true);
 
   // 便携备份码：整包往返，损坏内容拒绝
   const backupRound=backupDecode(backupEncode(makeBackupPayload()));
@@ -4297,34 +4785,28 @@ function selftest(){
   CLASS_SETUP.eggLevel=CLASS_EGGS_NORMAL;
 
   startClassGame(['jin','wen'],{headless:true,rhythm:CLASS_RHYTHM_BATCH,questions:5});
-  G.headless=false; show('game'); showClassThink();
+  G.headless=false; show('game'); showClassJudge();
   const blockedTurns=G.turns;
   act('w');
-  ok('静态地图思考层打开时输入被拦截',
-    G.turns===blockedTurns&&G.classroom.phase==='think'&&
-    !document.getElementById('classThink').classList.contains('hidden')&&
-    document.getElementById('classJudge').classList.contains('hidden'));
-  for(let i=0;i<5;i++)beginClassJudge();
-  act('w');
-  ok('整轮题目完成后才出现全员判分板并拦截地图',
+  ok('静态地图与倍率板同屏时输入被拦截',
     G.turns===blockedTurns&&G.classroom.phase==='judge'&&
+    document.getElementById('classThink').classList.contains('hidden')&&
+    !document.getElementById('classJudge').classList.contains('hidden')&&
     document.querySelectorAll('#groupGradeBoard .gradeplayer').length===2);
-  setClassGrade(1,2);setClassGrade(0,5);
-  ok('一屏判分可以先点任意学生并随时修改',
-    G.classroom.players[1].roundScore===2&&G.classroom.players[0].roundScore===5);
-  confirmClassGrades();
-  ok('全员填完才显示行动点概览', G.classroom.phase==='ready');
-  classBeginActions();
-  ok('推荐模式先打开一张全队行动板',
+  setClassGrade(1,2);
+  ok('一屏倍率板可以先点任意学生',
+    G.classroom.players[1].roundScore===2&&!G.classroom.players[0].judged);
+  setClassGrade(0,3);
+  ok('最后一人选完自动打开全队行动板',
     G.classroom.phase==='act'&&G.classroom.ap===0&&
     !document.getElementById('classAction').classList.contains('hidden'));
   selectClassActionPlayer(1);
   ok('行动板直接选择任意星徒后回到地图',
-    G.classroom.current===1&&G.classroom.ap===2&&
+    G.classroom.current===1&&G.classroom.ap===360&&
     document.getElementById('classAction').classList.contains('hidden'));
   selectClassActionPlayer(0);
   ok('地图名单也能直接换人且不丢行动点',
-    G.classroom.current===0&&G.classroom.ap===3&&G.classroom.players[1].roundAp===2);
+    G.classroom.current===0&&G.classroom.ap===540&&G.classroom.players[1].roundAp===360);
   document.getElementById('classThink').classList.add('hidden');
   document.getElementById('classJudge').classList.add('hidden');
   document.getElementById('classAction').classList.add('hidden');
@@ -4375,6 +4857,7 @@ function selftest(){
     CLASS_SETUP.sceneMode=__sceneMode0;
     CLASS_SETUP.fixedScene=__fixedScene0;
     CLASS_SETUP.eggLevel=__eggLevel0;
+    CLASS_SETUP.heat=__heat0;
   }catch(err){}
 
   G=null;
@@ -4388,7 +4871,7 @@ function mkMob(type,x,y){
   const t=MOBS[type];
   return {x,y,type,name:t.name,spr:t.spr,hp:t.hp,maxhp:t.hp,atk:t.atk,
           coin:t.coin,boss:!!t.boss,pattern:t.pattern||null,range:t.range||0,
-          slow:!!t.slow,tick:0,intent:null,flash:0};
+          slow:!!t.slow,armor:t.armor||0,rare:!!t.rare,elite:false,tick:0,intent:null,flash:0};
 }
 function qaScene(mode){
   startGame('jin');
@@ -4401,13 +4884,19 @@ function qaScene(mode){
   else if(mode==='ye'){ setF(8); const q=mkMob('ye',5,4); q.tick=2;
     G.ents=[q, mkMob('shell',3,6), mkMob('shade',2,3)]; }
   else if(mode==='ch2'){ setF(3); G.ents=[mkMob('viper',4,7), mkMob('shade',5,4), mkMob('snake',2,5)]; }
+  else if(mode==='world'){ setF(6); G.ents=[mkMob('witch',6,4),mkMob('guard',4,7),
+    mkMob('wisp',2,5),mkMob('mimic',4,2)]; }
   else
   G.ents=[mkMob('snake',5,4), mkMob('crow',4,2), mkMob('shade',2,5)];
-  G.items=[{x:6,y:6,type:'potion'},{x:3,y:6,type:'sword'},{x:6,y:2,type:'coin'}];
+  G.items=mode==='world'
+    ?[{x:6,y:6,type:'chest'},{x:3,y:6,type:'spike'},{x:6,y:2,type:'rift'},
+      {x:3,y:2,type:'rift'},{x:2,y:6,type:'shrine'},{x:7,y:5,type:'bomb'}]
+    :[{x:6,y:6,type:'potion'},{x:3,y:6,type:'sword'},{x:6,y:2,type:'coin'}];
   [[5,4],[4,2],[2,5],[6,6],[3,6],[6,2],[4,4],[4,3],[3,5],[5,5],[5,6],[6,5],[4,5],[5,3],[6,3],[6,4]]
     .forEach(([x,y])=>{ G.wall[key(x,y)]=false; });
   G.stairs=key(7,7); G.wall[key(7,7)]=false; G.wall[key(7,6)]=false;
   computeIntents(); syncHud();
+  if(mode==='shop'){G.coin=60;G.spent=0;syncHud();buildShop();}
 }
 function qaClass(mode){
   if(mode==='setup'){
@@ -4501,7 +4990,7 @@ else{
   else if(h.startsWith('#qa-class-')) qaClass(h.slice(10));
   else if(h.startsWith('#qa-')) qaScene(h.slice(4));
   else if(h.startsWith('#sim')){
-    const per=parseInt(h.slice(5),10)||40;
+    const per=parseInt(h.replace(/^#sim-?/,''),10)||40;
     const t0=performance.now();
     const res={single:runSim(per),classroom:{
       batch5:runClassSim(per,CLASS_RHYTHM_BATCH,5),
