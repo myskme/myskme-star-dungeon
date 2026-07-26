@@ -518,6 +518,7 @@ body{
 .cloudline b{color:var(--ink);font-size:11px}
 .cloudstatus{color:var(--ink3);font-size:9px;line-height:1.5;text-align:right}
 .cloudstatus.good{color:#79b889}.cloudstatus.bad{color:#d88983}
+.cloudstatus.busy{color:#e8cf95}
 .cloudprivacy{font-size:9px;line-height:1.6;color:var(--ink3);margin-top:7px}
 .cloudbtn{min-height:34px;padding:5px 8px;border:2px solid #343b58;background:#151a2a;color:var(--ink2);
   font:700 9px var(--px);cursor:pointer;white-space:nowrap}
@@ -527,6 +528,9 @@ body{
 .rankrow{display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:center;border:2px solid #2d334a;
   background:#10131f;padding:8px}
 .rankrow.top{border-color:var(--gold3);background:#17150f}
+.rankrow.mine{border-color:#5f739d;box-shadow:inset 4px 0 0 #8ca7d7}
+.rankrow.mine .rankmain b:after{content:'我的记录';display:inline-block;margin-left:6px;padding:1px 4px;
+  border:1px solid #5f739d;color:#a9c3ee;font-size:7px;vertical-align:2px}
 .rankno{font-size:18px;color:var(--gold2);text-align:center}
 .rankmain{min-width:0}
 .rankmain b{display:block;color:var(--ink);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -621,6 +625,7 @@ body{
       <button class="menuutil" id="btnCodex"><b>黑域图鉴</b>敌人档案</button>
       <button class="menuutil" id="btnResearch"><b>黑域研究</b>谜卷与收藏</button>
       <button class="menuutil" id="btnHow"><b>怎么玩</b>规则说明</button>
+      <button class="menuutil" id="btnMenuAudio"><b>声音工坊</b><span id="menuAudioState">音效与音乐全开</span></button>
     </div>
   </div>
 
@@ -716,6 +721,7 @@ body{
       <button class="btn" id="btnShop">星币商店</button>
       <button class="btn" id="btnResearch2">谜卷研究</button>
       <button class="btn" id="btnSound">音效 开</button>
+      <button class="btn" id="btnMusic">音乐 开</button>
       <button class="btn" id="btnHow2">怎么玩</button>
     </div>
   </div>
@@ -817,14 +823,14 @@ body{
           <b>公开我的最佳成绩</b>
           <button class="cloudbtn" id="btnCloudShare">未开启</button>
         </div>
-        <div class="cloudprivacy">开启后，个人榜只上传个人昵称，课堂榜只上传队名。每位学生的自定义名永远只留在本机。</div>
+        <div class="cloudprivacy">开启后，个人榜只上传个人昵称，课堂榜只上传队名。每位学生的自定义名永远只留在本机；上传成功会立即回读核对。</div>
         <div class="cloudstatus" id="cloudStatus">云榜读取无需开启；上传由你手动选择。</div>
       </div>
       <div class="ranksummary" id="rankSummary"></div>
       <div class="ranklist" id="rankList"></div>
       <div class="row" style="margin-top:12px">
         <button class="btn" id="btnRankClear">清空本机当前榜</button>
-        <button class="btn hidden" id="btnCloudRefresh">刷新云榜</button>
+        <button class="btn hidden" id="btnCloudRefresh">刷新并核对</button>
         <button class="btn" id="btnRankClose">回到主菜单</button>
       </div>
     </div>
@@ -2146,47 +2152,195 @@ function classThinkEgg(scene){
   return scene.eggs[(c.roundNumber+scene.id.length)%scene.eggs.length];
 }
 
-/* ---------- 8-bit 音效（WebAudio 程序合成，零音频文件） ---------- */
-const SND={ac:null, on:true};
+/* ---------- 自适应像素音频系统 ----------
+   全部由 WebAudio 即时合成：零外链、零版权素材、离线也有完整音效与分场景 BGM。 */
+const SND={ac:null,on:true,musicOn:true,master:null,sfxBus:null,musicBus:null,noise:null,
+  wanted:'menu',track:'',step:0,next:0,timer:null,token:0,unlocked:false};
 const TONES={
-  move:   [{f:220,t:'square',d:.045,v:.05}],
-  hit:    [{f:180,t:'square',d:.07,v:.13},{f:120,t:'square',d:.06,v:.10,at:.04}],
-  crit:   [{f:330,t:'square',d:.08,v:.16},{f:660,t:'square',d:.10,v:.14,at:.05}],
-  hurt:   [{f:150,t:'sawtooth',d:.16,v:.16},{f:90,t:'sawtooth',d:.16,v:.13,at:.05}],
-  pickup: [{f:520,t:'square',d:.06,v:.12},{f:780,t:'square',d:.08,v:.12,at:.05}],
-  stairs: [{f:440,t:'square',d:.07,v:.11},{f:330,t:'square',d:.07,v:.11,at:.06},
-           {f:220,t:'square',d:.12,v:.11,at:.12}],
-  boss:   [{f:70,t:'sawtooth',d:.42,v:.20},{f:104,t:'square',d:.30,v:.12,at:.10}],
-  win:    [{f:392,t:'square',d:.10,v:.14},{f:523,t:'square',d:.10,v:.14,at:.10},
-           {f:659,t:'square',d:.10,v:.14,at:.20},{f:784,t:'square',d:.24,v:.15,at:.30}],
-  lose:   [{f:330,t:'square',d:.14,v:.14},{f:262,t:'square',d:.14,v:.13,at:.13},
-           {f:196,t:'square',d:.30,v:.13,at:.26}]
+  ui:     [{f:420,t:'square',d:.045,v:.055},{f:630,t:'triangle',d:.055,v:.035,at:.025}],
+  move:   [{f:196,t:'square',d:.035,v:.032,to:220}],
+  hit:    [{f:185,t:'square',d:.065,v:.11,to:120},{noise:1,d:.045,v:.045,filter:1500}],
+  crit:   [{f:330,t:'square',d:.075,v:.13,to:660},{f:990,t:'triangle',d:.12,v:.09,at:.045},
+           {noise:1,d:.06,v:.055,filter:2300}],
+  hurt:   [{f:165,t:'sawtooth',d:.13,v:.13,to:82},{noise:1,d:.10,v:.055,filter:900}],
+  guard:  [{f:294,t:'triangle',d:.08,v:.09},{f:440,t:'triangle',d:.14,v:.07,at:.035}],
+  pickup: [{f:523,t:'square',d:.055,v:.085},{f:784,t:'square',d:.075,v:.075,at:.045}],
+  coin:   [{f:659,t:'square',d:.045,v:.07},{f:988,t:'square',d:.07,v:.07,at:.04}],
+  heal:   [{f:392,t:'triangle',d:.09,v:.08},{f:523,t:'triangle',d:.11,v:.08,at:.07},
+           {f:659,t:'triangle',d:.15,v:.07,at:.14}],
+  clue:   [{f:440,t:'triangle',d:.12,v:.075},{f:554,t:'triangle',d:.15,v:.07,at:.08},
+           {f:740,t:'sine',d:.22,v:.065,at:.16}],
+  relic:  [{f:262,t:'triangle',d:.11,v:.07},{f:392,t:'triangle',d:.13,v:.075,at:.075},
+           {f:659,t:'triangle',d:.24,v:.08,at:.15}],
+  route:  [{f:220,t:'square',d:.08,v:.07},{f:330,t:'square',d:.09,v:.07,at:.07},
+           {f:494,t:'triangle',d:.18,v:.08,at:.14}],
+  tactic: [{f:196,t:'square',d:.07,v:.08},{f:294,t:'square',d:.07,v:.08,at:.055},
+           {f:440,t:'square',d:.14,v:.085,at:.11}],
+  turn:   [{f:440,t:'triangle',d:.06,v:.06},{f:587,t:'triangle',d:.10,v:.065,at:.05}],
+  correct:[{f:523,t:'square',d:.07,v:.075},{f:659,t:'square',d:.07,v:.075,at:.06},
+           {f:784,t:'triangle',d:.12,v:.07,at:.12}],
+  wrong:  [{f:247,t:'square',d:.08,v:.07},{f:220,t:'square',d:.14,v:.065,at:.07}],
+  trap:   [{noise:1,d:.15,v:.11,filter:650},{f:82,t:'sawtooth',d:.18,v:.09,to:48}],
+  lever:  [{f:147,t:'square',d:.06,v:.07},{f:294,t:'square',d:.08,v:.075,at:.06},
+           {f:587,t:'triangle',d:.16,v:.07,at:.12}],
+  teleport:[{f:220,t:'sine',d:.24,v:.06,to:880},{f:659,t:'triangle',d:.16,v:.055,at:.12}],
+  /* 过层必须是“门被打开、向上进发”，不再使用从 440 掉到 220 的阵亡式下坠音。 */
+  stairs: [{f:294,t:'square',d:.09,v:.085},{f:440,t:'square',d:.09,v:.085,at:.075},
+           {f:587,t:'triangle',d:.12,v:.085,at:.15},{f:880,t:'triangle',d:.28,v:.08,at:.225}],
+  boss:   [{f:73,t:'sawtooth',d:.36,v:.14,to:55},{f:110,t:'square',d:.24,v:.08,at:.08},
+           {noise:1,d:.22,v:.06,filter:500}],
+  win:    [{f:392,t:'square',d:.09,v:.09},{f:523,t:'square',d:.09,v:.09,at:.075},
+           {f:659,t:'square',d:.09,v:.09,at:.15},{f:784,t:'triangle',d:.12,v:.09,at:.225},
+           {f:1047,t:'triangle',d:.42,v:.085,at:.31}],
+  lose:   [{f:294,t:'triangle',d:.15,v:.075},{f:247,t:'triangle',d:.15,v:.07,at:.13},
+           {f:196,t:'triangle',d:.28,v:.065,at:.26}]
 };
-function sfx(name){
-  if(G && G.sim) return;                 // 模拟局：静默
-  if(!SND.on) return;
-  try{
-    if(!SND.ac) SND.ac=new (window.AudioContext||window.webkitAudioContext)();
-    if(SND.ac.state==='suspended') SND.ac.resume();
-    const ac=SND.ac, now=ac.currentTime;
-    (TONES[name]||[]).forEach(n=>{
-      const o=ac.createOscillator(), g=ac.createGain();
-      o.type=n.t; o.frequency.value=n.f;
-      const t0=now+(n.at||0);
-      g.gain.setValueAtTime(0.0001,t0);
-      g.gain.exponentialRampToValueAtTime(n.v,t0+0.008);
-      g.gain.exponentialRampToValueAtTime(0.0001,t0+n.d);
-      o.connect(g); g.connect(ac.destination);
-      o.start(t0); o.stop(t0+n.d+0.02);
-    });
-  }catch(err){ /* 音频不可用就静默，不影响游戏 */ }
+const BGM={
+  menu:{bpm:82,wave:'triangle',lead:[69,null,72,null,76,74,72,null,67,null,69,72,71,null,67,null],
+    bass:[45,null,null,null,48,null,null,null,41,null,null,null,43,null,null,null],
+    chords:[[57,60,64],[60,64,67],[53,57,60],[55,59,62]],drum:'k...h...k...h...'},
+  think:{bpm:66,wave:'sine',lead:[72,null,null,76,null,null,74,null,69,null,null,72,null,67,null,null],
+    bass:[45,null,null,null,41,null,null,null,43,null,null,null,40,null,null,null],
+    chords:[[57,60,64],[53,57,60],[55,59,62],[52,55,59]],drum:'....h.......h...'},
+  dungeon1:{bpm:104,wave:'square',lead:[62,null,65,67,69,67,65,null,60,null,62,65,64,62,60,null],
+    bass:[38,null,38,null,41,null,43,null,36,null,36,null,41,null,43,null],
+    chords:[[50,53,57],[53,57,60],[48,52,55],[55,58,62]],drum:'k.h.k.h.k.h.k.hh'},
+  dungeon2:{bpm:112,wave:'square',lead:[62,63,65,null,62,58,60,null,62,65,66,65,63,62,58,null],
+    bass:[38,null,39,null,34,null,36,null,38,null,41,null,39,null,34,null],
+    chords:[[50,53,57],[51,55,58],[46,50,53],[48,51,55]],drum:'k.hhk.h.k.hhk.hh'},
+  dungeon3:{bpm:120,wave:'sawtooth',lead:[65,68,67,65,72,null,68,67,65,63,62,63,65,null,60,null],
+    bass:[41,null,36,36,41,null,44,43,41,null,39,39,36,null,41,null],
+    chords:[[53,56,60],[48,53,56],[56,60,63],[51,55,58]],drum:'khh.khh.khh.khhh'},
+  boss:{bpm:136,wave:'square',lead:[62,62,65,63,62,68,67,63,62,62,70,68,67,65,63,60],
+    bass:[38,38,38,41,38,38,43,41,38,38,46,44,43,41,39,36],
+    chords:[[50,53,57],[51,55,58],[46,50,53],[48,51,55]],drum:'khkkhkhkkhkkhkhk'},
+  research:{bpm:78,wave:'triangle',lead:[74,null,70,72,null,67,69,null,75,null,74,70,72,null,66,null],
+    bass:[38,null,null,null,43,null,null,null,39,null,null,null,42,null,null,null],
+    chords:[[50,53,57],[55,58,62],[51,55,58],[54,57,61]],drum:'k.......k...h...'},
+  victory:{bpm:92,wave:'triangle',lead:[67,69,71,72,76,null,74,72,71,72,74,76,79,null,76,null],
+    bass:[43,null,null,null,48,null,null,null,47,null,null,null,45,null,null,null],
+    chords:[[55,59,62],[60,64,67],[59,62,66],[57,60,64]],drum:'k...h...k.h.h...'},
+  defeat:{bpm:60,wave:'sine',lead:[69,null,67,null,64,null,62,null,60,null,62,null,57,null,null,null],
+    bass:[45,null,null,null,41,null,null,null,38,null,null,null,33,null,null,null],
+    chords:[[57,60,64],[53,57,60],[50,53,57],[45,48,52]],drum:'k.......h.......'}
+};
+function ensureAudio(){
+  if(SND.ac)return SND.ac;
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
+  const ac=SND.ac=new AC(),comp=ac.createDynamicsCompressor();
+  SND.master=ac.createGain();SND.sfxBus=ac.createGain();SND.musicBus=ac.createGain();
+  SND.master.gain.value=.72;SND.sfxBus.gain.value=.82;SND.musicBus.gain.value=.32;
+  SND.sfxBus.connect(SND.master);SND.musicBus.connect(SND.master);SND.master.connect(comp);comp.connect(ac.destination);
+  const buf=ac.createBuffer(1,Math.floor(ac.sampleRate*.4),ac.sampleRate),data=buf.getChannelData(0);
+  for(let i=0;i<data.length;i++)data[i]=Math.random()*2-1;
+  SND.noise=buf;return ac;
 }
+function audioTone(bus,n,baseTime){
+  const ac=SND.ac,t0=baseTime+(n.at||0),dur=Math.max(.02,n.d||.08),g=ac.createGain();
+  g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(Math.max(.0002,n.v||.05),t0+.008);
+  g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  if(n.noise){
+    const src=ac.createBufferSource(),filter=ac.createBiquadFilter();
+    src.buffer=SND.noise;filter.type='lowpass';filter.frequency.value=n.filter||1200;
+    src.connect(filter);filter.connect(g);g.connect(bus);src.start(t0);src.stop(t0+dur+.01);return;
+  }
+  const o=ac.createOscillator(),filter=ac.createBiquadFilter();
+  o.type=n.t||'square';o.frequency.setValueAtTime(Math.max(20,n.f||220),t0);
+  if(n.to)o.frequency.exponentialRampToValueAtTime(Math.max(20,n.to),t0+dur);
+  filter.type='lowpass';filter.frequency.value=n.cut||4200;
+  o.connect(filter);filter.connect(g);g.connect(bus);o.start(t0);o.stop(t0+dur+.02);
+}
+function sfx(name){
+  if((G&&(G.sim||G.headless))||!SND.on)return;
+  try{
+    const ac=ensureAudio();if(!ac)return;
+    if(ac.state==='suspended')ac.resume();
+    (TONES[name]||TONES.ui).forEach(n=>audioTone(SND.sfxBus,n,ac.currentTime+.006));
+  }catch(err){/* 音频不可用时静默，不影响游戏 */ }
+}
+function midiHz(n){return 440*Math.pow(2,(n-69)/12);}
+function musicNote(note,when,dur,vol,wave,cut){
+  if(!Number.isFinite(note))return;
+  audioTone(SND.musicBus,{f:midiHz(note),t:wave||'triangle',d:dur,v:vol,cut:cut||2600},when);
+}
+function musicDrum(mark,when,stepDur){
+  if(mark==='k'){
+    audioTone(SND.musicBus,{f:92,t:'sine',d:stepDur*.72,v:.045,to:45,cut:500},when);
+  }else if(mark==='h'){
+    audioTone(SND.musicBus,{noise:1,d:stepDur*.18,v:.016,filter:4200},when);
+  }
+}
+function scheduleMusicStep(track,step,when){
+  const d=60/track.bpm/4,i=step%16,lead=track.lead[i],bass=track.bass[i];
+  if(Number.isFinite(lead))musicNote(lead,when,d*.82,.026,track.wave,track===BGM.boss?1900:3000);
+  if(Number.isFinite(bass))musicNote(bass,when,d*1.75,.022,'triangle',900);
+  if(i%4===0){
+    const chord=track.chords[(i/4)%track.chords.length]||[];
+    chord.forEach((n,j)=>musicNote(n,when,d*3.45,.0065,j===0?'sine':'triangle',1500));
+  }
+  musicDrum(track.drum[i],when,d);
+  return d;
+}
+function pumpMusic(){
+  if(!SND.ac||!SND.musicOn||!BGM[SND.track])return;
+  const ac=SND.ac,track=BGM[SND.track];
+  while(SND.next<ac.currentTime+.28){
+    SND.next+=scheduleMusicStep(track,SND.step++,SND.next);
+  }
+}
+function startMusic(name){
+  if(!SND.musicOn||!BGM[name]||!SND.unlocked)return;
+  const ac=ensureAudio();if(!ac)return;
+  if(SND.track===name&&SND.timer)return;
+  clearInterval(SND.timer);SND.track=name;SND.step=0;SND.next=ac.currentTime+.055;
+  const g=SND.musicBus.gain;g.cancelScheduledValues(ac.currentTime);g.setValueAtTime(.0001,ac.currentTime);
+  g.exponentialRampToValueAtTime(.32,ac.currentTime+.18);
+  pumpMusic();SND.timer=setInterval(pumpMusic,75);
+}
+function stopMusic(){
+  clearInterval(SND.timer);SND.timer=null;SND.track='';
+  if(SND.ac&&SND.musicBus){
+    const t=SND.ac.currentTime,g=SND.musicBus.gain;
+    g.cancelScheduledValues(t);g.setValueAtTime(Math.max(.0001,g.value),t);g.exponentialRampToValueAtTime(.0001,t+.16);
+  }
+}
+function musicScene(name){
+  SND.wanted=BGM[name]?name:'menu';
+  if(SND.musicOn&&SND.unlocked)startMusic(SND.wanted);
+}
+function activeMusicScene(){
+  const visible=id=>{const e=document.getElementById(id);return e&&!e.classList.contains('hidden');};
+  if(visible('over'))return LAST_RESULT&&LAST_RESULT.won?'victory':'defeat';
+  if(visible('research')||visible('routeDraft')||visible('relicDraft'))return'research';
+  if(visible('classThink')||visible('classJudge'))return'think';
+  if(visible('game')&&G){
+    if((G.ents||[]).some(e=>e.boss))return'boss';
+    return ['dungeon1','dungeon2','dungeon3'][(FLOORS[G.fi]||FLOORS[0]).ch]||'dungeon1';
+  }
+  return'menu';
+}
+function refreshMusic(){musicScene(activeMusicScene());}
+function unlockAudio(){
+  try{
+    const ac=ensureAudio();if(!ac)return;
+    SND.unlocked=true;if(ac.state==='suspended')ac.resume();
+    if(SND.musicOn)startMusic(SND.wanted||activeMusicScene());
+  }catch(err){}
+  removeEventListener('pointerdown',unlockAudio,true);removeEventListener('keydown',unlockAudio,true);
+}
+addEventListener('pointerdown',unlockAudio,true);addEventListener('keydown',unlockAudio,true);
+addEventListener('visibilitychange',()=>{
+  if(!SND.ac)return;
+  if(document.hidden)SND.ac.suspend();
+  else if(SND.unlocked){SND.ac.resume();if(SND.musicOn)startMusic(SND.wanted||activeMusicScene());}
+});
 
 /* ---------- 玩家称呼与云端榜身份 ----------
    名称允许中文、英文、数字、空格、点和短横；课堂成员名绝不上传。 */
 const IDENTITY_KEY='starDungeon_identity_v1';
 const CLOUD_QUEUE_KEY='starDungeon_cloud_queue_v1';
 const CLOUD_API='https://myskme-game-api.wzc1020.workers.dev';
+const CLOUD_BUILD='star-dungeon-20260726-audio-cloud';
 const NETWORK_DISABLED=location.hash==='#selftest'||location.hash.startsWith('#qa')||location.hash.startsWith('#sim');
 function cleanDisplayName(raw,fallback,max){
   let s=String(raw==null?'':raw).replace(/[^一-鿿぀-ヿ㐀-䶿A-Za-z0-9 _\-.·]/g,'');
@@ -2203,11 +2357,13 @@ function makeDeviceId(){
   try{return 'sd_'+crypto.randomUUID().replace(/-/g,'').slice(0,24);}
   catch(err){return 'sd_'+Math.random().toString(36).slice(2)+Date.now().toString(36);}
 }
-let IDENTITY={v:1,playerName:'星徒旅人',cloud:false,deviceId:''};
+let IDENTITY={v:2,playerName:'星徒旅人',cloud:false,deviceId:'',lastSync:0,lastError:''};
 function normalizeIdentity(d){
   const id=String(d&&d.deviceId||'').replace(/[^A-Za-z0-9_-]/g,'').slice(0,60);
-  return {v:1,playerName:cleanDisplayName(d&&d.playerName,'星徒旅人',12),
-    cloud:!!(d&&d.cloud),deviceId:id||makeDeviceId()};
+  return {v:2,playerName:cleanDisplayName(d&&d.playerName,'星徒旅人',12),
+    cloud:!!(d&&d.cloud),deviceId:id||makeDeviceId(),
+    lastSync:Math.max(0,Math.floor(Number(d&&d.lastSync)||0)),
+    lastError:String(d&&d.lastError||'').slice(0,80)};
 }
 function identityLoad(){
   try{IDENTITY=normalizeIdentity(JSON.parse(localStorage.getItem(IDENTITY_KEY)||'null'));}
@@ -2236,15 +2392,16 @@ function normalizeResearchMeta(o){
   out.loadout=researchRelic(src.loadout)&&out.relics[src.loadout]?src.loadout:null;
   return out;
 }
-let META={best:{}, seen:{}, sound:true,research:normalizeResearchMeta(null)};
+let META={best:{},seen:{},sound:true,music:true,research:normalizeResearchMeta(null)};
 function metaLoad(){
   try{
     const raw=localStorage.getItem(META_KEY);
-    if(raw){ const o=JSON.parse(raw); META={best:o.best||{}, seen:o.seen||{}, sound:o.sound!==false,
+    if(raw){ const o=JSON.parse(raw); META={best:o.best||{},seen:o.seen||{},sound:o.sound!==false,
+      music:o.music!==false,
       research:normalizeResearchMeta(o.research)}; }
   }catch(err){}
   META.research=normalizeResearchMeta(META.research);
-  SND.on=META.sound;
+  SND.on=META.sound;SND.musicOn=META.music!==false;
 }
 function metaSave(){ try{ localStorage.setItem(META_KEY,JSON.stringify(META)); }catch(err){} }
 function markSeen(){
@@ -2346,7 +2503,9 @@ function cloudEntry(type,r){
 function loadCloudQueue(){
   try{
     const q=JSON.parse(localStorage.getItem(CLOUD_QUEUE_KEY)||'[]');
-    return Array.isArray(q)?q.filter(x=>x&&['personal','classroom'].includes(x.type)&&x.body):[];
+    return Array.isArray(q)?q.filter(x=>x&&['personal','classroom'].includes(x.type)&&x.body)
+      .map(x=>({type:x.type,body:x.body,attempts:Math.max(0,Number(x.attempts)||0),
+        queuedAt:Math.max(0,Number(x.queuedAt)||0)})):[];
   }catch(err){return [];}
 }
 function saveCloudQueue(q){
@@ -2358,51 +2517,105 @@ function saveCloudQueue(q){
 function queueCloudBody(type,body){
   const q=loadCloudQueue(),i=q.findIndex(x=>x.type===type);
   if(i>=0){
-    if(Number(body.score)>=Number(q[i].body.score))q[i]={type,body};
-  }else q.push({type,body});
+    if(Number(body.score)>=Number(q[i].body.score))q[i]={type,body,attempts:q[i].attempts+1,queuedAt:Date.now()};
+  }else q.push({type,body,attempts:1,queuedAt:Date.now()});
   saveCloudQueue(q);
 }
-async function cloudPost(body){
-  const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),6500);
-  try{
-    const res=await fetch(CLOUD_API,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(body),signal:ctl.signal});
-    const data=await res.json();
-    if(!res.ok||!data||data.ok!==true)throw new Error(data&&data.error||('HTTP '+res.status));
-    return data;
-  }finally{clearTimeout(timer);}
+function cloudError(code,message){
+  const e=new Error(message||code);e.code=code;return e;
+}
+function cloudErrorText(err){
+  if(!err)return'未知网络错误';
+  if(err.code==='local')return'本地文件模式不能安全连接云榜，请打开正式在线版';
+  if(err.code==='timeout')return'连接超时，成绩已保留在本机';
+  if(err.code==='bad origin')return'当前网页来源未获云榜许可，请使用正式在线版';
+  if(err.code==='busy')return'云端正在处理其他成绩，请稍后重试';
+  return'网络暂时不稳定，成绩已保留在本机';
+}
+function cloudTransient(err){
+  return !err||['timeout','network','busy','write failed'].includes(err.code);
+}
+async function cloudPost(body,options){
+  if(location.protocol==='file:')throw cloudError('local');
+  const tries=Math.max(1,Math.min(3,Number(options&&options.tries)||2));
+  let last=null;
+  for(let attempt=0;attempt<tries;attempt++){
+    const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),7000+attempt*1500);
+    try{
+      const payload=Object.assign({client:CLOUD_BUILD},body);
+      const res=await fetch(CLOUD_API,{method:'POST',mode:'cors',credentials:'omit',cache:'no-store',
+        headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body:JSON.stringify(payload),signal:ctl.signal});
+      const text=await res.text();let data=null;
+      try{data=JSON.parse(text);}catch(err){throw cloudError('bad response','云端返回格式异常');}
+      if(!res.ok||!data||data.ok!==true)throw cloudError(String(data&&data.error||('HTTP '+res.status)));
+      return data;
+    }catch(err){
+      last=err&&err.name==='AbortError'?cloudError('timeout'):err&&err.code?err:cloudError('network');
+      if(attempt+1>=tries||!cloudTransient(last))throw last;
+      await new Promise(resolve=>setTimeout(resolve,260*(attempt+1)));
+    }finally{clearTimeout(timer);}
+  }
+  throw last||cloudError('network');
 }
 function setCloudStatus(text,kind){
   const el=document.getElementById('cloudStatus');if(!el)return;
-  el.textContent=text;el.className='cloudstatus'+(kind?' '+kind:'');
+  const queued=loadCloudQueue().length;
+  el.textContent=text+(queued?' · 待传 '+queued+' 条':'');
+  el.className='cloudstatus'+(kind?' '+kind:'');
 }
 async function cloudSubmitRecord(type,r){
   if(!IDENTITY.cloud||NETWORK_DISABLED||QA_RANKS||!r)return;
   const body=cloudEntry(type,r);
+  setCloudStatus('正在上传并回读核对……','busy');
   try{
-    const data=await cloudPost(body);
+    const data=await cloudPost(body,{tries:3});
     const q=loadCloudQueue().filter(x=>x.type!==type);saveCloudQueue(q);
-    setCloudStatus('已同步云榜 · 当前第 '+data.rank+' 名','good');
+    if(Array.isArray(data.top))CLOUD_ROWS[type]=data.top;
+    CLOUD_FETCHED_AT[type]=Date.now();
+    CLOUD_MINE[type]=data.mine||CLOUD_MINE[type];
+    IDENTITY.lastSync=Date.now();IDENTITY.lastError='';identitySave();
+    setCloudStatus('上传成功并已回读 · 当前第 '+data.rank+' 名 · '+cloudClock(IDENTITY.lastSync),'good');
+    if(ACTIVE_RANK_SOURCE==='cloud'&&ACTIVE_RANK_TAB===type)buildLeaderboard(type,'cloud');
+    return data;
   }catch(err){
-    queueCloudBody(type,body);
-    setCloudStatus('暂时离线，最佳成绩已排队，联网后可重试。','bad');
+    IDENTITY.lastError=String(err&&err.code||'network');identitySave();
+    if(cloudTransient(err))queueCloudBody(type,body);
+    setCloudStatus(cloudErrorText(err),'bad');
+    return null;
   }
 }
+let CLOUD_FLUSHING=false;
 async function flushCloudQueue(){
-  if(!IDENTITY.cloud||NETWORK_DISABLED)return;
+  if(!IDENTITY.cloud||NETWORK_DISABLED||CLOUD_FLUSHING)return;
+  if(location.protocol==='file:'){setCloudStatus(cloudErrorText(cloudError('local')),'bad');return;}
+  CLOUD_FLUSHING=true;
   const q=loadCloudQueue(),keep=[];
   for(const item of q){
-    try{await cloudPost(item.body);}catch(err){keep.push(item);}
+    try{
+      const data=await cloudPost(item.body,{tries:3});
+      if(Array.isArray(data.top))CLOUD_ROWS[item.type]=data.top;
+      CLOUD_FETCHED_AT[item.type]=Date.now();CLOUD_MINE[item.type]=data.mine||CLOUD_MINE[item.type];
+    }catch(err){
+      if(cloudTransient(err))keep.push({...item,attempts:item.attempts+1});
+    }
   }
   saveCloudQueue(keep);
-  if(q.length)setCloudStatus(keep.length?'仍有成绩等待联网同步。':'离线成绩已经补传。',keep.length?'bad':'good');
+  CLOUD_FLUSHING=false;
+  if(q.length){
+    if(keep.length)setCloudStatus('仍有成绩等待网络恢复。','bad');
+    else{
+      IDENTITY.lastSync=Date.now();IDENTITY.lastError='';identitySave();
+      setCloudStatus('离线成绩已经补传并核对 · '+cloudClock(IDENTITY.lastSync),'good');
+    }
+  }
 }
-function cloudShareBestLocal(){
-  if(!IDENTITY.cloud)return;
+async function cloudShareBestLocal(){
+  if(!IDENTITY.cloud||NETWORK_DISABLED)return;
   const jobs=[];
   if(RANKS.personal[0])jobs.push(cloudSubmitRecord('personal',RANKS.personal[0]));
   if(RANKS.classroom[0])jobs.push(cloudSubmitRecord('classroom',RANKS.classroom[0]));
-  Promise.all(jobs).then(flushCloudQueue);
+  await Promise.allSettled(jobs);await flushCloudQueue();
 }
 function calculateRunScore(won){
   if(!G)return 0;
@@ -2704,7 +2917,8 @@ function resumeClassRun(){
 /* ---------- 便携备份码 ----------
    包含两份续玩档、榜单、图鉴战绩和课堂偏好；导入前全部校验，通过后才整体写入。 */
 function normalizeMetaData(o){
-  const out={best:{},seen:{},sound:!o||o.sound!==false,research:normalizeResearchMeta(o&&o.research)};
+  const out={best:{},seen:{},sound:!o||o.sound!==false,music:!o||o.music!==false,
+    research:normalizeResearchMeta(o&&o.research)};
   if(o&&o.best&&typeof o.best==='object')HEROES.forEach(h=>{
     const b=o.best[h.id];
     if(b&&Number.isInteger(b.floor)&&b.floor>=0&&b.floor<=FLOORS.length&&typeof b.win==='boolean'&&
@@ -2774,7 +2988,8 @@ function applyBackupCode(code){
   CLASS_SETUP.sceneMode=normalizedPrefs.sceneMode;CLASS_SETUP.fixedScene=normalizedPrefs.fixedScene;
   CLASS_SETUP.eggLevel=normalizedPrefs.eggLevel;CLASS_SETUP.heat=normalizedPrefs.heat;
   CLASS_SETUP.teamName=normalizedPrefs.teamName;
-  CLASS_SETUP.names=normalizedPrefs.names.slice();SND.on=META.sound;
+  CLASS_SETUP.names=normalizedPrefs.names.slice();SND.on=META.sound;SND.musicOn=META.music!==false;
+  if(!SND.musicOn)stopMusic();else refreshMusic();
   return true;
 }
 
@@ -2865,7 +3080,7 @@ function collectCaseClue(index,source){
   }
   if(!G.headless){
     const bonus=fresh?(hasRelic('bookmark')?' · 书签 +6 金':''):' · 已收入档案';
-    fnum(G.px,G.py,'谜页 '+(i+1)+'/3'+bonus,'#ffcd75',true);sfx('pickup');flash();
+    fnum(G.px,G.py,'谜页 '+(i+1)+'/3'+bonus,'#ffcd75',true);sfx('clue');flash();
     if(caseAllClues(c.id))fnum(G.px,G.py,'证据齐全 · 可提交推理','#9d72d6',true);
   }
   return fresh;
@@ -3009,6 +3224,7 @@ function chooseResearchRoute(id){
   if(!G||!Number.isInteger(G.routePending)||!(G.routeChoices||[]).includes(id))return false;
   const next=G.routePending;
   applyRouteCommit(id);
+  if(!G.headless)sfx('route');
   G.routePending=null;G.routeChoices=null;
   if(!G.headless)document.getElementById('routeDraft').classList.add('hidden');
   finishDescent(next);return true;
@@ -3036,7 +3252,7 @@ function chooseResearchRelic(id){
   G.relicPending=false;G.relicChoices=null;
   if(!G.headless){
     document.getElementById('relicDraft').classList.add('hidden');
-    fnum(G.px,G.py,fresh?'装备 · '+name:'重复遗物 · +12 金','#ffcd75',true);flash();
+    fnum(G.px,G.py,fresh?'装备 · '+name:'重复遗物 · +12 金','#ffcd75',true);sfx('relic');flash();
   }
   syncHud();if(G.classroom)saveClassRun();else saveRun();return true;
 }
@@ -3267,6 +3483,7 @@ function loadFloor(fi){
   const b=G.ents.find(e=>e.boss);
   if(b) setTimeout(()=>bossEntry(),newChapter?900:260);
   document.getElementById('hFloor').textContent=f.name+(G.loop>0?' · 二周目 '+G.loop:'');
+  refreshMusic();
 }
 function classBeginRound(){
   if(!G||!G.classroom||G.over)return;
@@ -3548,7 +3765,7 @@ function revealThinkEgg(){
   const scene=classThinkScene(),egg=classThinkEgg(scene);if(!egg)return;
   G.classroom.discovered[scene.id+':'+egg.id]=true;
   saveClassRun();
-  if(!G.headless){sfx('pickup');showClassJudge();}
+  if(!G.headless){sfx('clue');showClassJudge();}
 }
 function showClassThink(){
   showClassJudge();
@@ -3618,7 +3835,7 @@ function setClassGrade(index,correct){
   const c=G.classroom,p=c.players[index];if(!p)return;
   p.roundScore=Math.max(1,Math.min(3,Number(correct)||1));
   p.roundAnswers=c.questionTotal;p.roundAp=classActionSteps(p.roundScore,c.players.length);p.judged=true;
-  syncHud();renderGroupGradeBoard();
+  sfx('ui');syncHud();renderGroupGradeBoard();
 }
 function setAllClassGrades(correct){
   if(!G||!G.classroom||G.classroom.phase!=='judge'||G.over)return;
@@ -3627,7 +3844,7 @@ function setAllClassGrades(correct){
     p.roundScore=Math.max(1,Math.min(3,Number(correct)||1));
     p.roundAnswers=c.questionTotal;p.roundAp=classActionSteps(p.roundScore,c.players.length);p.judged=true;
   });
-  syncHud();renderGroupGradeBoard();
+  sfx('correct');syncHud();renderGroupGradeBoard();
 }
 function showClassJudge(){
   if(!G||!G.classroom||G.headless)return;
@@ -3656,6 +3873,7 @@ function confirmClassGrades(){
     p.roundAp=classActionSteps(p.roundScore,c.players.length);
   });
   c.roundPointRows=rows;c.roundPointGain=rows.reduce((n,r)=>n+r.points,0);
+  sfx('correct');
   c.phase='tactic';c.ap=0;c.tacticId=null;
   c.tacticHand=dealClassTactics();
   if(!G.headless)document.getElementById('classJudge').classList.add('hidden');
@@ -3719,6 +3937,7 @@ function chooseClassTactic(id){
   else if(id==='bounty')markTacticTarget('bounty');
   else if(id==='ward')c.players.forEach(p=>{p.hp=Math.min(p.maxhp,p.hp+3);p.ward=(p.ward||0)+1;});
   else if(id==='chain'){c.killAp=2;c.killApLeft=3;}
+  if(!G.headless)sfx('tactic');
   c.phase='ready';
   if(!G.headless)document.getElementById('classTactic').classList.add('hidden');
   syncHud();classBeginActions();saveClassRun();return true;
@@ -3743,6 +3962,7 @@ function selectClassActionPlayer(index,closeBoard){
     const old=classPlayer();if(old)old.roundAp=c.ap;
   }
   classLoadPlayer(index);c.ap=p.roundAp;
+  if(!G.headless)sfx('turn');
   if(closeBoard!==false&&!G.headless)document.getElementById('classAction').classList.add('hidden');
   syncHud();return true;
 }
@@ -3777,6 +3997,7 @@ function useHeroSkill(){
   if(!heroSkillReady()||uiBlocked())return false;
   const owner=G.classroom?classPlayer():G,stats=playerStats(owner);
   G.skillStamp=heroSkillStamp();owner.skillStamp=G.skillStamp;
+  sfx(G.hero.id==='xi'?'heal':G.hero.id==='hao'?'guard':'tactic');
   if(G.hero.id==='jin'){
     G.skillPower='crit';G.skillCharges=1;
     fnum(G.px,G.py,'狐火 · 下一击破甲暴击','#ffcd75',true);
@@ -4321,7 +4542,7 @@ function killFoe(foe){
     }else if(Math.max(Math.abs(G.px-deathSpot.x),Math.abs(G.py-deathSpot.y))<=1)hurtPlayer(2,null);
     fnum(deathSpot.x,deathSpot.y,'砰！笑爆连锁','#9d72d6',true);
   }
-  if(foe.boss && foe.type==='ye'){ sfx('win'); win(); return true; }   // 打倒叶王＝通关
+  if(foe.boss && foe.type==='ye'){ win(); return true; }   // 打倒叶王＝通关
   sfx(foe.boss?'boss':'hit');
   return false;
 }
@@ -4375,7 +4596,7 @@ function playerHit(foe){
 }
 
 function hurtPlayer(dmg,attacker){
-  if(G.ward>0){G.ward--;fnum(G.px,G.py,'星盾抵消','#41a6f6',true);return;}
+  if(G.ward>0){G.ward--;fnum(G.px,G.py,'星盾抵消','#41a6f6',true);sfx('guard');return;}
   G.hp-=dmg;
   fnum(G.px,G.py,'-'+dmg,'#ef4d4d');
   sfx('hurt'); hitNudge(); flash('red');
@@ -4383,11 +4604,11 @@ function hurtPlayer(dmg,attacker){
   if(G.reflect>0 && attacker && G.ents.includes(attacker)){
     damageFoe(attacker,G.reflect,'反弹 -'+G.reflect,'#41a6f6');
   }
-  if(G.hp<=0){ G.hp=0; sfx('lose'); lose(); }
+  if(G.hp<=0){ G.hp=0; lose(); }
 }
 function hurtClassPlayer(p,dmg,attacker){
   if(!p||p.resting)return;
-  if(p.ward>0){p.ward--;if(p===classPlayer())G.ward=p.ward;fnum(p.px,p.py,'星盾抵消','#41a6f6',true);return;}
+  if(p.ward>0){p.ward--;if(p===classPlayer())G.ward=p.ward;fnum(p.px,p.py,'星盾抵消','#41a6f6',true);sfx('guard');return;}
   const guard=G.classroom.players.find(q=>q!==p&&!q.resting&&q.hero.id==='hao'&&
     Math.max(Math.abs(q.px-p.px),Math.abs(q.py-p.py))<=1);
   if(guard){
@@ -4510,11 +4731,14 @@ function pickup(){
         if(G.classroom)classPlayer().hp=G.hp;
         if(heal)fnum(G.px,G.py,'棱镜回光 +'+heal,'#38b764',true);
       }
-      fnum(G.px,G.py,'裂隙跃迁','#7e75d6',true);sfx('stairs');flash();
+      fnum(G.px,G.py,'裂隙跃迁','#7e75d6',true);sfx('teleport');flash();
     }
     return;
   }
   G.items.splice(i,1);
+  const pickupSound={potion:'heal',coin:'coin',sword:'relic',armor:'guard',spike:'trap',mine:'trap',
+    bomb:'trap',chest:'pickup',shrine:'relic',lever:'lever',ward:'guard',spring:'turn'}[it.type];
+  if(pickupSound)sfx(pickupSound);
   playerStats(G.classroom?classPlayer():G).items++;
   if(it.type==='potion'){ const h=Math.min(8,G.maxhp-G.hp); G.hp+=h; fnum(G.px,G.py,'+'+h,'#38b764'); }
   if(it.type==='coin'){ G.coin+=5; fnum(G.px,G.py,'+5 金','#ffcd75'); }
@@ -4615,17 +4839,20 @@ function bossEntry(){
   flash('red'); shake(); sfx('boss');
   const b=G.ents.find(e=>e.boss);
   if(b) fnum(b.x,b.y,'头目 · '+b.name,'#ffcd75',true);
+  refreshMusic();
 }
 
 /* ---------- 结算 ---------- */
 function win(){ if(G.over)return; G.over=true;
   if(G.sim||G.headless) return; // 模拟与无界面测试只分胜负，不碰结算页
+  sfx('win');
   if(G.classroom) clearClassRun();
   else{ clearRun(); recordRun(true); }
   recordRanking(true,false);
   endScreen(true); }
 function lose(){ if(G.over)return; G.over=true;
   if(G.sim||G.headless) return;
+  sfx('lose');
   if(G.classroom) clearClassRun();
   else{ clearRun(); recordRun(false); }
   recordRanking(false,false);
@@ -5167,6 +5394,7 @@ function show(id){
     document.getElementById('classTactic').classList.add('hidden');
     document.getElementById('classAction').classList.add('hidden');
   }
+  queueMicrotask(refreshMusic);
 }
 function renderHeatPicker(id,current,onpick){
   const box=document.getElementById(id);if(!box)return;
@@ -5276,11 +5504,20 @@ let ACTIVE_RANK_SOURCE='local';
 let ACTIVE_RANK_METRIC='overall';
 const CLOUD_ROWS={personal:null,classroom:null};
 const CLOUD_LOADING={personal:false,classroom:false};
+const CLOUD_FETCHED_AT={personal:0,classroom:0};
+const CLOUD_MINE={personal:null,classroom:null};
+function cloudDeviceId(type){return IDENTITY.deviceId+(type==='classroom'?'_c':'_p');}
+function cloudClock(ts){
+  if(!Number.isFinite(ts)||ts<=0)return'尚未同步';
+  const d=new Date(ts),two=n=>String(n).padStart(2,'0');
+  return two(d.getHours())+':'+two(d.getMinutes())+':'+two(d.getSeconds());
+}
 function rankDate(ts){
-  const d=new Date(ts);return (d.getMonth()+1)+'/'+d.getDate();
+  const d=new Date(Number(ts)||0);return Number.isFinite(d.getTime())?(d.getMonth()+1)+'/'+d.getDate():'--';
 }
 function decodeCloudScore(type,score){
   let n=Math.max(0,Math.floor(Number(score)||0));
+  if(n===9000000)return {v3:true,score:null,clamped:true};
   if(n>=10000000)return {v3:true,score:n-10000000};
   const won=n>=5000000;
   if(won)n-=5000000;
@@ -5289,52 +5526,64 @@ function decodeCloudScore(type,score){
     ?{won,floor,kills:Math.floor(n/1000),turns:999-(n%1000)}
     :{won,floor,total:Math.floor(n/10),discoveries:n%10};
 }
+function cloudRankRow(type,r,rank,pinned){
+  const d=decodeCloudScore(type,r.score),row=document.createElement('div');
+  const mine=r.id===cloudDeviceId(type);
+  row.className='rankrow'+(rank<=3?' top':'')+(mine?' mine':'');
+  const rankLabel=pinned?'#'+rank:rank;
+  if(d.v3){
+    row.innerHTML='<div class="rankno">'+rankLabel+'</div><div class="rankmain"><b>'+
+      htmlSafe(r.name)+' · '+(d.clamped?'等待重新同步':'黑域综合挑战')+'</b><span>'+rankDate(r.t)+
+      (d.clamped?' · 旧后端曾截断分数；重新上传后会自动修复':' · 云端已核对的新契约积分')+
+      '</span></div><div class="rankscore">'+(d.clamped?'待修复':'综合分<br>'+d.score)+'</div>';
+    return row;
+  }
+  if(type==='personal'){
+    row.innerHTML='<div class="rankno">'+rankLabel+'</div><div class="rankmain"><b>'+
+      htmlSafe(r.name)+' · '+(d.won?'九层通关':'到达第 '+d.floor+' 层')+'</b><span>'+
+      rankDate(r.t)+' · 击杀 '+d.kills+' · '+d.turns+' 回合</span></div>'+
+      '<div class="rankscore">荣耀<br>'+r.score+'</div>';
+  }else{
+    row.innerHTML='<div class="rankno">'+rankLabel+'</div><div class="rankmain"><b>'+
+      htmlSafe(r.name)+' · '+(d.won?'九层通关':'到达第 '+d.floor+' 层')+'</b><span>'+
+      rankDate(r.t)+' · 课堂总分 '+d.total+' · 异闻 '+d.discoveries+'</span></div>'+
+      '<div class="rankscore">荣耀<br>'+r.score+'</div>';
+  }
+  return row;
+}
 function renderCloudLeaderboard(type){
   const list=document.getElementById('rankList'),data=CLOUD_ROWS[type];
   list.innerHTML='';
   if(data===null){
     list.innerHTML='<div class="rankempty">正在连接云端榜……</div>';return;
   }
-  if(!data.length){
+  if(!data.length&&!CLOUD_MINE[type]){
     list.innerHTML='<div class="rankempty">云榜还没有成绩。<br>开启公开后，真实结算局会自动参与。</div>';return;
   }
-  data.slice(0,50).forEach((r,i)=>{
-    const d=decodeCloudScore(type,r.score),row=document.createElement('div');
-    row.className='rankrow'+(i<3?' top':'');
-    if(d.v3){
-      row.innerHTML='<div class="rankno">'+(i+1)+'</div><div class="rankmain"><b>'+
-        htmlSafe(r.name)+' · 黑域综合挑战</b><span>'+rankDate(r.t)+
-        ' · 新版契约积分</span></div><div class="rankscore">综合分<br>'+d.score+'</div>';
-      list.appendChild(row);return;
-    }
-    if(type==='personal'){
-      row.innerHTML='<div class="rankno">'+(i+1)+'</div><div class="rankmain"><b>'+
-        htmlSafe(r.name)+' · '+(d.won?'九层通关':'到达第 '+d.floor+' 层')+'</b><span>'+
-        rankDate(r.t)+' · 击杀 '+d.kills+' · '+d.turns+' 回合</span></div>'+
-        '<div class="rankscore">荣耀<br>'+r.score+'</div>';
-    }else{
-      row.innerHTML='<div class="rankno">'+(i+1)+'</div><div class="rankmain"><b>'+
-        htmlSafe(r.name)+' · '+(d.won?'九层通关':'到达第 '+d.floor+' 层')+'</b><span>'+
-        rankDate(r.t)+' · 课堂总分 '+d.total+' · 异闻 '+d.discoveries+'</span></div>'+
-        '<div class="rankscore">荣耀<br>'+r.score+'</div>';
-    }
-    list.appendChild(row);
-  });
+  data.slice(0,50).forEach((r,i)=>list.appendChild(cloudRankRow(type,r,i+1,false)));
+  const mine=CLOUD_MINE[type];
+  if(mine&&mine.record&&!data.some(r=>r.id===mine.record.id)){
+    const label=document.createElement('div');label.className='ranksummary';
+    label.textContent='我的最佳成绩未进入前 50，仍已安全保存在云端：';
+    list.appendChild(label);list.appendChild(cloudRankRow(type,mine.record,mine.rank||'—',true));
+  }
 }
 async function loadCloudLeaderboard(type,force){
-  if(CLOUD_LOADING[type]||(!force&&CLOUD_ROWS[type]!==null))return;
-  CLOUD_LOADING[type]=true;CLOUD_ROWS[type]=null;
+  const fresh=Date.now()-CLOUD_FETCHED_AT[type]<15000;
+  if(CLOUD_LOADING[type]||(!force&&CLOUD_ROWS[type]!==null&&fresh))return;
+  const cached=CLOUD_ROWS[type];CLOUD_LOADING[type]=true;CLOUD_ROWS[type]=null;
   if(ACTIVE_RANK_SOURCE==='cloud'&&ACTIVE_RANK_TAB===type)renderCloudLeaderboard(type);
-  setCloudStatus('正在连接云端榜……');
+  setCloudStatus('正在刷新并核对云端记录……','busy');
   try{
-    const data=await cloudPost({action:'sdtop',kind:type});
+    const data=await cloudPost({action:'sdtop',kind:type,id:cloudDeviceId(type)},{tries:3});
     CLOUD_ROWS[type]=Array.isArray(data.top)?data.top:[];
-    setCloudStatus('云榜已更新 · '+CLOUD_ROWS[type].length+' 条公开成绩','good');
+    CLOUD_MINE[type]=data.mine||null;CLOUD_FETCHED_AT[type]=Date.now();
+    IDENTITY.lastSync=Date.now();IDENTITY.lastError='';identitySave();
+    setCloudStatus('云榜已核对 · '+CLOUD_ROWS[type].length+' 条 · '+cloudClock(IDENTITY.lastSync),'good');
   }catch(err){
-    CLOUD_ROWS[type]=[];
-    setCloudStatus(location.protocol==='https:'
-      ?'云榜暂时无法连接，请稍后刷新。'
-      :'本地预览保持离线；发布到 MYSKME 网站后连接云榜。','bad');
+    CLOUD_ROWS[type]=Array.isArray(cached)?cached:[];
+    IDENTITY.lastError=String(err&&err.code||'network');identitySave();
+    setCloudStatus(cloudErrorText(err),'bad');
   }finally{
     CLOUD_LOADING[type]=false;
     if(ACTIVE_RANK_SOURCE==='cloud'&&ACTIVE_RANK_TAB===type){
@@ -5504,11 +5753,13 @@ function submitMysteryAnswer(index){
     if((G.relics||[]).length<3&&!hasRelic(c.reward))equipRelic(c.reward);
     metaSave();syncHud();
     if(G.classroom)saveClassRun();else saveRun();
+    sfx('relic');
     buildResearch('推理成立！+20 金，并解锁「'+researchRelic(c.reward).name+'」蓝图。','good');
     return true;
   }
   meta.wrong[c.id]=(meta.wrong[c.id]||0)+1;metaSave();
   if(G.classroom)saveClassRun();else saveRun();
+  sfx('wrong');
   buildResearch('推理暂未成立。不会丢失线索；研究册已补上一条方向提示。','bad');
   return false;
 }
@@ -5525,14 +5776,20 @@ function drawSprSil(c,name){
   }
 }
 function syncSoundBtn(){
-  const b=document.getElementById('btnSound');
-  if(b) b.textContent='音效 '+(SND.on?'开':'关');
+  const b=document.getElementById('btnSound'),m=document.getElementById('btnMusic');
+  if(b)b.textContent='音效 '+(SND.on?'开':'关');
+  if(m)m.textContent='音乐 '+(SND.musicOn?'开':'关');
+  const state=document.getElementById('menuAudioState');
+  if(state)state.textContent=SND.on&&SND.musicOn?'音效与音乐全开':
+    SND.on?'仅音效开启':SND.musicOn?'仅音乐开启':'当前静音';
 }
 function syncCloudControl(){
   const b=document.getElementById('btnCloudShare');if(!b)return;
   b.textContent=IDENTITY.cloud?'已开启':'未开启';
   b.classList.toggle('on',IDENTITY.cloud);
-  if(!IDENTITY.cloud)setCloudStatus('云榜读取无需开启；上传由你手动选择。');
+  if(location.protocol==='file:')setCloudStatus('本地文件保持离线；请用正式在线版查看和上传云榜。','bad');
+  else if(!IDENTITY.cloud)setCloudStatus('云榜读取无需开启；上传由你手动选择。');
+  else if(IDENTITY.lastSync)setCloudStatus('上次云端核对 '+cloudClock(IDENTITY.lastSync),'good');
 }
 
 const CLASS_PREF_KEY='starDungeon_classroom_prefs_v1';
@@ -5816,9 +6073,9 @@ armConfirmButton(document.getElementById('btnImportBackup'),'再点一次确认�
   }catch(err){archiveMessage('导入失败：'+err.message,'bad');}
 });
 document.getElementById('btnRanks').onclick=()=>{
-  syncCloudControl();buildLeaderboard(ACTIVE_RANK_TAB,ACTIVE_RANK_SOURCE);
-  if(IDENTITY.cloud)flushCloudQueue();
   document.getElementById('leaderboard').classList.remove('hidden');
+  syncCloudControl();buildLeaderboard(ACTIVE_RANK_TAB,ACTIVE_RANK_SOURCE);
+  if(IDENTITY.cloud&&location.protocol!=='file:')cloudShareBestLocal();
 };
 document.getElementById('leaderboard').addEventListener('click',ev=>{
   const tab=ev.target.closest('[data-rank-tab]');
@@ -5828,12 +6085,16 @@ document.getElementById('leaderboard').addEventListener('click',ev=>{
   const metric=ev.target.closest('[data-rank-metric]');
   if(metric){ACTIVE_RANK_METRIC=metric.dataset.rankMetric;buildLeaderboard(ACTIVE_RANK_TAB);}
 });
-document.getElementById('btnCloudRefresh').onclick=()=>
-  loadCloudLeaderboard(ACTIVE_RANK_TAB,true);
+document.getElementById('btnCloudRefresh').onclick=()=>{
+  sfx('ui');loadCloudLeaderboard(ACTIVE_RANK_TAB,true);
+};
 document.getElementById('btnCloudShare').onclick=()=>{
+  if(location.protocol==='file:'){
+    IDENTITY.cloud=false;identitySave();syncCloudControl();return;
+  }
   IDENTITY.cloud=!IDENTITY.cloud;identitySave();syncCloudControl();
   if(IDENTITY.cloud){
-    setCloudStatus('已开启，正在同步本机最佳成绩……');
+    setCloudStatus('已开启，正在上传并回读本机最佳成绩……','busy');
     cloudShareBestLocal();
   }else{
     saveCloudQueue([]);
@@ -5851,7 +6112,16 @@ armConfirmButton(document.getElementById('btnRankClear'),'再点一次确认清�
 document.getElementById('btnSound').onclick=()=>{
   SND.on=!SND.on; META.sound=SND.on; metaSave(); syncSoundBtn(); if(SND.on) sfx('pickup');
 };
-addEventListener('online',()=>{if(IDENTITY.cloud)flushCloudQueue();});
+document.getElementById('btnMusic').onclick=()=>{
+  SND.musicOn=!SND.musicOn;META.music=SND.musicOn;metaSave();syncSoundBtn();
+  if(SND.musicOn){unlockAudio();refreshMusic();}else stopMusic();
+};
+document.getElementById('btnMenuAudio').onclick=()=>{
+  const turnOn=!(SND.on&&SND.musicOn);
+  SND.on=turnOn;SND.musicOn=turnOn;META.sound=turnOn;META.music=turnOn;metaSave();syncSoundBtn();
+  if(turnOn){unlockAudio();sfx('pickup');refreshMusic();}else stopMusic();
+};
+addEventListener('online',()=>{if(IDENTITY.cloud)cloudShareBestLocal();});
 const howto=document.getElementById('howto');
 document.getElementById('btnHow').onclick=()=>howto.classList.remove('hidden');
 document.getElementById('btnHow2').onclick=()=>howto.classList.remove('hidden');
@@ -6015,6 +6285,16 @@ function selftest(){
     ok('精灵 '+k+' 每行 16 字符', SPR[k].every(r=>r.length===16));
     ok('精灵 '+k+' 颜色字符全部有定义', SPR[k].every(r=>[...r].every(c=>c in PAL)));
   });
+  // 音频契约：过层上行、音效分类和九套场景音乐都必须保持可调度
+  ok('过层音效是持续上行的开门句，不再像阵亡下坠',
+    TONES.stairs.filter(n=>Number.isFinite(n.f)).every((n,i,a)=>i===0||n.f>a[i-1].f));
+  ok('战斗、机关、探索、课堂与结算均有独立音效',
+    ['hit','crit','hurt','guard','trap','lever','clue','relic','route','tactic','turn','stairs','boss','win','lose']
+      .every(k=>Array.isArray(TONES[k])&&TONES[k].length>0));
+  ok('九套分场景 BGM 拥有完整十六步旋律、低音与节奏',
+    ['menu','think','dungeon1','dungeon2','dungeon3','boss','research','victory','defeat'].every(k=>{
+      const t=BGM[k];return t&&t.lead.length===16&&t.bass.length===16&&t.drum.length===16&&t.chords.length===4&&t.bpm>=60;
+    }));
   // 地牢生成：连通且楼梯可达
   for(let f=0;f<FLOORS.length;f++){
     for(let t=0;t<25;t++){
@@ -6298,7 +6578,7 @@ function selftest(){
 
   // localStorage 记录读写
   const savedMeta=JSON.stringify(META);
-  META={best:{},seen:{},sound:true};
+  META={best:{},seen:{},sound:true,music:true,research:normalizeResearchMeta(null)};
   G=blank({hero:HEROES[0],fi:4,coin:33}); recordRun(false);
   ok('战绩记下了最深层数', META.best.jin && META.best.jin.floor===5);
   ok('战绩记下了金币', META.best.jin.coin===33);
@@ -6572,6 +6852,11 @@ function selftest(){
   ok('云榜课堂只带队名，不含成员名单',
     cloudClass.name==='银河七组'&&cloudClass.kind==='classroom'&&!('players' in cloudClass)&&
     decodeCloudScore('classroom',cloudClass.score).v3===true);
+  ok('新版云榜分数落在后端完整保真范围',
+    cloudPersonal.score>=10000000&&cloudPersonal.score<=18999999&&
+    cloudClass.score>=10000000&&cloudClass.score<=18999999);
+  ok('旧后端截断成 900 万的记录会标明待修复而不是误解码',
+    decodeCloudScore('personal',9000000).clamped===true);
 
   // 便携备份码：整包往返，损坏内容拒绝
   const backupRound=backupDecode(backupEncode(makeBackupPayload()));
@@ -6843,6 +7128,7 @@ function qaCloudRanks(tab){
     {name:'周末探险队',score:cloudScoreClassroom({won:true,floor:9,total:42,discoveries:7}),t:now-3600000},
     {name:'星尘泉小队',score:cloudScoreClassroom({won:false,floor:7,total:35,discoveries:5}),t:now-7200000}
   ];
+  CLOUD_FETCHED_AT.personal=now;CLOUD_FETCHED_AT.classroom=now;
   show('menu');syncCloudControl();buildLeaderboard(tab,'cloud');
   document.getElementById('leaderboard').classList.remove('hidden');
 }
@@ -6855,6 +7141,14 @@ classPrefLoad();
 syncSoundBtn();
 syncCloudControl();
 buildMenu();
+const MUSIC_WATCH=['menu','classSetup','game','over','research','routeDraft','relicDraft','classThink',
+  'classJudge','classTactic','classAction'];
+const musicObserver=new MutationObserver(()=>queueMicrotask(refreshMusic));
+MUSIC_WATCH.forEach(id=>{const el=document.getElementById(id);if(el)musicObserver.observe(el,{attributes:true,attributeFilter:['class']});});
+refreshMusic();
+if(IDENTITY.cloud&&!NETWORK_DISABLED&&location.protocol==='https:'){
+  setTimeout(()=>cloudShareBestLocal(),900);
+}
 if(location.hash==='#selftest'){ selftest(); }
 else{
   requestAnimationFrame(draw);
