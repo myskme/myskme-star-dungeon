@@ -3,7 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<link rel="icon" href="data:,">
+<meta name="theme-color" content="#0d0f18">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="星徒地牢">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="app-icon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <title>星徒地牢 · MYSKME</title>
 <style>
 :root{
@@ -16,6 +24,7 @@
   --px:ui-monospace,Menlo,Consolas,"Courier New",monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+button,[role="button"]{touch-action:manipulation}
 html,body{height:100%}
 body{
   background:var(--bg); color:var(--ink); font-family:var(--px); font-weight:700; letter-spacing:.06em;
@@ -70,7 +79,7 @@ body{
 .continuecard b{display:block;color:var(--gold2);font-size:14px;letter-spacing:.08em;margin-bottom:4px}
 .continuecard span{display:block;color:var(--ink3);margin-top:3px}
 .continuecard:hover{border-color:var(--gold);box-shadow:var(--glow-gold)}
-.menuutils{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.menuutils{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
 .menuutil{min-height:58px;padding:8px 5px;border:2px solid #2b3150;background:var(--bg2);color:var(--ink2);
   font:700 11px/1.45 var(--px);cursor:pointer}
 .menuutil b{display:block;color:var(--ink);font-size:13px;letter-spacing:.08em;margin-bottom:3px}
@@ -205,10 +214,12 @@ body{
 #tip b{color:var(--gold2)}
 
 /* ── 方向键 ── */
-#pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;touch-action:manipulation;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .pbtn{padding:16px 0;font-size:22px;font-family:var(--px);font-weight:700;color:var(--gold2);
   background:linear-gradient(180deg,var(--bg3),var(--bg2));border:3px solid #2b3150;cursor:pointer;
-  transition:transform .12s,border-color .12s,box-shadow .12s;user-select:none}
+  transition:transform .12s,border-color .12s,box-shadow .12s;touch-action:manipulation;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .pbtn:hover{border-color:var(--gold);box-shadow:var(--glow-gold)}
 .pbtn:active{transform:translateY(1px) scale(.96);transition-duration:.05s}
 .pbtn.wait{font-size:13px;letter-spacing:.16em}
@@ -256,15 +267,24 @@ body{
 .scorestatus.good{color:#79b889}.scorestatus.bad{color:#d88983}
 
 /* ── 教学卡 ── */
-#howto{position:fixed;inset:0;z-index:60;background:rgba(5,6,11,.94);
+#howto,#installHelp{position:fixed;inset:0;z-index:60;background:rgba(5,6,11,.94);
   display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow:auto}
-#howto>.box{margin:auto 0}
-#howto .box{max-width:400px;border:3px solid var(--gold);background:var(--bg2);padding:20px}
-#howto h2{font-size:17px;color:var(--gold2);letter-spacing:.24em;text-align:center;margin-bottom:16px}
+#howto>.box,#installHelp>.box{margin:auto 0}
+#howto .box,#installHelp .box{width:100%;max-width:400px;border:3px solid var(--gold);background:var(--bg2);padding:20px}
+#howto h2,#installHelp h2{font-size:17px;color:var(--gold2);letter-spacing:.24em;text-align:center;margin-bottom:16px}
 #howto li{list-style:none;font-size:13px;line-height:1.9;color:var(--ink);margin-bottom:10px;
   display:flex;gap:10px;align-items:flex-start}
 #howto li s{color:var(--gold2);text-decoration:none;flex:none}
 #howto b{color:var(--red)}
+.installmark{width:88px;height:88px;display:block;margin:0 auto 14px;image-rendering:pixelated;
+  border:3px solid var(--gold3);background:#0d0f18}
+.installlead{font-size:12px;line-height:1.8;color:var(--ink2);text-align:center;margin-bottom:14px}
+.installsteps{display:grid;gap:7px;margin-bottom:14px}
+.installstep{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:center;border:2px solid #303750;
+  background:#10131f;padding:9px;color:var(--ink2);font-size:11px;line-height:1.6}
+.installstep b{display:flex;align-items:center;justify-content:center;width:26px;height:26px;
+  border:2px solid var(--gold3);color:var(--gold2);font-size:12px}
+.installstatus{min-height:18px;color:#79b889;font-size:10px;line-height:1.6;text-align:center;margin-bottom:9px}
 
 /* 课堂答题：整轮只停在一张静态地图上，同屏完成全员行动倍率判定 */
 #classThink,#classJudge,#classTactic,#classAction{position:fixed;inset:0;z-index:75;background:rgba(5,6,11,.97);
@@ -626,6 +646,7 @@ body{
       <button class="menuutil" id="btnResearch"><b>黑域研究</b>谜卷与收藏</button>
       <button class="menuutil" id="btnHow"><b>怎么玩</b>规则说明</button>
       <button class="menuutil" id="btnMenuAudio"><b>声音工坊</b><span id="menuAudioState">音效与音乐全开</span></button>
+      <button class="menuutil" id="btnInstall"><b>装到主屏</b><span id="installState">像 App 一样打开</span></button>
     </div>
   </div>
 
@@ -933,6 +954,24 @@ body{
       <li><s>九</s><div>发光谜页会进入<b>黑域研究所</b>。三条证据可破解一宗谜卷；深入前的路线卡会改变下一层，遗物最多带三件并能组成联动。失败不会清掉已经理解的线索。</div></li>
     </ul>
     <div class="row" style="margin-top:14px"><button class="btn" id="btnHowClose">知道了</button></div>
+  </div>
+</div>
+
+<div id="installHelp" class="hidden">
+  <div class="box">
+    <img class="installmark" src="icon-192.png" alt="星徒地牢像素图标">
+    <h2>装 到 主 屏 幕</h2>
+    <div class="installlead">安装后会获得独立图标、全屏黑域界面和更像原生游戏的启动体验。存档仍保留在当前浏览器。</div>
+    <div class="installsteps" id="installSteps">
+      <div class="installstep"><b>一</b><span>iPhone / iPad：用 Safari 打开正式网站，点底部“分享”。</span></div>
+      <div class="installstep"><b>二</b><span>向下找到“添加到主屏幕”，确认名称为“星徒地牢”。</span></div>
+      <div class="installstep"><b>三</b><span>Android / 电脑：打开浏览器菜单，选择“安装应用”或“添加到主屏幕”。</span></div>
+    </div>
+    <div class="installstatus" id="installStatus"></div>
+    <div class="row">
+      <button class="btn" id="btnInstallNative">立即安装</button>
+      <button class="btn" id="btnInstallClose">暂时不用</button>
+    </div>
   </div>
 </div>
 
@@ -5886,6 +5925,44 @@ function buildClassSetup(count){
   }
 }
 
+/* ---------- 安装到主屏幕 ----------
+   核心游戏仍是单文件；manifest / 图标 / service worker 只增强正式 HTTPS 版。 */
+let INSTALL_PROMPT=null;
+function isInstalledApp(){
+  return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+}
+function syncInstallState(message){
+  const state=document.getElementById('installState'),status=document.getElementById('installStatus');
+  const installed=isInstalledApp();
+  if(state)state.textContent=installed?'已经安装':INSTALL_PROMPT?'可以直接安装':'像 App 一样打开';
+  if(status)status.textContent=message||(installed?'已经从主屏幕独立运行。':
+    INSTALL_PROMPT?'当前浏览器支持一键安装。':'按上面的设备步骤添加即可。');
+  const native=document.getElementById('btnInstallNative');
+  if(native){
+    native.textContent=installed?'已经安装':INSTALL_PROMPT?'立即安装':'按步骤安装';
+    native.disabled=installed;
+  }
+}
+async function requestAppInstall(){
+  if(isInstalledApp()){syncInstallState();return;}
+  if(!INSTALL_PROMPT){
+    syncInstallState('当前浏览器请使用“分享”或浏览器菜单里的“添加到主屏幕”。');return;
+  }
+  const p=INSTALL_PROMPT;INSTALL_PROMPT=null;
+  try{
+    await p.prompt();const choice=await p.userChoice;
+    syncInstallState(choice&&choice.outcome==='accepted'?'安装请求已确认，可以从主屏幕打开。':'安装已取消，之后仍可再次添加。');
+  }catch(err){syncInstallState('浏览器暂时没有完成安装，请按上面的手动步骤操作。');}
+}
+addEventListener('beforeinstallprompt',ev=>{
+  ev.preventDefault();INSTALL_PROMPT=ev;syncInstallState();
+});
+addEventListener('appinstalled',()=>{INSTALL_PROMPT=null;syncInstallState('安装完成，欢迎从主屏幕进入黑域。');});
+const DEPLOYED_ENTRY=location.pathname.endsWith('/')||location.pathname.endsWith('/index.html');
+if('serviceWorker' in navigator&&location.protocol.startsWith('http')&&DEPLOYED_ENTRY&&!NETWORK_DISABLED){
+  addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}),{once:true});
+}
+
 /* ---------- 输入 ---------- */
 const KEYMAP={ArrowUp:'u',ArrowDown:'d',ArrowLeft:'l',ArrowRight:'r',
   w:'u',s:'d',a:'l',d:'r',W:'u',S:'d',A:'l',D:'r',' ':'w'};
@@ -5893,9 +5970,13 @@ addEventListener('keydown',ev=>{
   const dir=KEYMAP[ev.key]; if(!dir)return;
   ev.preventDefault(); act(dir);
 });
-document.getElementById('pad').addEventListener('click',ev=>{
+const PAD=document.getElementById('pad');
+PAD.addEventListener('click',ev=>{
   const b=ev.target.closest('[data-d]'); if(!b)return; act(b.dataset.d);
 });
+// 快速连点仍会执行两次行动，但绝不让浏览器把它解释成双击放大或长按菜单。
+PAD.addEventListener('dblclick',ev=>ev.preventDefault(),{passive:false});
+PAD.addEventListener('contextmenu',ev=>ev.preventDefault(),{passive:false});
 /* 直接点格子走：只认相邻格（点远处不动，免得误触乱跑） */
 cv.addEventListener('click',ev=>{
   if(!G||G.over) return;
@@ -6121,11 +6202,18 @@ document.getElementById('btnMenuAudio').onclick=()=>{
   SND.on=turnOn;SND.musicOn=turnOn;META.sound=turnOn;META.music=turnOn;metaSave();syncSoundBtn();
   if(turnOn){unlockAudio();sfx('pickup');refreshMusic();}else stopMusic();
 };
+const installHelp=document.getElementById('installHelp');
+document.getElementById('btnInstall').onclick=()=>{
+  syncInstallState();installHelp.classList.remove('hidden');
+};
+document.getElementById('btnInstallNative').onclick=()=>requestAppInstall();
+document.getElementById('btnInstallClose').onclick=()=>installHelp.classList.add('hidden');
 addEventListener('online',()=>{if(IDENTITY.cloud)cloudShareBestLocal();});
 const howto=document.getElementById('howto');
 document.getElementById('btnHow').onclick=()=>howto.classList.remove('hidden');
 document.getElementById('btnHow2').onclick=()=>howto.classList.remove('hidden');
 document.getElementById('btnHowClose').onclick=()=>howto.classList.add('hidden');
+syncInstallState();
 
 /* ---------- 平衡模拟（#sim）：用"普通玩家"水平的 bot 真实数值跑几百局 ----------
    注意这不是外挂 bot，是调参工具：会看红叉躲大招、血少找药、优先补刀，
@@ -6295,6 +6383,11 @@ function selftest(){
     ['menu','think','dungeon1','dungeon2','dungeon3','boss','research','victory','defeat'].every(k=>{
       const t=BGM[k];return t&&t.lead.length===16&&t.bass.length===16&&t.drum.length===16&&t.chords.length===4&&t.bpm>=60;
     }));
+  ok('方向键快速连点使用 manipulation，不会触发双击放大',
+    getComputedStyle(document.querySelector('#pad [data-d="u"]')).touchAction==='manipulation');
+  ok('主屏幕安装元数据、图标入口与安装说明完整',
+    !!document.querySelector('link[rel="manifest"]')&&!!document.querySelector('link[rel="apple-touch-icon"]')&&
+    document.querySelector('meta[name="theme-color"]')?.content==='#0d0f18'&&!!document.getElementById('btnInstall'));
   // 地牢生成：连通且楼梯可达
   for(let f=0;f<FLOORS.length;f++){
     for(let t=0;t<25;t++){

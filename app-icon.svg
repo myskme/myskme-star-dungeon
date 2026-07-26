@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <rect width="1024" height="1024" fill="#090b12"/>
+  <path fill="#111522" d="M0 0h1024v128H0zM0 896h1024v128H0zM0 0h128v1024H0zM896 0h128v1024H896z"/>
+  <path fill="#1c2033" d="M128 128h768v768H128z"/>
+  <path fill="#0d0f18" d="M160 160h704v704H160z"/>
+
+  <!-- 黑金像素边框 -->
+  <path fill="#7a6320" d="M80 80h864v32H80zM80 912h864v32H80zM80 80h32v864H80zM912 80h32v864h-32z"/>
+  <path fill="#e8cf95" d="M112 112h800v16H112zM112 896h800v16H112zM112 112h16v800h-16zM896 112h16v800h-16z"/>
+  <path fill="#c8a558" d="M144 144h96v16h-96zM784 144h96v16h-96zM144 864h96v16h-96zM784 864h96v16h-96z"/>
+
+  <!-- 星门 -->
+  <path fill="#090b12" d="M288 272h448v512H288z"/>
+  <path fill="#7a6320" d="M288 272h448v48H288zM288 320h48v464h-48zM688 320h48v464h-48z"/>
+  <path fill="#c8a558" d="M336 240h352v32H336zM336 272h32v448h-32zM656 272h32v448h-32zM368 688h288v32H368z"/>
+  <path fill="#2b3150" d="M368 320h288v368H368z"/>
+  <path fill="#151a2a" d="M400 352h224v304H400z"/>
+  <path fill="#1f2440" d="M432 384h160v240H432z"/>
+
+  <!-- 顶部星芒 -->
+  <path fill="#ffcd75" d="M496 176h32v48h-32zM496 256h32v48h-32zM448 224h48v32h-48zM528 224h48v32h-48z"/>
+  <path fill="#f0ecdf" d="M496 224h32v32h-32z"/>
+
+  <!-- 赤狐耳朵 -->
+  <path fill="#c05a2e" d="M352 384h64v-64h64v128H352zM544 320h64v64h64v64H544z"/>
+  <path fill="#ef7d57" d="M384 352h64v128h-64zM576 352h64v128h-64z"/>
+  <path fill="#f2b8c6" d="M400 368h32v64h-32zM592 368h32v64h-32z"/>
+
+  <!-- 赤狐面部 -->
+  <path fill="#c05a2e" d="M352 448h320v160h-32v64H384v-64h-32z"/>
+  <path fill="#ef7d57" d="M384 416h256v224H384z"/>
+  <path fill="#ff9d73" d="M416 448h192v160H416z"/>
+  <path fill="#12131c" d="M416 480h64v48h-64zM544 480h64v48h-64z"/>
+  <path fill="#e8cf95" d="M432 480h32v32h-32zM560 480h32v32h-32z"/>
+  <path fill="#f0ecdf" d="M448 544h128v96H448zM416 576h32v64h-32zM576 576h32v64h-32z"/>
+  <path fill="#12131c" d="M496 560h32v32h-32zM480 608h64v16h-64z"/>
+  <path fill="#ef4d4d" d="M496 624h32v16h-32z"/>
+
+  <!-- 狐额星印 -->
+  <path fill="#ffcd75" d="M496 432h32v32h-32zM480 448h64v16h-64z"/>
+
+  <!-- 门槛与地牢光 -->
+  <path fill="#7e2553" d="M400 672h224v32H400z"/>
+  <path fill="#c8a558" d="M352 720h320v32H352z"/>
+  <path fill="#e8cf95" d="M400 752h224v16H400z"/>
+
+  <!-- 四角机关符 -->
+  <path fill="#c8a558" d="M176 208h32v96h96v32H176zM720 208h128v128h-32v-96h-96zM176 688h32v96h96v32H176zM816 688h32v128H720v-32h96z"/>
+</svg>
