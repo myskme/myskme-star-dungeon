@@ -70,7 +70,7 @@ body{
 .continuecard b{display:block;color:var(--gold2);font-size:14px;letter-spacing:.08em;margin-bottom:4px}
 .continuecard span{display:block;color:var(--ink3);margin-top:3px}
 .continuecard:hover{border-color:var(--gold);box-shadow:var(--glow-gold)}
-.menuutils{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.menuutils{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
 .menuutil{min-height:58px;padding:8px 5px;border:2px solid #2b3150;background:var(--bg2);color:var(--ink2);
   font:700 11px/1.45 var(--px);cursor:pointer}
 .menuutil b{display:block;color:var(--ink);font-size:13px;letter-spacing:.08em;margin-bottom:3px}
@@ -401,11 +401,11 @@ body{
   72%{opacity:1}100%{opacity:0}}
 
 /* 层间三选一 */
-#upgrade,#shop,#codex,#archive,#leaderboard{position:fixed;inset:0;z-index:70;background:rgba(5,6,11,.94);
+#upgrade,#shop,#codex,#research,#routeDraft,#relicDraft,#archive,#leaderboard{position:fixed;inset:0;z-index:70;background:rgba(5,6,11,.94);
   display:flex;align-items:flex-start;justify-content:center;padding:18px;overflow:auto}
-#upgrade>*,#shop>*,#codex>*,#archive>*,#leaderboard>*{margin:auto 0}
-.upbox,.shopbox,.cxbox,.archivebox,.rankbox{width:100%;max-width:460px;border:3px solid var(--gold);background:var(--bg2);padding:18px}
-.upbox h2,.shopbox h2,.cxbox h2,.archivebox h2,.rankbox h2{font-size:16px;color:var(--gold2);letter-spacing:.28em;text-align:center;
+#upgrade>*,#shop>*,#codex>*,#research>*,#routeDraft>*,#relicDraft>*,#archive>*,#leaderboard>*{margin:auto 0}
+.upbox,.shopbox,.cxbox,.researchbox,.routebox,.relicbox,.archivebox,.rankbox{width:100%;max-width:520px;border:3px solid var(--gold);background:var(--bg2);padding:18px}
+.upbox h2,.shopbox h2,.cxbox h2,.researchbox h2,.routebox h2,.relicbox h2,.archivebox h2,.rankbox h2{font-size:16px;color:var(--gold2);letter-spacing:.28em;text-align:center;
   margin-bottom:15px;text-indent:.28em}
 .upcard{border:3px solid #2b3150;background:linear-gradient(180deg,var(--bg3),var(--bg2));
   padding:13px;margin-bottom:10px;cursor:pointer;
@@ -434,6 +434,50 @@ body{
 .cxrow.dim .cxn{color:var(--ink3)}
 .cxd{font-size:11px;color:var(--ink2);margin-top:4px;line-height:1.6;letter-spacing:.03em}
 .cxrow.dim .cxd{color:var(--ink3)}
+
+/* 黑域研究：谜卷、路线、遗物是同一个探索循环，不做签到或限时任务 */
+.researchstats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:11px}
+.researchstat{border:2px solid #2e344d;background:#0d101a;padding:8px 4px;text-align:center;color:var(--ink3);font-size:9px;line-height:1.5}
+.researchstat b{display:block;color:var(--gold2);font-size:17px}
+.casecard{border:2px solid #39405b;background:linear-gradient(145deg,#111624,#171320);padding:12px;margin-bottom:10px}
+.casecard.solved{border-color:#55745b;background:linear-gradient(145deg,#101b17,#17191a)}
+.caseeyebrow{color:var(--gold);font-size:9px;letter-spacing:.16em;margin-bottom:5px}
+.casetitle{color:var(--gold2);font-size:15px;line-height:1.45}
+.caseprompt{color:var(--ink2);font-size:11px;line-height:1.7;margin:7px 0}
+.cluelist{display:flex;flex-direction:column;gap:5px;margin-top:8px}
+.clue{border-left:3px solid #3e4666;background:#0d101a;padding:7px 8px;color:var(--ink3);font-size:10px;line-height:1.6}
+.clue.found{border-left-color:var(--gold);color:var(--ink2)}
+.clue b{color:var(--gold2)}
+.answergrid{display:grid;gap:6px;margin-top:9px}
+.answerbtn{min-height:48px;border:2px solid #3a4260;background:#111522;color:var(--ink2);padding:8px;
+  font:700 10px/1.5 var(--px);cursor:pointer;text-align:left}
+.answerbtn:hover{border-color:var(--gold);color:var(--gold2)}
+.answerbtn:disabled{opacity:.42;cursor:default}
+.researchmsg{border:2px solid #303750;background:#0d101a;color:var(--ink3);font-size:10px;line-height:1.7;padding:8px;margin:8px 0}
+.researchmsg.good{border-color:#47694f;color:#8fc99a}.researchmsg.bad{border-color:#74464d;color:#e0a29b}
+.researchhead{font-size:11px;color:var(--gold2);letter-spacing:.15em;margin:15px 0 8px}
+.cabinet,.routearchive{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.reliccard,.routearchivecard{border:2px solid #303750;background:#10131f;padding:9px;color:var(--ink3);font-size:9px;line-height:1.55}
+.reliccard.found,.routearchivecard.found{border-color:#4a5575;color:var(--ink2)}
+.reliccard.loadout{border-color:var(--gold);background:#211d1b}
+.reliccard b,.routearchivecard b{display:block;color:var(--gold2);font-size:12px;margin-bottom:4px}
+.reliccard button{width:100%;margin-top:6px;min-height:34px;border:1px solid #4b5471;background:#151a2a;color:var(--ink2);font:700 9px var(--px);cursor:pointer}
+.reliccard button:disabled{opacity:.45}
+.combo{margin-top:6px;border:1px dashed #4a5270;padding:6px;color:var(--ink3);font-size:9px;line-height:1.5}
+.combo.on{border-color:var(--gold3);color:var(--gold2);background:#17150f}
+.activekit{color:var(--ink2);font-size:10px;line-height:1.65;margin:-3px 0 9px;text-align:center}
+
+/* 深入前的路线三选一与遗物研究 */
+.routeintro,.relicintro{color:var(--ink2);font-size:10px;line-height:1.7;text-align:center;margin:-5px 0 12px}
+.routecards,.reliccards{display:grid;gap:8px}
+.routecard,.relicpick{position:relative;border:3px solid #303750;background:linear-gradient(145deg,#10131f,#171421);
+  padding:12px;color:var(--ink2);font:700 10px/1.65 var(--px);text-align:left;cursor:pointer}
+.routecard:hover,.relicpick:hover{border-color:var(--gold);transform:translateY(-1px)}
+.routecard.safe{border-left-color:#52945f}.routecard.risk{border-left-color:#c45a5a}.routecard.wild{border-left-color:#8c6ac9}
+.routecard b,.relicpick b{display:block;color:var(--gold2);font-size:15px;margin-bottom:4px}
+.routecard em{display:inline-block;color:#080a10;background:var(--gold);font-style:normal;padding:2px 5px;margin-bottom:5px}
+.routecard strong{display:block;color:#ef9b8f;margin-top:5px}
+.relicpick span{display:block;color:var(--gold);margin-top:4px}
 
 /* 存档中心与本机榜单 */
 .panelnote{font-size:10px;line-height:1.7;color:var(--ink3);text-align:center;margin:-5px 0 13px}
@@ -518,6 +562,8 @@ body{
   .countbtn{min-height:48px}
   .herochoices{gap:4px}
   .herochoice{min-height:44px;font-size:12px}
+  #game>.row{display:grid;grid-template-columns:repeat(3,1fr)}
+  #game>.row .btn{min-height:48px;padding:8px 4px;line-height:1.35}
   .classturn{align-items:flex-start;flex-direction:column}
   .actiontools{width:100%;justify-content:space-between}
   .classroster{grid-template-columns:repeat(2,1fr)}
@@ -534,6 +580,9 @@ body{
   .thinkbox h2{font-size:19px}
   .thinkpips i{width:22px}
   .archivebox,.rankbox{padding:13px}
+  .researchbox,.routebox,.relicbox{padding:13px}
+  .researchstats{grid-template-columns:1fr 1fr}
+  .cabinet,.routearchive{grid-template-columns:1fr}
   .shoplist{grid-template-columns:1fr}
   .rankrow{grid-template-columns:28px 1fr auto;padding:7px 5px;gap:5px}
   .scorebreakdown{grid-template-columns:1fr 1fr}
@@ -570,6 +619,7 @@ body{
       <button class="menuutil" id="btnArchive"><b>远征存档</b>续玩与备份</button>
       <button class="menuutil" id="btnRanks"><b>远征榜单</b>本机与云端</button>
       <button class="menuutil" id="btnCodex"><b>黑域图鉴</b>敌人档案</button>
+      <button class="menuutil" id="btnResearch"><b>黑域研究</b>谜卷与收藏</button>
       <button class="menuutil" id="btnHow"><b>怎么玩</b>规则说明</button>
     </div>
   </div>
@@ -664,6 +714,7 @@ body{
       <button class="btn" id="btnBack">换英雄</button>
       <button class="btn skillbtn" id="btnSkill">职业技</button>
       <button class="btn" id="btnShop">星币商店</button>
+      <button class="btn" id="btnResearch2">谜卷研究</button>
       <button class="btn" id="btnSound">音效 开</button>
       <button class="btn" id="btnHow2">怎么玩</button>
     </div>
@@ -694,6 +745,33 @@ body{
       <h2>黑 域 图 鉴</h2>
       <div id="cxList"></div>
       <div class="row" style="margin-top:14px"><button class="btn" id="btnCxClose">回去</button></div>
+    </div>
+  </div>
+
+  <!-- 跨局知识进度：谜卷答案靠已发现线索，不靠刷属性 -->
+  <div id="research" class="hidden">
+    <div class="researchbox">
+      <h2>黑 域 研 究 所</h2>
+      <div id="researchContent"></div>
+      <button class="btn" id="btnResearchClose">合上研究册</button>
+    </div>
+  </div>
+
+  <!-- 每隔一层出现一次；收益与代价全部明示 -->
+  <div id="routeDraft" class="hidden">
+    <div class="routebox">
+      <h2>下 一 层 走 哪 条 路</h2>
+      <div class="routeintro" id="routeIntro"></div>
+      <div class="routecards" id="routeCards"></div>
+    </div>
+  </div>
+
+  <!-- 遗物三选一：三槽构筑，满槽时替换最早获得的一件 -->
+  <div id="relicDraft" class="hidden">
+    <div class="relicbox">
+      <h2>发 现 研 究 遗 物</h2>
+      <div class="relicintro" id="relicIntro"></div>
+      <div class="reliccards" id="relicCards"></div>
     </div>
   </div>
 
@@ -836,7 +914,7 @@ body{
 
 <div id="howto" class="hidden">
   <div class="box">
-    <h2>八句话学会</h2>
+    <h2>九句话学会</h2>
     <ul>
       <li><s>一</s><div>点方向键走一步（也可以直接点格子）。一个人闯时，<b>你走一步，敌人才动一步</b>，不急，慢慢想。</div></li>
       <li><s>二</s><div>朝敌人走过去＝<b>打它</b>。血量就在它脚下，几下能打死看得见。</div></li>
@@ -846,6 +924,7 @@ body{
       <li><s>六</s><div>课堂模式把<b>五或六题攒成一轮</b>，全员判分后再从<b>三到四张计谋中选一张</b>。一局通常 2～4 轮；诱敌踩机关、拆甲集火，往往比多走几十步更重要。</div></li>
       <li><s>七</s><div>每位星徒每轮有一次<b>职业技</b>：伏击、逆誓、回春、守阵和震场用途完全不同。三到四人的队伍会获得四张计谋候选。</div></li>
       <li><s>八</s><div>结算时点<b>立即计算积分</b>，可以保存带游戏官网二维码的战绩图。通关后开启二周目，难点是阵法与布局，不是单纯堆血。</div></li>
+      <li><s>九</s><div>发光谜页会进入<b>黑域研究所</b>。三条证据可破解一宗谜卷；深入前的路线卡会改变下一层，遗物最多带三件并能组成联动。失败不会清掉已经理解的线索。</div></li>
     </ul>
     <div class="row" style="margin-top:14px"><button class="btn" id="btnHowClose">知道了</button></div>
   </div>
@@ -1560,6 +1639,42 @@ shrine:[
 '................',
 '................',
 '................'],
+/* 黑域谜页：三枚线索拼成一个可推理案件 */
+clue:[
+'................',
+'...mmmmmmmmmm...',
+'..mccccccccccm..',
+'..mcyccccccccm..',
+'..mcccccyccccm..',
+'..mccccccccccm..',
+'..mcccyccccccm..',
+'..mccccccccccm..',
+'..mccccycccccm..',
+'..mccccccccccm..',
+'..mccccccccccm..',
+'..mmmmmmmmmmmm..',
+'.....pppp.......',
+'....pp..pp......',
+'................',
+'................'],
+/* 研究遗物：紫金星核，拾取后进入三槽构筑 */
+relic:[
+'................',
+'.......y........',
+'......yyy.......',
+'...p..yyy..p....',
+'....ppyyypp.....',
+'.....pyyyp......',
+'..yyyyyyyyyyy...',
+'...yyyyyyyyy....',
+'....yyycyyy.....',
+'....ppycypp.....',
+'...pp..c..pp....',
+'.......c........',
+'......ccc.......',
+'................',
+'................',
+'................'],
 /* 爆裂符 */
 bomb:[
 '................',
@@ -1763,6 +1878,71 @@ const LOOP_RULES=[
   {id:'volatile',name:'笑爆阵',desc:'紫光敌人倒下会炸伤周围所有单位；能躲，也能拿来连锁清场。'},
   {id:'keykeeper',name:'守门阵',desc:'金印敌人携带楼梯钥匙；先规划路线击破它，出口才会打开。'}
 ];
+/* ---------- 黑域研究：知识进度、路线抉择与三槽遗物 ----------
+   解谜靠实际找到的证据；强收益路线把代价完整写在卡面上。 */
+const MYSTERY_CASES=[
+  {id:'bell',title:'无人拨响的课铃',prompt:'旧课堂封门之后，课铃为何只在有人答对时自己响？',
+   clues:['铃绳没有指纹，窗缝却残着银灰色粉末。','星纹亮起后，裂隙会先吹来一阵风，铃声才出现。','用旧讲义堵住裂隙后，课铃整整一夜都没有响。'],
+   answers:['有学生躲在墙里拉铃','风穿过星纹裂隙推动了铃舌','课铃能判断答案正误'],correct:1,
+   hint:'把三条证据按“先发生—后发生”排一次。',solution:'课铃没有意识；答案激活星纹，裂隙风才是拨铃者。',reward:'bookmark'},
+  {id:'mirror',title:'镜廊的真门',prompt:'四扇一模一样的镜门中，哪一扇通向灰塔而不是把人送回原地？',
+   clues:['假门里的烛火永远比现实慢半拍。','灰塔的风带着煤灰，真门门槛上会留下向内的灰痕。','只有北侧镜面中的自己会先眨眼；那是雾织者在诱导视线。'],
+   answers:['烛火同步、门槛有向内灰痕的门','镜中人先眨眼的北门','最明亮、完全没有灰尘的门'],correct:0,
+   hint:'有一条证据是在识别骗局；另外两条才是在确认真门。',solution:'同步烛火排除假镜，向内煤灰证明门后确实连着灰塔。',reward:'prism'},
+  {id:'tower',title:'停转的灰塔弩机',prompt:'弩机齿轮完好、箭匣已满，为什么仍然一箭不发？',
+   clues:['弩机底座有五枚星币大小的圆槽，其中四枚是空的。','灯贼巢穴里没有食物，只有磨得发亮的旧星币。','投入五枚星币后，弩机先亮灯，再开始校准射线。'],
+   answers:['弩机害怕灯贼','星币其实是启动用的导能片','箭匣里的箭太重'],correct:1,
+   hint:'别只把星币当作钱；观察它在机器里的形状和作用。',solution:'灰塔把星币同时当货币和导能片；灯贼偷的是能源。',reward:'chalk'},
+  {id:'lantern',title:'会逃跑的骨灯',prompt:'骨灯司倒下后，地上的灯为什么会自己躲到墙角？',
+   clues:['灯座下面没有轮子，却黏着两枚很小的裂影足印。','强光照到灯罩时，里面会传出两声不同方向的抓挠。','封住灯罩两侧的缝后，骨灯再也移动不了。'],
+   answers:['骨灯记住了主人的命令','两只裂影仔藏在灯里抬着它走','墙角的风把灯吹走了'],correct:1,
+   hint:'“两声”“两侧”“两枚足印”反复出现，不是巧合。',solution:'两只裂影仔把灯当作移动盔甲，一左一右抬着逃跑。',reward:'purse'},
+  {id:'stars',title:'倒置的星图次序',prompt:'观星台只接受三枚兽印。正确的按压顺序是什么？',
+   clues:['赤狐在题字中写着：“我先点亮黑夜。”','巨兔的刻痕在原牛之前，却不在最前。','原牛石印旁只有一句：“我守最后一道门。”'],
+   answers:['原牛—巨兔—赤狐','赤狐—巨兔—原牛','巨兔—赤狐—原牛'],correct:1,
+   hint:'三条线索分别锁定了第一、第二和最后。',solution:'赤狐最先，巨兔居中，原牛守尾：狐—兔—牛。',reward:'compass'},
+  {id:'crown',title:'叶王镇守的出口',prompt:'叶王明明能离开灰塔，为何始终守在最顶层楼梯旁？',
+   clues:['楼梯背面刻着“向下封存”，并不是“向外通行”。','每当叶王离开三步，黑域裂痕就会扩大一圈。','旧档案把她称作“看守者”，却从未写过“囚徒”。'],
+   answers:['她在等待更强的挑战者','楼梯其实是封印，她也在压住黑域','她忘记了离开的路线'],correct:1,
+   hint:'重新理解“守门”两个字：她守的是谁不能出来？',solution:'楼梯是一道向下的封印。叶王既是敌人，也是压住更深黑域的看守者。',reward:'lantern'}
+];
+const RESEARCH_RELICS=[
+  {id:'bookmark',name:'会发光的书签',tag:'求知',desc:'发现新线索时额外获得 6 金。'},
+  {id:'ink',name:'不干的星墨',tag:'求知',desc:'每次发现新线索，本局攻击 +1。'},
+  {id:'gloves',name:'机关师手套',tag:'机关',desc:'友军尖刺与伏雷额外造成 2 伤害。'},
+  {id:'chalk',name:'逆写粉笔',tag:'机关',desc:'翻转机关时，使所有敌人停顿一拍。'},
+  {id:'prism',name:'裂光棱镜',tag:'穿行',desc:'每层第一次跃迁裂隙会回复 3 血。'},
+  {id:'lantern',name:'守夜星灯',tag:'守护',desc:'进入新层时获得 1 层星盾。'},
+  {id:'purse',name:'灯贼零钱袋',tag:'贪欲',desc:'宝匣更安全，并额外开出 4 金。'},
+  {id:'compass',name:'会撒谎的罗盘',tag:'路线',desc:'每次作出路线抉择，立即获得 4 金。'}
+];
+const RELIC_COMBOS=[
+  {a:'bookmark',b:'ink',name:'注解成真',desc:'新线索还会增加 1 点血上限。'},
+  {a:'gloves',b:'chalk',name:'反向工程',desc:'友军机关再额外造成 2 伤害。'},
+  {a:'prism',b:'lantern',name:'折光守夜',desc:'裂隙回复提高到 5 血。'},
+  {a:'purse',b:'compass',name:'逐利航线',desc:'路线奖励再增加 4 金。'}
+];
+const RESEARCH_ROUTES=[
+  {id:'archive',name:'封存档案室',kind:'safe',tag:'求知路线',
+   desc:'立即补全当前谜卷的一条未发现线索；若已齐全则获得 12 金。',cost:'没有额外敌情。'},
+  {id:'sanctuary',name:'守夜避难所',kind:'safe',tag:'休整路线',
+   desc:'全队回复约三成生命并获得星盾；下一层少一名普通敌人。',cost:'战利品也会少一件。'},
+  {id:'workshop',name:'倒置机关工坊',kind:'wild',tag:'构筑路线',
+   desc:'下一层出现遗物、扳机和成组机关，适合研究机关连锁。',cost:'机关尚未翻转前同样会伤到自己。'},
+  {id:'mirror',name:'裂光镜廊',kind:'wild',tag:'捷径路线',
+   desc:'出口更近，并出现成对裂隙；可以快速深入或绕路搜刮。',cost:'灰塔弩机会监视其中一条直线。'},
+  {id:'hunt',name:'星鸦狩猎场',kind:'risk',tag:'高压路线',
+   desc:'追加一名高额赏金精英与一个宝匣，击破精英收益丰厚。',cost:'精英生命提高 45%，攻击 +1。'},
+  {id:'greed',name:'会咬人的金库',kind:'risk',tag:'贪欲契约',
+   desc:'立即获得 24 金，下一层再出现两个宝匣。',cost:'本层所有宝匣更容易苏醒成贪匣。'},
+  {id:'forbidden',name:'禁书捷径',kind:'risk',tag:'禁术契约',
+   desc:'立即揭开一条谜卷线索，并在下一层放置研究遗物。',cost:'每位星徒永久失去 3 点血上限，最低保留 1 血。'},
+  {id:'prank',name:'摸鱼怪运动会',kind:'wild',tag:'恶搞路线',
+   desc:'蕉皮和摸鱼怪大量出现；善用摔倒可以制造连续控制。',cost:'路线更拥挤，但笑出声也会计入探索表现。'}
+];
+function mysteryCase(id){return MYSTERY_CASES.find(c=>c.id===id)||MYSTERY_CASES[0];}
+function researchRelic(id){return RESEARCH_RELICS.find(r=>r.id===id)||null;}
+function researchRoute(id){return RESEARCH_ROUTES.find(r=>r.id===id)||null;}
 const GAME_URL='https://myskme.github.io/myskme-star-dungeon/';
 const EMPTY_PLAYER_STATS=()=>({steps:0,attacks:0,damage:0,kills:0,support:0,hazards:0,items:0,objectives:0});
 function normalizePlayerStats(s){
@@ -2040,12 +2220,30 @@ function identitySave(){
 
 /* ---------- 局外记录（localStorage，独立键，不与任何存档混用） ---------- */
 const META_KEY='starDungeon_meta_v1';
-let META={best:{}, seen:{}, sound:true};
+function normalizeResearchMeta(o){
+  const out={clues:{},solved:{},wrong:{},relics:{},routes:{},insight:0,loadout:null};
+  const src=o&&typeof o==='object'&&!Array.isArray(o)?o:{};
+  MYSTERY_CASES.forEach(c=>{
+    const a=src.clues&&Array.isArray(src.clues[c.id])?src.clues[c.id]:[];
+    out.clues[c.id]=c.clues.map((_,i)=>a[i]===true);
+    if(src.solved&&src.solved[c.id]===true)out.solved[c.id]=true;
+    const w=Math.max(0,Math.min(99,Math.floor(Number(src.wrong&&src.wrong[c.id])||0)));
+    if(w)out.wrong[c.id]=w;
+  });
+  RESEARCH_RELICS.forEach(r=>{if(src.relics&&src.relics[r.id]===true)out.relics[r.id]=true;});
+  RESEARCH_ROUTES.forEach(r=>{if(src.routes&&src.routes[r.id]===true)out.routes[r.id]=true;});
+  out.insight=Math.max(0,Math.floor(Number(src.insight)||0));
+  out.loadout=researchRelic(src.loadout)&&out.relics[src.loadout]?src.loadout:null;
+  return out;
+}
+let META={best:{}, seen:{}, sound:true,research:normalizeResearchMeta(null)};
 function metaLoad(){
   try{
     const raw=localStorage.getItem(META_KEY);
-    if(raw){ const o=JSON.parse(raw); META={best:o.best||{}, seen:o.seen||{}, sound:o.sound!==false}; }
+    if(raw){ const o=JSON.parse(raw); META={best:o.best||{}, seen:o.seen||{}, sound:o.sound!==false,
+      research:normalizeResearchMeta(o.research)}; }
   }catch(err){}
+  META.research=normalizeResearchMeta(META.research);
   SND.on=META.sound;
 }
 function metaSave(){ try{ localStorage.setItem(META_KEY,JSON.stringify(META)); }catch(err){} }
@@ -2209,11 +2407,13 @@ function cloudShareBestLocal(){
 function calculateRunScore(won){
   if(!G)return 0;
   const mult=heatData(G.heat).mult;
+  const researchPoints=(G.caseClues||[]).length*180+(G.routeHistory||[]).length*110+
+    (G.relics||[]).length*90+(G.caseSolvedThisRun?260:0);
   if(G.classroom){
     const ps=G.classroom.players,personal=ps.reduce((n,p)=>n+classPersonalPoints(p,won),0);
     const discoveries=Object.keys(G.classroom.discovered||{}).length;
     const tactics=new Set(G.classroom.tacticHistory||[]).size;
-    const strategy=(G.fi+1)*420+(G.kills||0)*90+discoveries*180+tactics*160+
+    const strategy=(G.fi+1)*420+(G.kills||0)*90+discoveries*180+tactics*160+researchPoints+
       (G.laughs||0)*80+Math.max(0,700-(G.turns||0)*90)+(won?3200:0);
     const harmony=ps.length===3||ps.length===4?1.10:1;
     const loopMult=1+Math.min(2,G.loop||0)*.35;
@@ -2221,7 +2421,7 @@ function calculateRunScore(won){
   }
   const s=normalizePlayerStats(G.stats),loopMult=1+Math.min(2,G.loop||0)*.35;
   return Math.max(0,Math.round((G.fi*900+(G.fi+1)*350+(G.kills||0)*125+
-    s.damage*8+s.hazards*120+s.objectives*120+(G.laughs||0)*60+
+    s.damage*8+s.hazards*120+s.objectives*120+(G.laughs||0)*60+researchPoints+
     (G.coin||0)*12+(G.spent||0)*7-(G.turns||0)*4+(won?6500:0))*mult*loopMult));
 }
 function recordRanking(won,endedEarly){
@@ -2275,8 +2475,9 @@ function validEntitiesData(a){
 }
 function validItemsData(a){
   return Array.isArray(a)&&a.every(o=>o&&
-    ['potion','coin','sword','armor','chest','spike','rift','shrine','bomb','lever','mine','ward','spring','banana'].includes(o.type)&&
-    Number.isInteger(o.x)&&Number.isInteger(o.y)&&inb(o.x,o.y));
+    ['potion','coin','sword','armor','chest','spike','rift','shrine','bomb','lever','mine','ward','spring','banana','clue','relic'].includes(o.type)&&
+    Number.isInteger(o.x)&&Number.isInteger(o.y)&&inb(o.x,o.y)&&
+    (o.type!=='clue'||(MYSTERY_CASES.some(c=>c.id===o.caseId)&&Number.isInteger(o.clueIndex)&&o.clueIndex>=0&&o.clueIndex<3)));
 }
 function validStatsData(s){
   return s===undefined||(s&&typeof s==='object'&&!Array.isArray(s)&&
@@ -2297,7 +2498,8 @@ function validSingleRunData(d){
       .every(k=>d[k]===undefined||validRankNumber(d[k]))&&
     (d.loop===undefined||validRankNumber(d.loop))&&validStatsData(d.stats)&&
     (d.heat===undefined||normalizeHeat(d.heat)===d.heat)&&
-    (d.shopBought===undefined||(d.shopBought&&typeof d.shopBought==='object'&&!Array.isArray(d.shopBought)));
+    (d.shopBought===undefined||(d.shopBought&&typeof d.shopBought==='object'&&!Array.isArray(d.shopBought)))&&
+    validResearchRunData(d);
 }
 function saveRun(){
   if(!G||G.sim||G.headless||G.classroom||G.over) return;
@@ -2308,6 +2510,11 @@ function saveRun(){
       coin:G.coin, kills:G.kills, turns:G.turns,spent:G.spent,smoke:G.smoke,luck:G.luck,
       heat:G.heat,shopBought:G.shopBought,loop:G.loop||0,stats:normalizePlayerStats(G.stats),laughs:G.laughs||0,
       skillStamp:G.skillStamp||null,skillPower:G.skillPower||null,skillCharges:G.skillCharges||0,
+      caseId:G.caseId,caseClues:G.caseClues||[],caseAttempted:!!G.caseAttempted,
+      caseSolvedThisRun:!!G.caseSolvedThisRun,
+      routeHistory:G.routeHistory||[],routePending:G.routePending,routeChoices:G.routeChoices,
+      routeCurrent:G.routeCurrent,relics:G.relics||[],relicPending:!!G.relicPending,
+      relicChoices:G.relicChoices,lanternFloor:G.lanternFloor,riftFloor:G.riftFloor,
       fi:G.fi, px:G.px, py:G.py,
       wall:G.wall.map(w=>w?1:0).join(''), stairs:G.stairs,
       ents:G.ents.map(savedEntity),
@@ -2343,9 +2550,12 @@ function resumeRun(){
        stolen:o.stolen||0,tacticMarked:!!o.tacticMarked,bountyMarked:!!o.bountyMarked,
        volatile:!!o.volatile,keykeeper:!!o.keykeeper,stunned:o.stunned||0})),
      items:d.items||[], fname:floorName(d.fi), perkPending:!!d.perk};
+  assignResearchRun(G,d);
   document.getElementById('hFloor').textContent=G.fname+(G.loop>0?' · 二周目 '+G.loop:'');
   show('game'); syncHud();
-  if(G.perkPending) offerUpgrades(d.perkIds||null);
+  if(G.routePending)offerRoutes(G.routePending,G.routeChoices);
+  else if(G.relicPending)offerRelicDraft(G.relicChoices);
+  else if(G.perkPending)offerUpgrades(d.perkIds||null);
 }
 
 function classPlayerSaveData(p,i){
@@ -2362,7 +2572,12 @@ function classRunSnapshot(){
   const c=G.classroom;
   return {v:1,savedAt:Date.now(),coin:G.coin||0,kills:G.kills||0,turns:G.turns||0,
     spent:G.spent||0,smoke:G.smoke||0,luck:G.luck||0,heat:G.heat||0,
-    shopBought:Object.assign({},G.shopBought||{}),loop:G.loop||0,laughs:G.laughs||0,fi:G.fi,
+    shopBought:Object.assign({},G.shopBought||{}),loop:G.loop||0,laughs:G.laughs||0,
+    caseId:G.caseId,caseClues:G.caseClues||[],caseAttempted:!!G.caseAttempted,
+    caseSolvedThisRun:!!G.caseSolvedThisRun,
+    routeHistory:G.routeHistory||[],routePending:G.routePending,routeChoices:G.routeChoices,
+    routeCurrent:G.routeCurrent,relics:G.relics||[],relicPending:!!G.relicPending,
+    relicChoices:G.relicChoices,lanternFloor:G.lanternFloor,riftFloor:G.riftFloor,fi:G.fi,
     wall:G.wall.map(w=>w?1:0).join(''),stairs:G.stairs,ents:G.ents.map(savedEntity),items:G.items,
     classroom:{teamName:c.teamName,players:c.players.map(classPlayerSaveData),current:c.current,ap:c.ap,phase:c.phase,flowVersion:5,
       rhythm:c.rhythm,questionsPerRound:c.questionsPerRound,sceneMode:c.sceneMode,
@@ -2387,7 +2602,7 @@ function validClassPlayerData(p,i){
     ['crit','berserk','lifesteal','reflect','splash','ward'].every(k=>p[k]===undefined||validRankNumber(p[k]));
 }
 function validClassRunData(d){
-  if(!d||d.v!==1||!validMapData(d)||!d.classroom)return false;
+  if(!d||d.v!==1||!validMapData(d)||!d.classroom||!validResearchRunData(d))return false;
   if(!['coin','kills','turns'].every(k=>validRankNumber(d[k])))return false;
   if(!['spent','smoke','luck'].every(k=>d[k]===undefined||validRankNumber(d[k])))return false;
   if(d.loop!==undefined&&!validRankNumber(d.loop))return false;
@@ -2470,13 +2685,16 @@ function resumeClassRun(){
       focusBonus:c.focusBonus||0,hazardBoost:c.hazardBoost||1,armorPierce:c.armorPierce||0,
       killAp:c.killAp||0,killApLeft:c.killApLeft||0,roundPointGain:c.roundPointGain||0,
       roundPointRows:Array.isArray(c.roundPointRows)?c.roundPointRows.slice(0,6):[]}};
+  assignResearchRun(G,d);
   classLoadPlayer(c.current);
   document.getElementById('hFloor').textContent=G.fname+(G.loop>0?' · 二周目 '+G.loop:'');
   document.getElementById('classThink').classList.add('hidden');
   document.getElementById('classJudge').classList.add('hidden');
   document.getElementById('classTactic').classList.add('hidden');
   show('game');syncHud();
-  if(c.phase==='think'||c.phase==='judge')showClassJudge();
+  if(G.routePending)offerRoutes(G.routePending,G.routeChoices);
+  else if(G.relicPending)offerRelicDraft(G.relicChoices);
+  else if(c.phase==='think'||c.phase==='judge')showClassJudge();
   else if(c.phase==='tactic')showClassTactic();
   else if(c.phase==='ready')showClassRoundReady();
   else if(c.phase==='act'&&c.ap<=0&&c.rhythm===CLASS_RHYTHM_BATCH)showClassActionBoard();
@@ -2486,7 +2704,7 @@ function resumeClassRun(){
 /* ---------- 便携备份码 ----------
    包含两份续玩档、榜单、图鉴战绩和课堂偏好；导入前全部校验，通过后才整体写入。 */
 function normalizeMetaData(o){
-  const out={best:{},seen:{},sound:!o||o.sound!==false};
+  const out={best:{},seen:{},sound:!o||o.sound!==false,research:normalizeResearchMeta(o&&o.research)};
   if(o&&o.best&&typeof o.best==='object')HEROES.forEach(h=>{
     const b=o.best[h.id];
     if(b&&Number.isInteger(b.floor)&&b.floor>=0&&b.floor<=FLOORS.length&&typeof b.win==='boolean'&&
@@ -2568,6 +2786,273 @@ function rnd(n){return Math.floor(Math.random()*n)}
 function key(x,y){return y*N+x}
 function inb(x,y){return x>=0&&y>=0&&x<N&&y<N}
 
+/* ---------- 研究运行态 ---------- */
+function researchMeta(){
+  META.research=normalizeResearchMeta(META.research);
+  return META.research;
+}
+function caseClueCount(id){
+  const c=mysteryCase(id),a=researchMeta().clues[c.id]||[];
+  return c.clues.reduce((n,_,i)=>n+(a[i]?1:0),0);
+}
+function caseAllClues(id){return caseClueCount(id)>=mysteryCase(id).clues.length;}
+function chooseRunCase(){
+  const r=researchMeta(),unsolved=MYSTERY_CASES.filter(c=>!r.solved[c.id]);
+  const pool=unsolved.length?unsolved:MYSTERY_CASES;
+  const ranked=pool.slice().sort((a,b)=>caseClueCount(b.id)-caseClueCount(a.id));
+  const best=caseClueCount(ranked[0].id);
+  const shortlist=ranked.filter(c=>caseClueCount(c.id)===best);
+  return shortlist[rnd(shortlist.length)].id;
+}
+function freshResearchRun(){
+  const loadout=researchMeta().loadout;
+  return {caseId:chooseRunCase(),caseClues:[],caseAttempted:false,caseSolvedThisRun:false,
+    routeHistory:[],routePending:null,routeChoices:null,routeCurrent:null,
+    relics:loadout?[loadout]:[],relicPending:false,relicChoices:null,
+    lanternFloor:-1,riftFloor:-1};
+}
+function restoreResearchRun(d){
+  const base=freshResearchRun();
+  if(d&&MYSTERY_CASES.some(c=>c.id===d.caseId))base.caseId=d.caseId;
+  base.caseClues=Array.isArray(d&&d.caseClues)?d.caseClues.filter(i=>Number.isInteger(i)&&i>=0&&i<3):[];
+  base.caseAttempted=!!(d&&d.caseAttempted);
+  base.caseSolvedThisRun=!!(d&&d.caseSolvedThisRun);
+  base.routeHistory=Array.isArray(d&&d.routeHistory)?d.routeHistory.filter(id=>researchRoute(id)).slice(-12):[];
+  base.routePending=Number.isInteger(d&&d.routePending)&&d.routePending>0&&d.routePending<FLOORS.length?d.routePending:null;
+  base.routeChoices=Array.isArray(d&&d.routeChoices)?d.routeChoices.filter(id=>researchRoute(id)).slice(0,3):null;
+  base.routeCurrent=researchRoute(d&&d.routeCurrent)?d.routeCurrent:null;
+  base.relics=Array.isArray(d&&d.relics)?[...new Set(d.relics.filter(id=>researchRelic(id)))].slice(0,3):base.relics;
+  base.relicPending=!!(d&&d.relicPending);
+  base.relicChoices=Array.isArray(d&&d.relicChoices)?d.relicChoices.filter(id=>researchRelic(id)).slice(0,3):null;
+  base.lanternFloor=Number.isInteger(d&&d.lanternFloor)?d.lanternFloor:-1;
+  base.riftFloor=Number.isInteger(d&&d.riftFloor)?d.riftFloor:-1;
+  return base;
+}
+function assignResearchRun(target,data){Object.assign(target,restoreResearchRun(data));return target;}
+function hasRelic(id){return !!(G&&Array.isArray(G.relics)&&G.relics.includes(id));}
+function hasRelicCombo(a,b){return hasRelic(a)&&hasRelic(b);}
+function unlockRelic(id){
+  const r=researchRelic(id);if(!r||!G||G.sim||G.headless)return false;
+  const meta=researchMeta(),fresh=!meta.relics[id];
+  meta.relics[id]=true;if(fresh)meta.insight++;metaSave();return fresh;
+}
+function equipRelic(id){
+  if(!G||!researchRelic(id))return false;
+  G.relics=Array.isArray(G.relics)?G.relics:[];
+  unlockRelic(id);
+  if(G.relics.includes(id)){G.coin+=12;return false;}
+  if(G.relics.length>=3)G.relics.shift();
+  G.relics.push(id);return true;
+}
+function clueKnown(id,index){
+  return !!((researchMeta().clues[id]||[])[index]||
+    (G&&G.caseId===id&&Array.isArray(G.caseClues)&&G.caseClues.includes(index)));
+}
+function collectCaseClue(index,source){
+  if(!G||!MYSTERY_CASES.some(c=>c.id===G.caseId))return false;
+  const c=mysteryCase(G.caseId),i=Math.max(0,Math.min(c.clues.length-1,Number(index)||0));
+  G.caseClues=Array.isArray(G.caseClues)?G.caseClues:[];
+  const meta=researchMeta(),fresh=!meta.clues[c.id][i];
+  if(!G.caseClues.includes(i))G.caseClues.push(i);
+  if(fresh&&!G.sim&&!G.headless){
+    meta.clues[c.id][i]=true;meta.insight++;
+    if(hasRelic('bookmark'))G.coin+=6;
+    if(hasRelic('ink'))G.atk+=1;
+    if(hasRelicCombo('bookmark','ink')){G.maxhp+=1;G.hp+=1;}
+    if(G.classroom)G.classroom.discovered['mystery:'+c.id+':'+i]=true;
+    playerStats(G.classroom?classPlayer():G).objectives++;
+    metaSave();
+  }
+  if(!G.headless){
+    const bonus=fresh?(hasRelic('bookmark')?' · 书签 +6 金':''):' · 已收入档案';
+    fnum(G.px,G.py,'谜页 '+(i+1)+'/3'+bonus,'#ffcd75',true);sfx('pickup');flash();
+    if(caseAllClues(c.id))fnum(G.px,G.py,'证据齐全 · 可提交推理','#9d72d6',true);
+  }
+  return fresh;
+}
+function revealMissingCaseClue(source){
+  const c=mysteryCase(G.caseId),i=c.clues.findIndex((_,n)=>!clueKnown(c.id,n));
+  if(i<0){G.coin+=12;return false;}
+  collectCaseClue(i,source);return true;
+}
+function validResearchRunData(d){
+  if(d.caseId!==undefined&&!MYSTERY_CASES.some(c=>c.id===d.caseId))return false;
+  if(d.caseClues!==undefined&&(!Array.isArray(d.caseClues)||d.caseClues.some(i=>!Number.isInteger(i)||i<0||i>2)))return false;
+  if(d.caseAttempted!==undefined&&typeof d.caseAttempted!=='boolean')return false;
+  if(d.caseSolvedThisRun!==undefined&&typeof d.caseSolvedThisRun!=='boolean')return false;
+  if(d.routeHistory!==undefined&&(!Array.isArray(d.routeHistory)||d.routeHistory.some(id=>!researchRoute(id))))return false;
+  if(d.routePending!==undefined&&d.routePending!==null&&
+     (!Number.isInteger(d.routePending)||d.routePending<=0||d.routePending>=FLOORS.length))return false;
+  if(d.routeChoices!==undefined&&d.routeChoices!==null&&
+     (!Array.isArray(d.routeChoices)||d.routeChoices.length>3||d.routeChoices.some(id=>!researchRoute(id))))return false;
+  if(d.routeCurrent!==undefined&&d.routeCurrent!==null&&!researchRoute(d.routeCurrent))return false;
+  if(d.relics!==undefined&&(!Array.isArray(d.relics)||d.relics.length>3||d.relics.some(id=>!researchRelic(id))))return false;
+  if(d.relicPending!==undefined&&typeof d.relicPending!=='boolean')return false;
+  if(d.relicChoices!==undefined&&d.relicChoices!==null&&
+     (!Array.isArray(d.relicChoices)||d.relicChoices.length>3||d.relicChoices.some(id=>!researchRelic(id))))return false;
+  return true;
+}
+
+function researchFreeCells(f,minDist){
+  const dist=bfs(f.wall,key(4,4)),used=new Set([key(4,4),f.stairs,
+    ...f.ents.map(e=>key(e.x,e.y)),...f.items.map(i=>key(i.x,i.y))]);
+  const cells=[];
+  for(let i=0;i<N*N;i++)if(!f.wall[i]&&!used.has(i)&&dist[i]>=Math.max(1,minDist||1))cells.push(i);
+  shuffle(cells);return cells;
+}
+function addResearchItem(f,type,extra,minDist){
+  const cells=researchFreeCells(f,minDist);if(!cells.length)return null;
+  const c=cells[0],item=Object.assign({type,x:c%N,y:(c/N)|0},extra||{});
+  f.items.push(item);return item;
+}
+function addResearchMob(f,type,mutate){
+  const cells=researchFreeCells(f,3);if(!cells.length)return null;
+  const c=cells[0],e=mkMob(type,c%N,(c/N)|0);if(mutate)mutate(e);
+  f.ents.push(e);return e;
+}
+function applyRouteToFloor(f,fi,id){
+  if(!researchRoute(id))return;
+  if(id==='sanctuary'){
+    const ix=f.ents.findIndex(e=>!e.boss);if(ix>=0)f.ents.splice(ix,1);
+    const ii=f.items.findIndex(i=>i.type!=='clue');if(ii>=0)f.items.splice(ii,1);
+  }else if(id==='workshop'){
+    addResearchItem(f,'lever',null,3);addResearchItem(f,'spike',null,3);
+    addResearchItem(f,'mine',null,3);addResearchItem(f,'relic',null,5);
+  }else if(id==='mirror'){
+    const dist=bfs(f.wall,key(4,4)),used=new Set([...f.ents.map(e=>key(e.x,e.y)),...f.items.map(i=>key(i.x,i.y))]);
+    const exits=dist.map((d,i)=>({d,i})).filter(o=>o.d>=5&&o.d<=7&&!used.has(o.i));
+    if(exits.length)f.stairs=exits[rnd(exits.length)].i;
+    addResearchItem(f,'rift',null,3);addResearchItem(f,'rift',null,5);
+    addResearchMob(f,'turret');
+  }else if(id==='hunt'){
+    const regular=(FLOORS[fi].mobs.find(t=>!MOBS[t].boss)||'guard');
+    addResearchMob(f,regular,e=>{e.elite=true;e.maxhp=Math.ceil(e.maxhp*1.45);e.hp=e.maxhp;e.atk+=1;e.coin+=12;});
+    addResearchItem(f,'chest',null,4);
+  }else if(id==='greed'){
+    addResearchItem(f,'chest',null,3);addResearchItem(f,'chest',null,5);
+  }else if(id==='forbidden'){
+    addResearchItem(f,'relic',null,5);addResearchMob(f,fi>=6?'wisp':'witch');
+  }else if(id==='prank'){
+    addResearchItem(f,'banana',{friendly:true},2);addResearchItem(f,'banana',{friendly:true},3);
+    addResearchItem(f,'banana',{friendly:true},4);addResearchMob(f,'slacker');addResearchMob(f,'slacker');
+  }
+}
+function applyResearchToFloor(f,fi){
+  if(!G)return f;
+  const clueIndex=fi===0?0:fi===3?1:fi===6?2:-1;
+  if(clueIndex>=0&&!clueKnown(G.caseId,clueIndex))
+    addResearchItem(f,'clue',{caseId:G.caseId,clueIndex},4);
+  applyRouteToFloor(f,fi,G.routeCurrent);
+  return f;
+}
+
+function routeHand(){
+  const recent=new Set((G.routeHistory||[]).slice(-2));
+  const pickKind=kind=>{
+    let p=RESEARCH_ROUTES.filter(r=>r.kind===kind&&!recent.has(r.id));
+    if(!p.length)p=RESEARCH_ROUTES.filter(r=>r.kind===kind);
+    return p[rnd(p.length)];
+  };
+  const hand=[pickKind('safe'),pickKind('risk'),pickKind('wild')];
+  shuffle(hand);return hand.map(r=>r.id);
+}
+function autoResearchRoute(ids){
+  const hand=(ids||[]).map(researchRoute).filter(Boolean);
+  const hpRatio=G.classroom
+    ?Math.min(...G.classroom.players.filter(p=>!p.resting).map(p=>p.hp/p.maxhp))
+    :G.hp/G.maxhp;
+  if(hpRatio<.48&&hand.some(r=>r.id==='sanctuary'))return 'sanctuary';
+  if(!caseAllClues(G.caseId)&&hand.some(r=>r.id==='archive'))return 'archive';
+  if((G.relics||[]).length<2&&hand.some(r=>r.id==='workshop'))return 'workshop';
+  const safe=hand.find(r=>r.kind==='safe'),wild=hand.find(r=>r.kind==='wild');
+  return (safe||wild||hand[0]).id;
+}
+function applyRouteCommit(id){
+  const r=researchRoute(id);if(!r)return false;
+  G.routeHistory=(G.routeHistory||[]).concat(id).slice(-12);
+  G.routeCurrent=id;
+  if(!G.sim&&!G.headless){const m=researchMeta();m.routes[id]=true;metaSave();}
+  if(id==='archive')revealMissingCaseClue('route');
+  else if(id==='sanctuary'){
+    if(G.classroom){
+      G.classroom.players.forEach(p=>{const h=Math.max(3,Math.ceil(p.maxhp*.3));p.hp=Math.min(p.maxhp,p.hp+h);p.ward=(p.ward||0)+1;});
+      classLoadPlayer(G.classroom.current);
+    }else{const h=Math.max(3,Math.ceil(G.maxhp*.3));G.hp=Math.min(G.maxhp,G.hp+h);G.ward=(G.ward||0)+1;}
+  }else if(id==='greed')G.coin+=24;
+  else if(id==='forbidden'){
+    if(G.classroom){
+      G.classroom.players.forEach(p=>{p.maxhp=Math.max(1,p.maxhp-3);p.hp=Math.max(1,Math.min(p.hp,p.maxhp));});
+      classLoadPlayer(G.classroom.current);
+    }else{G.maxhp=Math.max(1,G.maxhp-3);G.hp=Math.max(1,Math.min(G.hp,G.maxhp));}
+    revealMissingCaseClue('forbidden');
+  }
+  if(hasRelic('compass'))G.coin+=4;
+  if(hasRelicCombo('purse','compass'))G.coin+=4;
+  if(G.classroom)classSaveActive();
+  return true;
+}
+function offerRoutes(nextFi,fixedIds){
+  G.routePending=nextFi;G.routeChoices=fixedIds&&fixedIds.length?fixedIds.slice(0,3):routeHand();
+  if(G.headless){chooseResearchRoute(autoResearchRoute(G.routeChoices));return;}
+  const box=document.getElementById('routeCards'),routeNames=G.routeHistory.slice(-2).map(id=>researchRoute(id).name);
+  document.getElementById('routeIntro').textContent='第 '+(nextFi+1)+' 层之前，全队只需选一次。'+
+    (routeNames.length?'最近走过：'+routeNames.join('、')+'。重复路线已降低出现率。':'每张卡都写明收益与代价。');
+  box.innerHTML=G.routeChoices.map(id=>{
+    const r=researchRoute(id);
+    return '<button class="routecard '+r.kind+'" data-route-pick="'+r.id+'"><em>'+r.tag+'</em><b>'+
+      r.name+'</b>'+r.desc+'<strong>代价：'+r.cost+'</strong></button>';
+  }).join('');
+  document.getElementById('routeDraft').classList.remove('hidden');
+  if(G.classroom)saveClassRun();else saveRun();
+}
+function chooseResearchRoute(id){
+  if(!G||!Number.isInteger(G.routePending)||!(G.routeChoices||[]).includes(id))return false;
+  const next=G.routePending;
+  applyRouteCommit(id);
+  G.routePending=null;G.routeChoices=null;
+  if(!G.headless)document.getElementById('routeDraft').classList.add('hidden');
+  finishDescent(next);return true;
+}
+function offerRelicDraft(fixedIds){
+  let ids=fixedIds&&fixedIds.length?fixedIds.slice(0,3):RESEARCH_RELICS.map(r=>r.id).filter(id=>!hasRelic(id));
+  if(!ids.length)ids=RESEARCH_RELICS.map(r=>r.id);
+  if(!fixedIds){shuffle(ids);ids=ids.slice(0,3);}
+  G.relicPending=true;G.relicChoices=ids;
+  if(G.headless){chooseResearchRelic(ids[0]);return;}
+  document.getElementById('relicIntro').textContent='当前携带：'+
+    ((G.relics||[]).map(id=>researchRelic(id).name).join('、')||'无')+
+    '。最多三件；满槽后会换下最早获得的一件。';
+  document.getElementById('relicCards').innerHTML=ids.map(id=>{
+    const r=researchRelic(id);
+    return '<button class="relicpick" data-relic-pick="'+id+'"><b>'+r.name+'</b>'+r.desc+
+      '<span>'+r.tag+'遗物 · 可与同类遗物组成联动</span></button>';
+  }).join('');
+  document.getElementById('relicDraft').classList.remove('hidden');
+  if(G.classroom)saveClassRun();else saveRun();
+}
+function chooseResearchRelic(id){
+  if(!G||!(G.relicChoices||[]).includes(id)||!researchRelic(id))return false;
+  const fresh=equipRelic(id),name=researchRelic(id).name;
+  G.relicPending=false;G.relicChoices=null;
+  if(!G.headless){
+    document.getElementById('relicDraft').classList.add('hidden');
+    fnum(G.px,G.py,fresh?'装备 · '+name:'重复遗物 · +12 金','#ffcd75',true);flash();
+  }
+  syncHud();if(G.classroom)saveClassRun();else saveRun();return true;
+}
+function finishDescent(nextFi){
+  loadFloor(nextFi);
+  if(G.classroom&&G.classroom.phase==='act'){
+    G.classroom.ap+=3;
+    const p=classPlayer();if(p)p.roundAp=G.classroom.ap;
+    if(!G.headless)fnum(G.px,G.py,'深入士气 +3 行动','#e8cf95',true);
+  }
+  syncHud();
+  if(G.classroom)offerClassUpgrades();
+  else if(G.sim)simPerk();
+  else{offerUpgrades();saveRun();}
+}
+
 /* ---------- 地牢生成（随机游走保证连通） ---------- */
 function genFloor(fi){
   const cfg=FLOORS[fi];
@@ -2635,7 +3120,9 @@ function genFloor(fi){
     if(gift!=null)items.push({x:gift%N,y:(gift/N)|0,type:fi%2?'ward':'lever'});
   }
 
-  return {wall,stairs:far,ents,items,name:floorName(fi)};
+  const out={wall,stairs:far,ents,items,name:floorName(fi)};
+  applyResearchToFloor(out,fi);
+  return out;
 }
 function bfs(wall,start){
   const d=new Array(N*N).fill(-1); d[start]=0;
@@ -2663,6 +3150,7 @@ function startGame(heroId,opts){
      over:false, parts:[], kills:0, turns:0,spent:0,smoke:0,luck:0,shopBought:{},
      heat:normalizeHeat(opts&&opts.heat),scoreMult:heatData(opts&&opts.heat).mult,
      loop:Math.max(0,Math.floor(Number(opts&&opts.loop)||0)),stats:EMPTY_PLAYER_STATS(),laughs:0};
+  assignResearchRun(G,null);
   if(opts && opts.sim){ G.sim=true; G.headless=true; }
   loadFloor(0);
   if(!G.sim){ show('game'); syncHud(); saveRun(); }
@@ -2698,6 +3186,7 @@ function startClassGame(heroIds,opts){
       questionTotal:0,questionIndex:0,roundStartSeat:0,roundNumber:0,
       tacticId:null,tacticHand:[],tacticHistory:[],focusBonus:0,hazardBoost:1,
       armorPierce:0,killAp:0,killApLeft:0,roundPointGain:0,roundPointRows:[]}};
+  assignResearchRun(G,null);
   if(opts&&opts.sim){ G.sim=true; G.headless=true; }
   else if(opts&&opts.headless){ G.headless=true; }
   loadFloor(0);
@@ -2765,6 +3254,12 @@ function loadFloor(fi){
   G.wall=f.wall; G.stairs=f.stairs; G.ents=f.ents; G.items=f.items; G.fname=f.name;
   if(G.classroom) placeClassPlayers(fi);
   else{ G.px=4; G.py=4; }
+  if(hasRelic('lantern')&&G.lanternFloor!==fi){
+    if(G.classroom)G.classroom.players.forEach(p=>{if(!p.resting)p.ward=(p.ward||0)+1;});
+    else G.ward=(G.ward||0)+1;
+    G.lanternFloor=fi;
+    if(G.classroom)classLoadPlayer(G.classroom.current);
+  }
   computeIntents();
   markSeen();
   if(G.sim||G.headless) return;
@@ -3732,7 +4227,8 @@ function uiBlocked(){
   // 否则玩家会在看不见棋盘的情况下被键盘走位、白白挨打（夜班查出的真竞态）。
   if(G && G.headless) return false;          // 自测/模拟局不走 DOM 判定
   if(document.getElementById('game').classList.contains('hidden')) return true;
-  return ['upgrade','shop','codex','archive','leaderboard','howto','classThink','classJudge','classTactic','classAction']
+  return ['upgrade','shop','codex','research','routeDraft','relicDraft','archive','leaderboard','howto',
+    'classThink','classJudge','classTactic','classAction']
     .some(id=>!document.getElementById(id).classList.contains('hidden'));
 }
 function act(dir){
@@ -3919,12 +4415,13 @@ function triggerEnemyHazard(e){
   const it=G.items[i];G.items.splice(i,1);
   playerStats(G.classroom?classPlayer():G).hazards++;
   const mult=(it.friendly&&G.classroom)?Math.max(2,G.classroom.hazardBoost||1):1;
+  const relicBonus=it.friendly&&hasRelic('gloves')?(hasRelicCombo('gloves','chalk')?4:2):0;
   if(it.type==='spike'){
     fnum(e.x,e.y,'踩中尖刺','#ef7d57');
-    damageFoe(e,4*mult,'机关 -'+(4*mult),'#ef7d57');
+    damageFoe(e,4*mult+relicBonus,'机关 -'+(4*mult+relicBonus),'#ef7d57');
   }else if(it.type==='mine'){
     burst(e.x,e.y,'#ef7d57');shake();
-    damageFoe(e,6*mult,'伏雷 -'+(6*mult),'#ef7d57',true);
+    damageFoe(e,6*mult+relicBonus,'伏雷 -'+(6*mult+relicBonus),'#ef7d57',true);
   }else if(it.type==='bomb'){
     const targets=G.ents.filter(o=>Math.max(Math.abs(o.x-e.x),Math.abs(o.y-e.y))<=1);
     burst(e.x,e.y,'#ffcd75');shake();
@@ -4007,6 +4504,12 @@ function pickup(){
     const mate=G.items.find((o,j)=>j!==i&&o.type==='rift');
     if(mate){
       G.px=mate.x;G.py=mate.y;
+      if(hasRelic('prism')&&G.riftFloor!==G.fi){
+        const amount=hasRelicCombo('prism','lantern')?5:3;
+        const heal=Math.min(amount,G.maxhp-G.hp);G.hp+=heal;G.riftFloor=G.fi;
+        if(G.classroom)classPlayer().hp=G.hp;
+        if(heal)fnum(G.px,G.py,'棱镜回光 +'+heal,'#38b764',true);
+      }
       fnum(G.px,G.py,'裂隙跃迁','#7e75d6',true);sfx('stairs');flash();
     }
     return;
@@ -4015,6 +4518,8 @@ function pickup(){
   playerStats(G.classroom?classPlayer():G).items++;
   if(it.type==='potion'){ const h=Math.min(8,G.maxhp-G.hp); G.hp+=h; fnum(G.px,G.py,'+'+h,'#38b764'); }
   if(it.type==='coin'){ G.coin+=5; fnum(G.px,G.py,'+5 金','#ffcd75'); }
+  if(it.type==='clue')collectCaseClue(it.clueIndex,'floor');
+  if(it.type==='relic')offerRelicDraft();
   if(it.type==='sword'){ G.atk+=1; fnum(G.px,G.py,'攻击 +1','#e8cf95'); flash(); }
   if(it.type==='armor'){ G.maxhp+=5; G.hp+=5; fnum(G.px,G.py,'血上限 +5','#41a6f6'); flash(); }
   if(it.type==='spike'){
@@ -4039,16 +4544,17 @@ function pickup(){
     targets.forEach(o=>{if(G.ents.includes(o))damageFoe(o,6,'爆裂 -6','#ffcd75',true);});
   }
   if(it.type==='chest'){
-    const risk=Math.max(.08,.28-(G.luck||0)*.08);
+    const routeRisk=G.routeCurrent==='greed' ? .18 : 0,relicSafe=hasRelic('purse') ? .10 : 0;
+    const risk=Math.max(.05,.28+routeRisk-(G.luck||0)*.08-relicSafe);
     if(Math.random()<risk){
       const cells=[[1,0],[-1,0],[0,1],[0,-1]].map(([dx,dy])=>({x:G.px+dx,y:G.py+dy}))
         .filter(c=>inb(c.x,c.y)&&!G.wall[key(c.x,c.y)]&&!occupied(c.x,c.y));
       if(cells.length){
         const c=cells[rnd(cells.length)];G.ents.push(mkMob('mimic',c.x,c.y));
         fnum(c.x,c.y,'宝匣醒了','#ef7d57',true);computeIntents();
-      }else{G.coin+=10;fnum(G.px,G.py,'+10 金','#ffcd75');}
+      }else{const g=10+(hasRelic('purse')?4:0);G.coin+=g;fnum(G.px,G.py,'+'+g+' 金','#ffcd75');}
     }else{
-      const gold=8+(G.luck||0)*2;G.coin+=gold;
+      const gold=8+(G.luck||0)*2+(hasRelic('purse')?4:0);G.coin+=gold;
       if(Math.random()<.35){G.atk+=1;fnum(G.px,G.py,'星刃 +1','#e8cf95',true);}
       else fnum(G.px,G.py,'宝匣 +'+gold+' 金','#ffcd75',true);
     }
@@ -4064,8 +4570,10 @@ function pickup(){
     let n=0;
     G.items.forEach(o=>{if(o.type==='spike'||o.type==='mine'){o.friendly=true;n++;}});
     if(G.classroom)G.classroom.hazardBoost=Math.max(2,G.classroom.hazardBoost||1);
+    if(hasRelic('chalk'))G.ents.forEach(e=>{e.stunned=(e.stunned||0)+1;});
     playerStats(G.classroom?classPlayer():G).support+=n;
-    fnum(G.px,G.py,'星轨翻转 · '+n+' 处机关归队','#38b764',true);flash();
+    fnum(G.px,G.py,'星轨翻转 · '+n+' 处机关归队'+(hasRelic('chalk')?' · 全敌停顿':''),
+      '#38b764',true);flash();
   }
   if(it.type==='ward'){
     G.ward=(G.ward||0)+1;
@@ -4086,16 +4594,10 @@ function pickup(){
 function descend(){
   if(G.fi>=FLOORS.length-1){ win(); return; }
   flash(); shake(); sfx('stairs');
-  loadFloor(G.fi+1);
-  if(G.classroom&&G.classroom.phase==='act'){
-    G.classroom.ap+=3;
-    const p=classPlayer();if(p)p.roundAp=G.classroom.ap;
-    fnum(G.px,G.py,'深入士气 +3 行动','#e8cf95',true);
-  }
-  syncHud();
-  if(G.classroom){ offerClassUpgrades(); }
-  else if(G.sim) simPerk();      // 模拟局：按"普通玩家"偏好自动选强化
-  else{ offerUpgrades(); saveRun(); }   // 每下一层，选一个变强；连同"待选"状态入档
+  const next=G.fi+1;
+  if([1,3,5,7].includes(next)){offerRoutes(next);return;}
+  G.routeCurrent=null;
+  finishDescent(next);
 }
 /* 模拟局的选卡逻辑要贴近真人：同样是随机三张里挑，血少优先回血，否则要攻击 */
 function simPerk(){
@@ -4138,7 +4640,9 @@ function classEndData(won){
     floor:G.fi+1,kills:G.kills||0,turns:G.turns||0,
     discoveries:Object.keys(G.classroom.discovered||{}).length,
     tactics:new Set(G.classroom.tacticHistory||[]).size,
-    teamPoints:calculateRunScore(won),loop:G.loop||0,laughs:G.laughs||0
+    teamPoints:calculateRunScore(won),loop:G.loop||0,laughs:G.laughs||0,
+    research:{title:mysteryCase(G.caseId).title,clues:(G.caseClues||[]).length,
+      routes:(G.routeHistory||[]).length,relics:(G.relics||[]).length,solved:!!G.caseSolvedThisRun}
   };
 }
 let LAST_RESULT=null;
@@ -4148,7 +4652,10 @@ function endScreen(w,endedEarly){
            fl:G.fi+1, k:G.kills||0, t:G.turns||0,score:calculateRunScore(w),
            heat:heatData(G.heat),spent:G.spent||0,classroom:classEndData(w),
            heroId:G.hero.id,won:!!w,endedEarly:!!endedEarly,loop:G.loop||0,
-           stats:normalizePlayerStats(G.stats),laughs:G.laughs||0,ts:Date.now()};
+           stats:normalizePlayerStats(G.stats),laughs:G.laughs||0,
+           research:{title:mysteryCase(G.caseId).title,clues:(G.caseClues||[]).length,
+             routes:(G.routeHistory||[]).length,relics:(G.relics||[]).length,solved:!!G.caseSolvedThisRun},
+           ts:Date.now()};
   LAST_RESULT=s;
   setTimeout(()=>{
     const big=document.getElementById('overBig');
@@ -4165,6 +4672,8 @@ function endScreen(w,endedEarly){
         '<br><br>到达 <b>第'+s.classroom.floor+'层</b> · 击杀 <b>'+s.classroom.kills+
         '</b> · 总回合 <b>'+s.classroom.turns+'</b>'+
         '<br>本局发现地图异闻 <b>'+s.classroom.discoveries+' 处</b>'+
+        '<br>谜卷「<b>'+s.research.title+'</b>」 · 新证据 '+s.research.clues+
+        ' · 路线抉择 '+s.research.routes+(s.research.solved?' · <b>推理成立</b>':'')+
         '<br><b>'+s.heat.name+'</b> · 团队远征积分等待计算'+
         '<br>答题、配合、机关、路线与通关都会计分。';
       document.getElementById('btnAgain').textContent=w?'开启二周目':'同组再来';
@@ -4175,6 +4684,8 @@ function endScreen(w,endedEarly){
           : '<b>'+s.n+'</b> 倒在了'+s.f+'。')+
         '<br>到达 <b>第'+s.fl+'层</b> · 击杀 <b>'+s.k+'</b> · 回合 <b>'+s.t+'</b>'+
         '<br>金币 <b>'+s.coin+'</b> · 已消费 <b>'+s.spent+'</b> · 攻击 <b>'+s.atk+'</b> · 血上限 <b>'+s.mh+'</b>'+
+        '<br>谜卷「<b>'+s.research.title+'</b>」 · 新证据 '+s.research.clues+
+        ' · 路线抉择 '+s.research.routes+(s.research.solved?' · <b>推理成立</b>':'')+
         '<br><b>'+s.heat.name+'</b> · 远征积分等待计算'+
         '<br>失败也会有完整成绩；路线、机关与战斗贡献都会记分。';
       document.getElementById('btnAgain').textContent=w?'开启二周目':'再来一局';
@@ -4217,6 +4728,7 @@ function scoreBreakdown(s){
   }
   return [{name:'深入层数',value:s.fl},{name:'击杀敌人',value:s.k},
     {name:'机关利用',value:s.stats.hazards},{name:'有效伤害',value:s.stats.damage},
+    {name:'探索研究',value:s.research.clues+s.research.routes+(s.research.solved?3:0)},
     {name:'欢乐事件',value:s.laughs||0},{name:'远征回合',value:s.t}];
 }
 function renderScoreReport(){
@@ -4575,6 +5087,8 @@ function syncHud(){
   const skillUsed=G.skillStamp===heroSkillStamp();
   skillBtn.textContent=G.hero.active+(skillReady?'':skillUsed?' · 已用':' · 等待行动');
   skillBtn.disabled=!skillReady;skillBtn.classList.toggle('ready',skillReady);
+  const clueNow=caseClueCount(G.caseId);
+  document.getElementById('btnResearch2').textContent='谜卷 '+clueNow+'/3 · 遗物 '+(G.relics||[]).length+'/3';
   const ch=document.getElementById('classHud');
   ch.classList.toggle('hidden',!G.classroom);
   if(G.classroom){
@@ -4613,7 +5127,9 @@ function syncHud(){
     }).join('');
     const tactic=classTactic(G.classroom.tacticId);
     const loopRule=currentLoopRule();
-    document.getElementById('tip').innerHTML=(loopRule
+    const route=researchRoute(G.routeCurrent);
+    document.getElementById('tip').innerHTML=(route
+      ?'<div class="tacticactive"><b>本层路线 · '+route.name+'</b>　'+route.desc+'</div>':'')+(loopRule
       ?'<div class="tacticactive"><b>二周目阵法 · '+loopRule.name+'</b>　'+loopRule.desc+'</div>':'')+(tactic
       ?'<div class="tacticactive"><b>本轮计谋 · '+tactic.name+'</b>　'+tactic.desc+'</div>':'')+
       (G.classroom.rhythm===CLASS_RHYTHM_BATCH
@@ -4623,7 +5139,9 @@ function syncHud(){
   }else{
     document.getElementById('btnBack').textContent='换英雄';
     const loopRule=currentLoopRule();
-    document.getElementById('tip').innerHTML=(loopRule
+    const route=researchRoute(G.routeCurrent);
+    document.getElementById('tip').innerHTML=(route
+      ?'<div class="tacticactive"><b>本层路线 · '+route.name+'</b>　'+route.desc+'</div>':'')+(loopRule
       ?'<div class="tacticactive"><b>二周目阵法 · '+loopRule.name+'</b>　'+loopRule.desc+'</div>':'')+
       '格子上亮起<b>红叉</b> = 下回合那里会挨打，<b>走开就能躲掉</b>';
   }
@@ -4641,6 +5159,9 @@ function show(id){
   ['menu','classSetup','game','over'].forEach(s=>document.getElementById(s).classList.toggle('hidden',s!==id));
   if(id!=='game'){
     document.getElementById('shop').classList.add('hidden');
+    document.getElementById('research').classList.add('hidden');
+    document.getElementById('routeDraft').classList.add('hidden');
+    document.getElementById('relicDraft').classList.add('hidden');
     document.getElementById('classThink').classList.add('hidden');
     document.getElementById('classJudge').classList.add('hidden');
     document.getElementById('classTactic').classList.add('hidden');
@@ -4906,6 +5427,96 @@ function buildCodex(){
   });
   document.getElementById('codex').classList.remove('hidden');
 }
+function caseResearchCard(c,active){
+  const meta=researchMeta(),solved=!!meta.solved[c.id],count=caseClueCount(c.id);
+  let html='<div class="casecard'+(solved?' solved':'')+'"><div class="caseeyebrow">'+
+    (solved?'已破解谜卷':active?'本次远征案件':'研究档案 · '+count+'/3 线索')+'</div>'+
+    '<div class="casetitle">'+c.title+'</div><div class="caseprompt">'+c.prompt+'</div>'+
+    '<div class="cluelist">'+c.clues.map((clue,i)=>{
+      const found=!!meta.clues[c.id][i];
+      return '<div class="clue'+(found?' found':'')+'"><b>证据 '+(i+1)+'</b>　'+
+        (found?clue:'尚未发现：在对应章节远端寻找发光谜页。')+'</div>';
+    }).join('')+'</div>';
+  if(solved)html+='<div class="researchmsg good"><b>推理成立：</b>'+c.solution+'</div>';
+  else if(active){
+    const attempted=!!G.caseAttempted,ready=count===c.clues.length;
+    if(attempted)html+='<div class="researchmsg bad"><b>本次推理未成立。</b>'+c.hint+
+      '<br>保留所有线索，下次远征可以再次提交。</div>';
+    else if(meta.wrong[c.id])html+='<div class="researchmsg"><b>上次留下的研究提示：</b>'+c.hint+'</div>';
+    html+='<div class="answergrid">'+c.answers.map((a,i)=>
+      '<button class="answerbtn" data-case-answer="'+i+'" '+(!ready||attempted?'disabled':'')+'>'+
+      String.fromCharCode(65+i)+' · '+a+'</button>').join('')+'</div>'+
+      '<div class="researchmsg">'+(ready?(attempted?'这次已提交过答案。':'证据齐全；答案会由三条线索共同支持。'):
+        '还差 '+(c.clues.length-count)+' 条证据。可以先继续探索，也可以选择档案室或禁书路线。')+'</div>';
+  }
+  return html+'</div>';
+}
+function buildResearch(message,kind){
+  const meta=researchMeta(),content=document.getElementById('researchContent');
+  const solved=MYSTERY_CASES.filter(c=>meta.solved[c.id]).length;
+  const clues=MYSTERY_CASES.reduce((n,c)=>n+caseClueCount(c.id),0);
+  const relics=RESEARCH_RELICS.filter(r=>meta.relics[r.id]).length;
+  const routes=RESEARCH_ROUTES.filter(r=>meta.routes[r.id]).length;
+  let html='<div class="researchstats"><div class="researchstat"><b>'+solved+'/'+MYSTERY_CASES.length+
+    '</b>谜卷破解</div><div class="researchstat"><b>'+clues+'/'+(MYSTERY_CASES.length*3)+
+    '</b>证据归档</div><div class="researchstat"><b>'+relics+'/'+RESEARCH_RELICS.length+
+    '</b>遗物蓝图</div><div class="researchstat"><b>'+meta.insight+
+    '</b>研究见识</div></div>';
+  if(message)html+='<div class="researchmsg '+(kind||'')+'">'+message+'</div>';
+  const active=!!(G&&!G.over&&MYSTERY_CASES.some(c=>c.id===G.caseId));
+  if(active){
+    html+='<div class="activekit">本局携带：'+((G.relics||[]).map(id=>researchRelic(id).name).join(' · ')||'尚无遗物')+
+      '　｜　路线档案 '+(G.routeHistory||[]).length+' 次</div>'+
+      caseResearchCard(mysteryCase(G.caseId),true);
+  }else{
+    html+='<div class="researchhead">谜 卷 档 案</div>'+
+      MYSTERY_CASES.map(c=>caseResearchCard(c,false)).join('');
+  }
+  html+='<div class="researchhead">遗 物 陈 列 柜 · 点 选 下 次 出 发 工 具</div>'+
+    '<div class="cabinet">'+RESEARCH_RELICS.map(r=>{
+      const found=!!meta.relics[r.id],loadout=meta.loadout===r.id;
+      return '<div class="reliccard'+(found?' found':'')+(loadout?' loadout':'')+'"><b>'+
+        (found?r.name:'？？？遗物')+'</b>'+(found?r.desc:'继续破解谜卷或探索机关工坊。')+
+        (found?'<button data-loadout="'+r.id+'">'+(loadout?'取消出发装备':'设为出发工具')+'</button>':'')+'</div>';
+    }).join('')+'</div><div class="researchhead">遗 物 联 动</div>'+
+    RELIC_COMBOS.map(c=>{
+      const found=meta.relics[c.a]&&meta.relics[c.b],on=active&&hasRelicCombo(c.a,c.b);
+      return '<div class="combo'+(on?' on':'')+'"><b>'+(found?c.name:'？？？联动')+'</b>　'+
+        (found?c.desc:'同时发现两件互有关联的遗物后解锁说明。')+'</div>';
+    }).join('')+
+    '<div class="researchhead">路 线 图 谱 · '+routes+'/'+RESEARCH_ROUTES.length+'</div>'+
+    '<div class="routearchive">'+RESEARCH_ROUTES.map(r=>{
+      const found=!!meta.routes[r.id];
+      return '<div class="routearchivecard'+(found?' found':'')+'"><b>'+(found?r.name:'未踏足路线')+
+        '</b>'+(found?r.desc+'<br>代价：'+r.cost:'远征中作出选择后才会归档。')+'</div>';
+    }).join('')+'</div>';
+  content.innerHTML=html;
+  document.getElementById('research').classList.remove('hidden');
+}
+function submitMysteryAnswer(index){
+  if(!G||G.over||G.caseAttempted)return false;
+  const c=mysteryCase(G.caseId),ready=caseAllClues(c.id),meta=researchMeta();
+  if(meta.solved[c.id]||!ready)return false;
+  G.caseAttempted=true;
+  if(Number(index)===c.correct){
+    meta.solved[c.id]=true;meta.insight+=3;meta.relics[c.reward]=true;G.caseSolvedThisRun=true;G.coin+=20;
+    playerStats(G.classroom?classPlayer():G).objectives+=3;
+    if((G.relics||[]).length<3&&!hasRelic(c.reward))equipRelic(c.reward);
+    metaSave();syncHud();
+    if(G.classroom)saveClassRun();else saveRun();
+    buildResearch('推理成立！+20 金，并解锁「'+researchRelic(c.reward).name+'」蓝图。','good');
+    return true;
+  }
+  meta.wrong[c.id]=(meta.wrong[c.id]||0)+1;metaSave();
+  if(G.classroom)saveClassRun();else saveRun();
+  buildResearch('推理暂未成立。不会丢失线索；研究册已补上一条方向提示。','bad');
+  return false;
+}
+function setResearchLoadout(id){
+  const meta=researchMeta();if(!meta.relics[id]||!researchRelic(id))return;
+  meta.loadout=meta.loadout===id?null:id;metaSave();
+  buildResearch(meta.loadout?'已将「'+researchRelic(id).name+'」设为下一局的出发工具。':'已取消出发工具。','good');
+}
 function drawSprSil(c,name){
   const s=SPR[name]; if(!s)return;
   for(let r=0;r<16;r++)for(let i=0;i<16;i++){
@@ -5167,6 +5778,21 @@ document.getElementById('btnAgain').onclick=()=>{
 };
 document.getElementById('btnCodex').onclick=()=>buildCodex();
 document.getElementById('btnCxClose').onclick=()=>document.getElementById('codex').classList.add('hidden');
+document.getElementById('btnResearch').onclick=()=>buildResearch();
+document.getElementById('btnResearch2').onclick=()=>buildResearch();
+document.getElementById('btnResearchClose').onclick=()=>document.getElementById('research').classList.add('hidden');
+document.getElementById('researchContent').addEventListener('click',ev=>{
+  const answer=ev.target.closest('[data-case-answer]');
+  if(answer){submitMysteryAnswer(Number(answer.dataset.caseAnswer));return;}
+  const loadout=ev.target.closest('[data-loadout]');
+  if(loadout)setResearchLoadout(loadout.dataset.loadout);
+});
+document.getElementById('routeCards').addEventListener('click',ev=>{
+  const b=ev.target.closest('[data-route-pick]');if(b)chooseResearchRoute(b.dataset.routePick);
+});
+document.getElementById('relicCards').addEventListener('click',ev=>{
+  const b=ev.target.closest('[data-relic-pick]');if(b)chooseResearchRelic(b.dataset.relicPick);
+});
 document.getElementById('btnArchive').onclick=()=>{
   buildArchive();archiveMessage('');
   document.getElementById('archive').classList.remove('hidden');
@@ -5405,6 +6031,65 @@ function selftest(){
       headless:true,
       wall:new Array(N*N).fill(false),stairs:key(0,0),ents:[],items:[],fname:'测'},over||{});
 
+  // ── 黑域研究：谜卷、路线与遗物 ──
+  ok('六宗谜卷编号互不重复且各有三条证据',
+    MYSTERY_CASES.length===6&&new Set(MYSTERY_CASES.map(c=>c.id)).size===6&&
+    MYSTERY_CASES.every(c=>c.clues.length===3));
+  ok('每宗谜卷都有三个答案、唯一正确项和遗物奖励',
+    MYSTERY_CASES.every(c=>c.answers.length===3&&c.correct>=0&&c.correct<3&&researchRelic(c.reward)));
+  ok('研究遗物八件且编号互不重复',
+    RESEARCH_RELICS.length===8&&new Set(RESEARCH_RELICS.map(r=>r.id)).size===8);
+  ok('路线图谱包含安全、风险、奇策三类',
+    ['safe','risk','wild'].every(k=>RESEARCH_ROUTES.some(r=>r.kind===k)));
+  const oldResearch=normalizeResearchMeta(null);
+  ok('旧版 META 自动补齐研究结构',
+    MYSTERY_CASES.every(c=>oldResearch.clues[c.id].length===3)&&oldResearch.loadout===null);
+  META.research=normalizeResearchMeta(null);
+  G=blank({caseId:'bell',caseClues:[],caseAttempted:false,caseSolvedThisRun:false,
+    routeHistory:[],routeCurrent:null,relics:['bookmark','ink'],stats:EMPTY_PLAYER_STATS(),headless:false});
+  show('game');
+  G.items=[{x:4,y:4,type:'clue',caseId:'bell',clueIndex:0}];pickup();
+  ok('拾取谜页会跨局归档证据',researchMeta().clues.bell[0]===true);
+  ok('书签与星墨联动同时给予金币、攻击和血上限',G.coin===6&&G.atk===4&&G.maxhp===21);
+  const handResearch=routeHand().map(id=>researchRoute(id).kind);
+  ok('每次路线三选一保证安全、风险、奇策各一张',
+    new Set(handResearch).size===3&&['safe','risk','wild'].every(k=>handResearch.includes(k)));
+  G.headless=true;G.routeHistory=[];G.relics=[];G.coin=0;
+  applyRouteCommit('greed');
+  ok('金库契约明示收益并立即给予 24 金',G.coin===24&&G.routeCurrent==='greed');
+  G.maxhp=20;G.hp=20;G.caseId='bell';G.caseClues=[];
+  applyRouteCommit('forbidden');
+  ok('禁书契约按说明永久降低 3 点血上限',G.maxhp===17&&G.hp===17);
+  G.relics=['bookmark','ink','gloves'];equipRelic('chalk');
+  ok('遗物严格限制三槽且满槽换下最早一件',
+    G.relics.join(',')==='ink,gloves,chalk');
+  G=blank({caseId:'bell',caseClues:[],routeHistory:[],routeCurrent:'workshop',
+    relics:[],stats:EMPTY_PLAYER_STATS()});
+  const workshopFloor=genFloor(1);
+  ok('机关工坊真实生成扳机、机关和研究遗物',
+    ['lever','spike','mine','relic'].every(t=>workshopFloor.items.some(i=>i.type===t)));
+  G=blank({caseId:'mirror',caseClues:[],routeHistory:[],routeCurrent:null,
+    relics:[],stats:EMPTY_PLAYER_STATS()});
+  META.research=normalizeResearchMeta(null);
+  const clueFloor=genFloor(0),clueItem=clueFloor.items.find(i=>i.type==='clue');
+  ok('章节远端会生成与当前案件匹配的可达谜页',
+    clueItem&&clueItem.caseId==='mirror'&&bfs(clueFloor.wall,key(4,4))[key(clueItem.x,clueItem.y)]>=4);
+  G=blank({relics:['gloves','chalk'],stats:EMPTY_PLAYER_STATS()});
+  const relicTarget=Object.assign(mkMob('snake',5,4),{hp:20,maxhp:20,intent:{t:'wait'}});
+  G.ents=[relicTarget];G.items=[{type:'spike',x:5,y:4,friendly:true}];triggerEnemyHazard(relicTarget);
+  ok('机关师与粉笔联动把友军尖刺提高到 8 伤害',relicTarget.hp===12);
+  META.research=normalizeResearchMeta({clues:{stars:[true,true,true]}});
+  G=blank({headless:false,caseId:'stars',caseClues:[0,1,2],caseAttempted:false,caseSolvedThisRun:false,
+    routeHistory:[],routeCurrent:null,relics:[],stats:EMPTY_PLAYER_STATS(),shopBought:{},heat:0,loop:0});
+  show('game');
+  ok('三枚星图证据会被识别为齐全',caseAllClues('stars'));
+  const puzzleAccepted=submitMysteryAnswer(1);
+  ok('证据齐全后正确答案会被接受',puzzleAccepted===true);
+  ok('正确推理会记录本局破解',G.caseSolvedThisRun===true);
+  ok('正确推理会跨局记录谜卷已解',researchMeta().solved.stars===true);
+  ok('正确推理会解锁奖励蓝图',researchMeta().relics.compass===true);
+  document.getElementById('research').classList.add('hidden');show('menu');
+
   G=blank({hero:HEROES[2],hp:18,maxhp:18,lifesteal:2});
   G.ents=[mkMob('snake',5,4)];
   computeIntents();
@@ -5550,13 +6235,18 @@ function selftest(){
   const savedRunRaw=localStorage.getItem(RUN_KEY);      // 保护真玩家的档，测完还原
   const savedMetaRaw=JSON.stringify(META);              // win() 会写战绩，测完还原免污染
   startGame('jin');
-  G.hp=15; G.coin=7; G.fi=4; G.fname=floorName(4); saveRun();
+  G.hp=15; G.coin=7; G.fi=4; G.fname=floorName(4);
+  G.caseId='mirror';G.caseClues=[0,1];G.routeHistory=['archive','workshop'];
+  G.routeCurrent='workshop';G.relics=['bookmark','ink'];saveRun();
   const snapEnts=G.ents.length;
   ok('个人存档带更新时间', Number.isFinite(loadRun().savedAt));
   G=null; resumeRun();
   ok('存档往返：血/金/层一致', G && G.hp===15 && G.coin===7 && G.fi===4);
   ok('存档往返：敌人数量一致', G && G.ents.length===snapEnts);
   ok('存档往返：敌人意图原样保留', G && G.ents.every(e=>e.intent!==undefined));
+  ok('存档往返：谜卷、路线和遗物一致',
+    G&&G.caseId==='mirror'&&G.caseClues.join()==='0,1'&&
+    G.routeHistory.join()==='archive,workshop'&&G.relics.join()==='bookmark,ink');
   G.hp=0; G.over=false; clearRun();
   ok('清档后无法再续', loadRun()===null);
   try{ localStorage.setItem(RUN_KEY,'{"v":1,"hero":"没这人"}'); }catch(err){}
@@ -5819,7 +6509,8 @@ function selftest(){
   startClassGame(['jin','wen'],{headless:true,rhythm:CLASS_RHYTHM_BATCH,questions:5,
     teamName:'存档测试队',names:['存档甲','存档乙'],
     sceneMode:CLASS_SCENE_FIXED,fixedScene:'snakewood',eggLevel:CLASS_EGGS_RICH});
-  G.headless=false;G.classroom.players[0].score=4;saveClassRun();
+  G.headless=false;G.classroom.players[0].score=4;
+  G.caseId='tower';G.caseClues=[0];G.routeHistory=['prank'];G.relics=['chalk'];saveClassRun();
   const savedClass=loadClassRun();
   ok('课堂存档往返：人数/阶段/题号一致',
     savedClass&&savedClass.classroom.players.length===2&&savedClass.classroom.phase==='judge'&&
@@ -5830,6 +6521,9 @@ function selftest(){
   ok('课堂存档带更新时间与风景设置',
     savedClass&&Number.isFinite(savedClass.savedAt)&&savedClass.classroom.fixedScene==='snakewood'&&
     savedClass.classroom.eggLevel===CLASS_EGGS_RICH);
+  ok('课堂存档保留共同谜卷、路线与遗物',
+    savedClass&&savedClass.caseId==='tower'&&savedClass.caseClues.join()==='0'&&
+    savedClass.routeHistory.join()==='prank'&&savedClass.relics.join()==='chalk');
   const personalSentinel=localStorage.getItem(RUN_KEY);
   ok('课堂自动存档不覆盖个人存档', localStorage.getItem(RUN_KEY)===personalSentinel);
   try{
@@ -6031,6 +6725,17 @@ function qaScene(mode){
   document.getElementById('chapter').classList.remove('go');   // 截图时别让过场大字挡住场面
   const setF=(fi)=>{ G.fi=fi; G.fname=floorName(fi);
     document.getElementById('hFloor').textContent=G.fname; };
+  if(mode==='route'){
+    G.routeHistory=['workshop'];offerRoutes(1,['archive','greed','prank']);return;
+  }
+  if(mode==='relic'){
+    G.relics=['bookmark','ink','gloves'];offerRelicDraft(['chalk','prism','purse']);return;
+  }
+  if(mode==='research'){
+    META.research=normalizeResearchMeta({clues:{bell:[true,true,false]},
+      relics:{bookmark:true,ink:true},routes:{archive:true,workshop:true},loadout:'bookmark'});
+    G.caseId='bell';G.caseClues=[0,1];G.relics=['bookmark','ink'];buildResearch();return;
+  }
   if(mode==='single-over'){
     setF(6);G.kills=19;G.turns=46;G.coin=37;G.spent=24;G.laughs=3;
     G.stats=normalizePlayerStats({damage:126,kills:19,hazards:5,items:12,objectives:6});
