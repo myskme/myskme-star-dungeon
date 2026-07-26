@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="data:,">
 <title>星徒地牢 · MYSKME</title>
 <style>
 :root{
@@ -86,6 +87,7 @@ body{
 .countgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}
 .countbtn{min-height:54px;border:3px solid #2b3150;background:var(--bg2);color:var(--ink2);
   font:700 18px var(--px);cursor:pointer}
+.countbtn small{display:block;color:var(--gold);font-size:7px;margin-top:3px}
 .countbtn.active{border-color:var(--gold);color:var(--gold2);box-shadow:var(--glow-gold)}
 .rhythmgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .rhythmbtn{min-height:86px;padding:12px;border:3px solid #2b3150;background:#111522;color:var(--ink2);
@@ -219,14 +221,39 @@ body{
   transition:transform .12s,border-color .12s,color .12s}
 .btn:hover{border-color:var(--gold);color:var(--gold2)}
 .btn:active{transform:translateY(1px) scale(.98);transition-duration:.05s}
+.btn:disabled{opacity:.45;cursor:default;transform:none}
+.btn.skillbtn{border-color:#5a4b27;background:#1b1813;color:var(--gold2)}
+.btn.skillbtn.ready{box-shadow:0 0 0 2px rgba(200,165,88,.18) inset}
 
 /* ── 结算 ── */
-#over{text-align:center;gap:16px}
+#over{text-align:center;gap:13px;overflow:auto;padding-top:20px;padding-bottom:20px}
 #over .big{font-size:34px;letter-spacing:.3em;text-indent:.3em;text-shadow:3px 3px 0 #000}
 #over .big.win{color:var(--gold2)}
 #over .big.lose{color:var(--red)}
 #over .sum{font-size:13px;color:var(--ink2);line-height:2}
 #over .sum b{color:var(--gold2)}
+.scorecalc{width:100%;max-width:560px;min-height:60px;border-color:var(--gold);color:var(--gold2);
+  background:#211d1b;font-size:15px}
+.scorereport{width:100%;max-width:560px;border:3px solid var(--gold);background:#0d1019;padding:13px;text-align:left}
+.scorehero{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;padding-bottom:10px;
+  border-bottom:1px solid rgba(200,165,88,.24)}
+.scorehero span{display:block;color:var(--ink3);font-size:9px;line-height:1.6}
+.scorehero b{display:block;color:var(--gold2);font-size:17px;letter-spacing:.1em}
+.scoretotal{text-align:right;color:var(--gold2);font-size:24px;line-height:1}
+.scoretotal small{display:block;color:var(--ink3);font-size:8px;margin-top:5px}
+.scorebreakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:9px 0}
+.scorechip{border:2px solid #2c334d;background:#111522;padding:7px;color:var(--ink3);font-size:8px;line-height:1.5}
+.scorechip b{display:block;color:var(--ink);font-size:12px}
+.scoreplayers{display:flex;flex-direction:column;gap:5px;margin-top:8px}
+.scoreplayer{display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:center;border:2px solid #2c334d;
+  background:#10131f;padding:6px}
+.scoreplayer canvas{width:30px;height:30px;image-rendering:pixelated}
+.scoreplayer b{display:block;color:var(--gold2);font-size:11px}
+.scoreplayer span{display:block;color:var(--ink3);font-size:8px;line-height:1.5;margin-top:2px}
+.scoreplayer strong{color:var(--gold2);font-size:13px}
+.scoreactions{width:100%;max-width:560px;display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.scorestatus{width:100%;max-width:560px;min-height:18px;color:var(--ink3);font-size:9px;line-height:1.6}
+.scorestatus.good{color:#79b889}.scorestatus.bad{color:#d88983}
 
 /* ── 教学卡 ── */
 #howto{position:fixed;inset:0;z-index:60;background:rgba(5,6,11,.94);
@@ -240,9 +267,9 @@ body{
 #howto b{color:var(--red)}
 
 /* 课堂答题：整轮只停在一张静态地图上，同屏完成全员行动倍率判定 */
-#classThink,#classJudge,#classAction{position:fixed;inset:0;z-index:75;background:rgba(5,6,11,.97);
+#classThink,#classJudge,#classTactic,#classAction{position:fixed;inset:0;z-index:75;background:rgba(5,6,11,.97);
   display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow:auto}
-#classThink>*,#classJudge>*,#classAction>*{margin:auto 0}
+#classThink>*,#classJudge>*,#classTactic>*,#classAction>*{margin:auto 0}
 .thinkbox{width:100%;max-width:480px;border:3px solid var(--gold);background:#10131f;padding:18px}
 .thinkeyebrow{font-size:10px;color:var(--ink3);letter-spacing:.24em;text-align:center;margin-bottom:9px}
 .thinkbox h2{font-size:22px;line-height:1.4;color:var(--gold2);letter-spacing:.12em;text-align:center}
@@ -306,7 +333,30 @@ body{
 .gradeconfirm{width:100%;min-height:56px;margin-top:10px;border:3px solid var(--gold);
   background:#211d1b;color:var(--gold2);font:700 15px var(--px);letter-spacing:.08em;cursor:pointer}
 .gradeconfirm:disabled{border-color:#343b58;background:#111522;color:var(--ink3);cursor:default}
+.roundscorepreview{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin-top:9px;
+  border:2px solid #343b58;background:#0d101a;padding:8px;color:var(--ink3);font-size:9px;line-height:1.55}
+.roundscorepreview b{display:block;color:var(--gold2);font-size:12px}
+.roundscorepreview strong{color:var(--gold2);font-size:16px}
 .judgenote{font-size:11px;color:var(--ink3);line-height:1.6;text-align:center;margin-top:12px}
+.tacticbox{width:100%;max-width:650px;border:3px solid var(--gold);background:var(--bg2);padding:18px}
+.tacticbox h2{font-size:22px;color:var(--gold2);letter-spacing:.16em;text-align:center}
+.tacticintro{font-size:11px;color:var(--ink2);line-height:1.8;text-align:center;margin:10px auto 14px;max-width:520px}
+.tacticroundscore{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin:-5px 0 12px}
+.tacticroundscore span{border:1px solid #4b4538;background:#15130f;padding:5px 7px;color:var(--ink2);font-size:9px}
+.tacticroundscore b{color:var(--gold2)}
+.tacticgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.tacticcard{min-height:176px;border:3px solid #303750;background:#10131f;padding:12px;color:var(--ink2);
+  font:700 10px/1.65 var(--px);text-align:left;cursor:pointer;position:relative;overflow:hidden}
+.tacticcard:before{content:"";position:absolute;right:-18px;top:-22px;width:64px;height:64px;
+  border:2px solid rgba(200,165,88,.16);transform:rotate(45deg)}
+.tacticcard:hover,.tacticcard:focus{border-color:var(--gold);background:#1b1813}
+.tacticcard b{display:block;color:var(--gold2);font-size:16px;letter-spacing:.12em;margin-bottom:7px}
+.tacticcard span{display:block;color:var(--ink3);font-size:9px;margin-top:9px}
+.tacticseal{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;margin-bottom:10px;
+  border:2px solid var(--gold3);color:var(--gold2);font-size:14px;background:#17140f}
+.tacticactive{margin:7px 0 9px;border:2px solid #4b4538;background:#15130f;padding:7px 9px;
+  color:var(--ink2);font-size:10px;line-height:1.6}
+.tacticactive b{color:var(--gold2)}
 .judgesummary{margin-top:14px}
 .judgesummary h3{color:var(--gold2);font-size:17px;letter-spacing:.16em;text-align:center;margin-bottom:10px}
 .summarylist{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
@@ -367,8 +417,10 @@ body{
 .shopgold{text-align:center;color:var(--ink2);font-size:11px;margin:-5px 0 12px}
 .shopgold b{color:var(--gold2);font-size:18px}
 .shoplist{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.shopcard{min-height:95px;border:2px solid #303750;background:#10131f;padding:10px;color:var(--ink2);
+.shopcard{min-height:108px;border:2px solid #303750;background:#10131f;padding:9px;color:var(--ink2);
   font:700 9px/1.6 var(--px);cursor:pointer;text-align:left}
+.shopcardhead{display:grid;grid-template-columns:34px 1fr;gap:8px;align-items:center;margin-bottom:4px}
+.shopcard canvas{width:32px;height:32px;image-rendering:pixelated}
 .shopcard b{display:block;color:var(--gold2);font-size:13px;margin-bottom:4px}
 .shopcard em{display:block;color:var(--gold);font-style:normal;margin-top:5px}
 .shopcard:disabled{opacity:.45;cursor:default}
@@ -476,12 +528,16 @@ body{
   .judgecrest{width:52px;height:52px;font-size:20px}
   .judgewho h2{font-size:19px}
   .actionplayers{grid-template-columns:1fr}
+  .tacticgrid{grid-template-columns:1fr}
+  .tacticcard{min-height:116px}
   .thinkbox{padding:13px}
   .thinkbox h2{font-size:19px}
   .thinkpips i{width:22px}
   .archivebox,.rankbox{padding:13px}
   .shoplist{grid-template-columns:1fr}
   .rankrow{grid-template-columns:28px 1fr auto;padding:7px 5px;gap:5px}
+  .scorebreakdown{grid-template-columns:1fr 1fr}
+  .scoreactions{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -528,7 +584,7 @@ body{
       <label for="classTeamName">队伍名字<span>云榜只公开队名，不公开成员名</span></label>
       <input class="nameinput" id="classTeamName" maxlength="16" value="星徒小队" autocomplete="off">
     </div>
-    <div class="sectionhead">先 选 人 数</div>
+    <div class="sectionhead">先 选 人 数 · 三 到 四 人 最 佳</div>
     <div class="countgrid" id="classCounts"></div>
     <div class="sectionhead">再 选 课 堂 节 奏</div>
     <div class="rhythmgrid" id="classRhythms">
@@ -537,8 +593,8 @@ body{
     </div>
     <div class="sectionhead">每 轮 先 攒 几 道 题</div>
     <div class="questiongrid" id="classQuestions">
-      <button class="questionbtn" data-questions="5"><b>5 道题 · 推荐</b>标准一局约 15～20 题，节奏最紧凑。</button>
-      <button class="questionbtn" data-questions="6"><b>6 道题 · 加长</b>行动要求更高，适合更长课时。</button>
+      <button class="questionbtn" data-questions="5"><b>5 道题 · 推荐</b>通常 2～4 轮打完九层，约 10～20 题。</button>
+      <button class="questionbtn" data-questions="6"><b>6 道题 · 加长</b>通常 2～4 轮，适合题量稍多的课时。</button>
     </div>
     <div class="setupnote">五或六道题由全员共同作答；整轮只停在一张风景图，每位玩家只点一次行动倍率。</div>
     <div class="sectionhead">挑 战 契 约 · 越 险 分 越 高</div>
@@ -606,6 +662,7 @@ body{
 
     <div class="row">
       <button class="btn" id="btnBack">换英雄</button>
+      <button class="btn skillbtn" id="btnSkill">职业技</button>
       <button class="btn" id="btnShop">星币商店</button>
       <button class="btn" id="btnSound">音效 开</button>
       <button class="btn" id="btnHow2">怎么玩</button>
@@ -699,6 +756,14 @@ body{
   <div id="over" class="screen hidden">
     <div class="big" id="overBig">胜 利</div>
     <div class="sum" id="overSum"></div>
+    <button class="btn scorecalc" id="btnScoreNow">立即计算积分</button>
+    <div class="scorereport hidden" id="scoreReport"></div>
+    <div class="scoreactions hidden" id="scoreActions">
+      <button class="btn" id="btnSavePoster">保存战绩图片</button>
+      <button class="btn" id="btnSharePoster">分享战绩</button>
+    </div>
+    <div class="scorestatus" id="scoreStatus"></div>
+    <canvas id="scoreCanvas" width="1080" height="1440" class="hidden"></canvas>
     <div class="row">
       <button class="btn" id="btnAgain">再来一局</button>
       <button class="btn" id="btnMenu">换英雄</button>
@@ -736,10 +801,25 @@ body{
             <button id="judgeClearAll">全部清空重填</button>
           </div>
           <div class="groupgrade" id="groupGradeBoard"></div>
+          <div class="roundscorepreview" id="roundScorePreview">
+            <div><b>本轮积分等待计算</b>所有人选好倍率后，一次计算全队行动与个人课堂积分。</div>
+            <strong>--</strong>
+          </div>
+          <button class="gradeconfirm" id="btnCalculateGrades" disabled>请先为全员选择倍率</button>
         </div>
         <div class="judgenote" id="judgeNote">行动步数会按课堂人数与角色协同强度自动补正。</div>
       </div>
     </div>
+  </div>
+</div>
+
+<div id="classTactic" class="hidden">
+  <div class="tacticbox">
+    <div class="thinkeyebrow">谋 略 阶 段 · 每 轮 只 选 一 计</div>
+    <h2 id="tacticTitle">本轮用哪一计？</h2>
+    <div class="tacticintro" id="tacticIntro">行动点比以前更珍贵。读地图、看敌人，再从三张计谋中选一张改变本轮打法。</div>
+    <div class="tacticroundscore" id="tacticRoundScore"></div>
+    <div class="tacticgrid" id="tacticCards"></div>
   </div>
 </div>
 
@@ -756,14 +836,16 @@ body{
 
 <div id="howto" class="hidden">
   <div class="box">
-    <h2>六句话学会</h2>
+    <h2>八句话学会</h2>
     <ul>
       <li><s>一</s><div>点方向键走一步（也可以直接点格子）。一个人闯时，<b>你走一步，敌人才动一步</b>，不急，慢慢想。</div></li>
       <li><s>二</s><div>朝敌人走过去＝<b>打它</b>。血量就在它脚下，几下能打死看得见。</div></li>
       <li><s>三</s><div>格子上的<b>红叉</b>＝下回合那里会挨打。<b>站开就躲掉了</b>，头目的大招也一样。</div></li>
       <li><s>四</s><div>走到<b>金色楼梯</b>下一层，每层可以<b>选一个变强</b>。共九层，三个头目。</div></li>
       <li><s>五</s><div>打不过就<b>绕开</b>——「等一回合」让它先动，往往比硬拼划算。</div></li>
-      <li><s>六</s><div>课堂模式把<b>五或六题攒成一轮</b>，同一张风景图下给每人选行动 ×1 / ×2 / ×3；最后一人选完自动行动。推荐自由选人，直接点任意星徒切换。</div></li>
+      <li><s>六</s><div>课堂模式把<b>五或六题攒成一轮</b>，全员判分后再从<b>三到四张计谋中选一张</b>。一局通常 2～4 轮；诱敌踩机关、拆甲集火，往往比多走几十步更重要。</div></li>
+      <li><s>七</s><div>每位星徒每轮有一次<b>职业技</b>：伏击、逆誓、回春、守阵和震场用途完全不同。三到四人的队伍会获得四张计谋候选。</div></li>
+      <li><s>八</s><div>结算时点<b>立即计算积分</b>，可以保存带游戏官网二维码的战绩图。通关后开启二周目，难点是阵法与布局，不是单纯堆血。</div></li>
     </ul>
     <div class="row" style="margin-top:14px"><button class="btn" id="btnHowClose">知道了</button></div>
   </div>
@@ -1100,6 +1182,240 @@ wisp:[
 '................',
 '................',
 '................'],
+/* 雾医 · 会治疗同伴的菌灯医者 */
+medic:[
+'................',
+'.....gggggg.....',
+'....ggwwwwgg....',
+'....gwgwwgwg....',
+'....ggwwwwgg....',
+'.....gggggg.....',
+'....gggnnggg....',
+'...gggnnnnggg...',
+'...ggnnwwnngg...',
+'...ggnnwwnngg...',
+'....gnnnnnng....',
+'....gnnnnnng....',
+'.....gg..gg.....',
+'....gg....gg....',
+'................',
+'................'],
+/* 灯贼 · 贴身偷走星币再逃 */
+thief:[
+'................',
+'.....mmmmmm.....',
+'....mssssssm....',
+'...mssyssyssm...',
+'...mssksskssm...',
+'....mssssssm....',
+'.....mssssm.....',
+'....mmssssmm....',
+'...mssssssssm...',
+'...mssmssmssm...',
+'....mssssssm....',
+'....mssssssm....',
+'.....ms..sm.....',
+'....mm....mm....',
+'................',
+'................'],
+/* 爆符童子 · 近身蓄爆一圈 */
+bomber:[
+'.......y........',
+'......yyy.......',
+'.....mmymm......',
+'....mrrrrrrm....',
+'....rrkrrkrr....',
+'....rrrrrrrr....',
+'.....rwwwwr.....',
+'....rrrrrrrr....',
+'...rrrkkkkrrr...',
+'...rrkrrrrkrr...',
+'....rrrrrrrr....',
+'....rr.rr.rr....',
+'.....r.rr.r.....',
+'....rr....rr....',
+'................',
+'................'],
+/* 铁角兽 · 直线冲撞 */
+ram:[
+'................',
+'..ee........ee..',
+'...ee......ee...',
+'....dddddddd....',
+'...dddddddddd...',
+'..ddkddddddkdd..',
+'..dddddddddddd..',
+'..dddwwwwwwddd..',
+'..ddwwkkkkwwdd..',
+'...ddwwwwwwdd...',
+'...dddddddddd...',
+'....dddddddd....',
+'....dd.dd.dd....',
+'...dd......dd...',
+'................',
+'................'],
+/* 裂影团 · 击破后分裂 */
+splitter:[
+'................',
+'......pppp......',
+'....pppppppp....',
+'...ppbppppbpp...',
+'...pppkppkppp...',
+'..pppppppppppp..',
+'..pppbbbbbbppp..',
+'...pppppppppp...',
+'....ppp..ppp....',
+'...ppp....ppp...',
+'..ppp......ppp..',
+'...pp......pp...',
+'....p......p....',
+'................',
+'................',
+'................'],
+/* 裂影仔 */
+shard:[
+'................',
+'................',
+'................',
+'.....pppppp.....',
+'....ppbppbpp....',
+'....ppkppkpp....',
+'....pppppppp....',
+'.....pbbbbp.....',
+'....pppppppp....',
+'.....pp..pp.....',
+'....pp....pp....',
+'................',
+'................',
+'................',
+'................',
+'................'],
+/* 骨灯司 · 周期召来裂影 */
+summoner:[
+'................',
+'......eeee......',
+'.....ekkkkk.....',
+'....ekwwwwke....',
+'....ekwkkwke....',
+'....ekwwwwke....',
+'.....ekkkke.....',
+'....pppeeepp....',
+'...pppppppppp...',
+'...pppddddppp...',
+'....ppddddpp....',
+'....ppddddpp....',
+'.....p.dd.p.....',
+'....pp....pp....',
+'................',
+'................'],
+/* 灰塔弩机 · 不移动的长线火力 */
+turret:[
+'................',
+'......mmmm......',
+'....mmmmmmmm....',
+'...mmddddddmm...',
+'...mddyyyyddm...',
+'...mddddddddm...',
+'..mmmmmmmmmmmm..',
+'..mdddmmmmdddm..',
+'..mdddmmmmdddm..',
+'..mmmmmmmmmmmm..',
+'....mddddddm....',
+'...mmmddddmmm...',
+'...m..mmmm..m...',
+'..mm........mm..',
+'................',
+'................'],
+/* 机关狸 · 在追路上布雷 */
+trapper:[
+'..c..........c..',
+'...c........c...',
+'....cccccccc....',
+'...cccccccccc...',
+'...cckcccckcc...',
+'...cccccccccc...',
+'....ccwwwwcc....',
+'...cccccccccc...',
+'..cccmmmmmmccc..',
+'..ccmrrrrrrmcc..',
+'...cmrrrrrrmc...',
+'...cccccccccc...',
+'....cc....cc....',
+'...cc......cc...',
+'................',
+'................'],
+/* 星轨扳机 · 把本层机关翻为己用 */
+lever:[
+'................',
+'.........m......',
+'........mmm.....',
+'.......mm.......',
+'......mm........',
+'.....mm.........',
+'....mm..........',
+'....m...........',
+'...mmmmmmmmmm...',
+'..mmddddddddmm..',
+'..mddddddddddm..',
+'..mmmmmmmmmmmm..',
+'................',
+'................',
+'................',
+'................'],
+/* 伏雷 · 敌我都能踩，翻轨后只伤敌 */
+mine:[
+'................',
+'................',
+'.......y........',
+'......yyy.......',
+'......mym.......',
+'....mmmmmmmm....',
+'...mmrrrrrrmm...',
+'...mrrkkkkrrm...',
+'...mrrkkkkrrm...',
+'...mmrrrrrrmm...',
+'....mmmmmmmm....',
+'.....m....m.....',
+'................',
+'................',
+'................',
+'................'],
+/* 星盾符 · 抵消下一次伤害 */
+ward:[
+'................',
+'.......y........',
+'.....yyyyyy.....',
+'....yybbbbby....',
+'....ybbbbbyy....',
+'....ybbwwbyy....',
+'....ybbwwbyy....',
+'....ybbbbbyy....',
+'....yybbbbyy....',
+'.....yyyyyy.....',
+'......yyyy......',
+'.......yy.......',
+'................',
+'................',
+'................',
+'................'],
+/* 弹簧阵 · 踩中后补回短促行动 */
+spring:[
+'................',
+'................',
+'....mmmmmmmm....',
+'...mmddddddmm...',
+'...mddddddddm...',
+'...mmmmmmmmmm...',
+'......m..m......',
+'.....m....m.....',
+'....m......m....',
+'.....m....m.....',
+'......m..m......',
+'...mmmmmmmmmm...',
+'...mddddddddm...',
+'...mmmmmmmmmm...',
+'................',
+'................'],
 /* 药水 */
 potion:[
 '................',
@@ -1262,6 +1578,42 @@ bomb:[
 '................',
 '................',
 '................'],
+/* 御前蕉皮：既是笑点也是控场机关 */
+banana:[
+'................',
+'................',
+'................',
+'................',
+'................',
+'..........yy....',
+'.........yy.....',
+'........yy......',
+'...yy..yy.......',
+'....yyyy........',
+'.....yyyy.......',
+'......yyy.......',
+'.......y........',
+'................',
+'................',
+'................'],
+/* 摸鱼怪：会周期性装睡的稀有敌人 */
+slacker:[
+'................',
+'................',
+'.....nnnnnn.....',
+'...nnnnnnnnnn...',
+'..nnnnnnnnnnnn..',
+'..nnkknnnnkknn..',
+'..nnkknnnnkknn..',
+'..nnnnnnnnnnnn..',
+'...nnnkkkkknnn..',
+'....nnnnnnnn....',
+'...nnnnnnnnnn...',
+'..nnn.nnnn.nnn..',
+'..nn..nnnn..nn..',
+'......n..n......',
+'.....nn..nn.....',
+'................'],
 /* 楼梯（下一层） */
 stairs:[
 '................',
@@ -1285,45 +1637,87 @@ stairs:[
 /* ---------- 英雄（技能全部字段化：三选一强化直接加这些字段） ---------- */
 const HEROES=[
  {id:'jin', name:'瑾', spr:'jin', animal:'赤狐', role:'争头名 · 暴击',
-  hp:20, atk:3, crit:0.30, tag:'爆发',
-  skill:'三成几率打出<b>双倍伤害</b>', desc:'打得狠，但也脆。'},
+  hp:20, atk:3, crit:0.30, tag:'爆发',active:'狐火伏击',
+  skill:'三成几率打出<b>双倍伤害</b>；职业技让下一击必暴击并破甲。', desc:'专门拆掉最危险的目标。'},
  {id:'wen', name:'文', spr:'wen', animal:'雪狼', role:'觉醒者 · 背水狂化',
-  hp:24, atk:2, berserk:5, tag:'逆转',
-  skill:'<b>血越少，打得越狠</b>（最多 +5）', desc:'越到绝境越强。'},
+  hp:24, atk:2, berserk:5, tag:'逆转',active:'雪狼逆誓',
+  skill:'<b>血越少，打得越狠</b>；职业技以 4 血换三次强攻。', desc:'风险最高，逆风翻盘最强。'},
  {id:'xi',  name:'晰', spr:'xi', animal:'弗莱明巨兔', role:'软抵抗 · 吸血快刃',
-  hp:16, atk:3, lifesteal:1, tag:'续航',
-  skill:'每打中一次<b>回 1 点血</b>', desc:'最不容易死，新手先选它。'},
+  hp:16, atk:3, lifesteal:1, tag:'续航',active:'兔跃回春',
+  skill:'每打中一次<b>回 1 点血</b>；职业技为自己和全队治疗。', desc:'最可靠的队伍续航核心。'},
  {id:'hao', name:'浩', spr:'hao', animal:'原牛', role:'护守者 · 反弹之墙',
-  hp:28, atk:2, reflect:2, tag:'坚壁',
-  skill:'挨打时<b>反弹 2 点</b>给打你的人', desc:'血最厚，能扛能磨。'},
+  hp:28, atk:2, reflect:2, tag:'坚壁',active:'原牛守阵',
+  skill:'挨打时<b>反弹 2 点</b>；职业技给自己和相邻队友星盾。', desc:'站位正确就能替全队省血。'},
  {id:'hai', name:'海', spr:'hai', animal:'驼鹿', role:'街舞者 · 震荡波',
-  hp:22, atk:3, splash:1, tag:'群攻',
-  skill:'打人时<b>震到旁边的敌人</b>（溅射 1 点）', desc:'被围住时最舒服。'}
+  hp:22, atk:3, splash:1, tag:'群攻',active:'驼鹿震场',
+  skill:'攻击会<b>震到旁边敌人</b>；职业技把近敌推向机关。', desc:'地形越复杂，它越能整活。'}
 ];
 
 /* ---------- 敌人（boss 带 pattern：所有攻击一律预告，绝不偷袭） ---------- */
 const MOBS={
-  snake:{name:'蛇卒', spr:'snake', hp:5,  atk:2, coin:2,  lore:'黑域最常见的爪牙，成群结队地堵路。'},
-  crow: {name:'鸦卫', spr:'crow',  hp:4,  atk:2, coin:2,  lore:'替黑域盯梢的哨兵，飞得比想得快。'},
-  shade:{name:'影卒', spr:'shade', hp:8,  atk:3, coin:3,  lore:'没有面孔的兵，只认命令不认人。'},
+  snake:{name:'蛇卒', spr:'snake', hp:5,  atk:2, coin:2,  lore:'黑域最常见的爪牙，成群结队地堵路。',
+         counter:'对策：一击补刀，别让它和远程敌人形成夹角。'},
+  crow: {name:'鸦卫', spr:'crow',  hp:4,  atk:2, coin:2,  lore:'替黑域盯梢的哨兵，飞得比想得快。',
+         counter:'对策：血薄，优先清掉就能打开移动通道。'},
+  shade:{name:'影卒', spr:'shade', hp:8,  atk:3, coin:3,  lore:'没有面孔的兵，只认命令不认人。',
+         counter:'对策：不要和它换血；引去伏雷或两人接力集火。'},
   viper:{name:'雾蝰', spr:'viper', hp:5,  atk:3, coin:3, range:2,
-         lore:'隔着两格就能吐出毒雾，站成一条直线最危险。'},
+         lore:'隔着两格就能吐出毒雾，站成一条直线最危险。',
+         counter:'对策：贴墙折线接近，红线一出现就横移。'},
   shell:{name:'坚壳', spr:'shell', hp:14, atk:3, coin:4, slow:true,
-         lore:'壳厚步子慢，硬碰硬很吃亏，绕开它更省事。'},
+         lore:'壳厚步子慢，硬碰硬很吃亏，绕开它更省事。',
+         counter:'对策：隔回合才走；绕开、困住或用机关磨掉它。'},
   witch:{name:'雾织者',spr:'witch',hp:7,atk:3,coin:5,range:3,
-         lore:'隔三格编织雾线。它很脆，却会逼你研究墙角与视线。'},
+         lore:'隔三格编织雾线。它很脆，却会逼你研究墙角与视线。',
+         counter:'对策：利用拐角断视线；它本身很脆，接近后先杀。'},
   guard:{name:'镜甲卫',spr:'guard',hp:11,atk:4,coin:6,armor:1,
-         lore:'灰塔镜甲会抵消每次伤害 1 点。单次重击比反复轻击更有效。'},
+         lore:'灰塔镜甲会抵消每次伤害 1 点。单次重击比反复轻击更有效。',
+         counter:'对策：选“破阵点睛”，或让暴击英雄用重击拆甲。'},
   mimic:{name:'贪匣',spr:'mimic',hp:10,atk:4,coin:12,
-         lore:'有些宝箱会长出牙。先找退路再开匣，往往能保住战利品。'},
+         lore:'有些宝箱会长出牙。先找退路再开匣，往往能保住战利品。',
+         counter:'对策：开匣前留出退路；贪匣掉钱多，适合悬赏集火。'},
   wisp:{name:'星鸦残影',spr:'wisp',hp:5,atk:2,coin:8,range:2,rare:true,
-         lore:'取自 MYSKME 黑域星鸦档案的稀有游影；击破后留下额外星币。'},
+         lore:'取自 MYSKME 黑域星鸦档案的稀有游影；击破后留下额外星币。',
+         counter:'对策：血薄但会隔格袭击，先封直线再收掉高额星币。'},
+  medic:{name:'雾医',spr:'medic',hp:8,atk:2,coin:7,pattern:'medic',
+         lore:'菌灯每三拍为最虚弱的同伴缝合伤口。',
+         counter:'对策：看见绿色治疗框就先切雾医，或一轮内补掉受疗目标。'},
+  thief:{name:'灯贼',spr:'thief',hp:6,atk:2,coin:9,pattern:'thief',
+         lore:'贴身不恋战，只想摸走星币再往暗处逃。',
+         counter:'对策：让它靠近伏雷；若被偷走，击杀会把赃物一起拿回。'},
+  bomber:{name:'爆符童子',spr:'bomber',hp:7,atk:5,coin:7,pattern:'blast',
+         lore:'贴近后会点燃身边八格，爆圈出现后一拍才炸。',
+         counter:'对策：不要围殴；故意让它的爆圈覆盖其他敌人。'},
+  ram:{name:'铁角兽',spr:'ram',hp:12,atk:5,coin:8,pattern:'ram',armor:1,
+         lore:'沿直线蓄力冲锋，撞到尽头前不会拐弯。',
+         counter:'对策：站到伏雷同一直线上，最后一刻横移，让它替你踩雷。'},
+  splitter:{name:'裂影团',spr:'splitter',hp:9,atk:3,coin:5,pattern:'split',
+         lore:'外壳破碎后会爬出两只小裂影。',
+         counter:'对策：击破前先占住周围空格，能压缩甚至阻止分裂。'},
+  shard:{name:'裂影仔',spr:'shard',hp:3,atk:2,coin:1,
+         lore:'裂影团散出的脆弱小体，数量才是它的武器。',
+         counter:'对策：海的震荡波、爆圈和机关都能一次清掉一片。'},
+  summoner:{name:'骨灯司',spr:'summoner',hp:9,atk:3,coin:8,pattern:'summoner',
+         lore:'每四拍在脚边点起骨灯，召来一只裂影仔。',
+         counter:'对策：紫色召唤框出现时占住那格，或直接集火施术者。'},
+  turret:{name:'灰塔弩机',spr:'turret',hp:10,atk:5,coin:8,pattern:'turret',armor:1,
+         lore:'不会移动，却会把整条走廊变成射线。',
+         counter:'对策：借墙角接近；它不会追人，也可以直接绕开。'},
+  trapper:{name:'机关狸',spr:'trapper',hp:8,atk:3,coin:8,pattern:'trapper',
+         lore:'一边追赶一边在前路埋下伏雷，迫使队伍改线。',
+         counter:'对策：先抢星轨扳机，把它铺的雷全部翻成己方机关。'},
+  slacker:{name:'摸鱼怪',spr:'slacker',hp:7,atk:3,coin:6,pattern:'slacker',rare:true,
+         lore:'黑域里最会装忙的怪。每三拍突然趴平，仿佛刚才什么也没发生。',
+         counter:'对策：看到它“认真摸鱼”就从身边大胆通过；蕉皮能让它多躺一拍。'},
   xuan: {name:'璇',  spr:'xuan', hp:20, atk:4, coin:15, boss:true, pattern:'dash',
-         lore:'黑域头目。狞猫的耳簇一竖，就是要扑过来了。'},
+         lore:'黑域头目。狞猫的耳簇一竖，就是要扑过来了。',
+         counter:'对策：冲锋线完全预告；横移后趁她喘息的一拍输出。'},
   tiger:{name:'慧',  spr:'tiger', hp:26, atk:6, coin:25, boss:true, pattern:'sweep',
-         lore:'黑域头目。西伯利亚虎蓄力一圈横扫，身边八格都别站。'},
+         lore:'黑域头目。西伯利亚虎蓄力一圈横扫，身边八格都别站。',
+         counter:'对策：红圈出现就退；横扫后的破绽才是安全输出窗。'},
   ye:   {name:'叶王', spr:'ye',   hp:36, atk:6, coin:50, boss:true, pattern:'queen',
-         lore:'黑域之主，网纹蟒女王。召影卒、十字重击，是这座地牢的尽头。'}
+         lore:'黑域之主，网纹蟒女王。召影卒、十字重击，是这座地牢的尽头。',
+         counter:'对策：先清召唤物，站斜角避十字；她喘息时再全队接力。'}
 };
 
 /* ---------- 三章九层 ---------- */
@@ -1337,15 +1731,15 @@ const CHAPTERS=[
    floor:'#11141f', dot:'#161a28'}
 ];
 const FLOORS=[
-  {ch:0, mobs:['snake','snake','crow'],                    items:['potion','coin','chest','spike']},
-  {ch:0, mobs:['snake','crow','witch','snake'],            items:['potion','sword','coin','bomb']},
-  {ch:0, mobs:['xuan','snake','crow'],                     items:['potion','chest','rift','rift']},
-  {ch:1, mobs:['snake','shade','viper','wisp'],            items:['potion','coin','armor','spike']},
-  {ch:1, mobs:['shade','viper','witch','snake'],           items:['potion','sword','chest','shrine']},
-  {ch:1, mobs:['tiger','shade','viper','guard'],           items:['potion','bomb','rift','rift']},
-  {ch:2, mobs:['shell','guard','shade','viper','crow'],    items:['potion','coin','armor','spike']},
-  {ch:2, mobs:['shell','guard','witch','viper','wisp'],    items:['potion','sword','chest','shrine']},
-  {ch:2, mobs:['ye','shell','guard','shade'],              items:['potion','bomb','rift','rift']}
+  {ch:0, mobs:['snake','crow','thief'],                         items:['potion','coin','chest','spike','spring']},
+  {ch:0, mobs:['snake','witch','bomber','trapper','slacker'],    items:['potion','sword','coin','mine','lever']},
+  {ch:0, mobs:['xuan','ram','medic'],                            items:['potion','chest','rift','rift','ward']},
+  {ch:1, mobs:['shade','viper','wisp','splitter'],               items:['potion','coin','armor','spike','mine']},
+  {ch:1, mobs:['witch','summoner','medic','trapper','slacker'],  items:['potion','sword','chest','shrine','lever']},
+  {ch:1, mobs:['tiger','viper','bomber','splitter'],             items:['potion','bomb','rift','rift','spring']},
+  {ch:2, mobs:['shell','guard','ram','turret','thief'],          items:['potion','coin','armor','spike','ward']},
+  {ch:2, mobs:['guard','witch','summoner','turret','trapper','slacker'],items:['potion','sword','chest','shrine','lever','mine']},
+  {ch:2, mobs:['ye','guard','medic','bomber'],                   items:['potion','bomb','rift','rift','ward']}
 ];
 function floorName(fi){ return CHAPTERS[FLOORS[fi].ch].name+' · 第'+(fi+1)+'层'; }
 
@@ -1353,7 +1747,8 @@ function floorName(fi){ return CHAPTERS[FLOORS[fi].ch].name+' · 第'+(fi+1)+'�
 let G=null;
 let classEndArmed=false, classEndTimer=null;
 const SEAT_NAMES=['一号','二号','三号','四号','五号','六号'];
-const BATTLE_FIELDS=['hp','maxhp','atk','crit','berserk','lifesteal','reflect','splash','px','py'];
+const BATTLE_FIELDS=['hp','maxhp','atk','crit','berserk','lifesteal','reflect','splash','ward','px','py'];
+const PLAYER_SPECIAL_FIELDS=['skillStamp','skillPower','skillCharges'];
 const CLASS_RHYTHM_BATCH='batch', CLASS_RHYTHM_RELAY='relay';
 const CLASS_SCENE_CHAPTER='chapter', CLASS_SCENE_WANDER='wander', CLASS_SCENE_FIXED='fixed';
 const CLASS_EGGS_QUIET='quiet', CLASS_EGGS_NORMAL='normal', CLASS_EGGS_RICH='rich';
@@ -1363,9 +1758,37 @@ const HEATS=[
   {id:2,name:'追猎契约',short:'追猎',mult:1.7,desc:'追加敌人与机关'},
   {id:3,name:'黑域契约',short:'黑域',mult:2.05,desc:'精英敌人，最高榜分'}
 ];
+const LOOP_RULES=[
+  {id:'formation',name:'铁网阵',desc:'相邻敌人额外获得 1 点护甲；先把它们引开再打。'},
+  {id:'volatile',name:'笑爆阵',desc:'紫光敌人倒下会炸伤周围所有单位；能躲，也能拿来连锁清场。'},
+  {id:'keykeeper',name:'守门阵',desc:'金印敌人携带楼梯钥匙；先规划路线击破它，出口才会打开。'}
+];
+const GAME_URL='https://myskme.github.io/myskme-star-dungeon/';
+const EMPTY_PLAYER_STATS=()=>({steps:0,attacks:0,damage:0,kills:0,support:0,hazards:0,items:0,objectives:0});
+function normalizePlayerStats(s){
+  const out=EMPTY_PLAYER_STATS();
+  Object.keys(out).forEach(k=>{out[k]=Math.max(0,Math.floor(Number(s&&s[k])||0));});
+  return out;
+}
+function classGradePoints(band){
+  return Number(band)===3?300:Number(band)===2?180:80;
+}
+function playerStats(p){
+  if(!p)return EMPTY_PLAYER_STATS();
+  p.stats=normalizePlayerStats(p.stats);return p.stats;
+}
+function classPersonalPoints(p,won){
+  const s=playerStats(p);
+  return Math.max(0,Math.round((p.studyPoints||0)+s.damage*10+s.kills*120+s.support*80+
+    s.hazards*140+s.items*30+s.objectives*180+(p.hp>0?120:0)+(won?260:0)));
+}
 let SINGLE_HEAT=0;
 function normalizeHeat(v){return Math.max(0,Math.min(3,Number(v)||0))|0;}
 function heatData(v){return HEATS[normalizeHeat(v)];}
+function currentLoopRule(){
+  if(!G||!(G.loop>0))return null;
+  return LOOP_RULES[(G.fi+Math.max(0,G.loop-1))%LOOP_RULES.length];
+}
 function normalizeClassRhythm(v){ return v===CLASS_RHYTHM_RELAY?CLASS_RHYTHM_RELAY:CLASS_RHYTHM_BATCH; }
 function normalizeClassQuestions(v){ return Number(v)===5?5:6; }
 function normalizeClassSceneMode(v){
@@ -1386,11 +1809,30 @@ function classCorrectPoints(correct,total){
   return ratio>=.8?3:ratio>=.4?2:1;
 }
 function classActionBase(count){
-  return [0,330,180,96,48,18,12][Math.max(1,Math.min(6,Number(count)||1))];
+  return [0,100,60,52,32,13,10][Math.max(1,Math.min(6,Number(count)||1))];
 }
 function classActionSteps(band,count){
   return classActionBase(count)*Math.max(1,Math.min(3,Number(band)||1));
 }
+const CLASS_TACTICS=[
+  {id:'focus',seal:'击',name:'擒贼擒王',tag:'集火',
+   desc:'标记本层血量最高的敌人；本轮每次命中它额外造成 2 点伤害。'},
+  {id:'engineer',seal:'机',name:'借刀杀人',tag:'机关',
+   desc:'本层尖刺与伏雷翻为友军机关，不再伤星徒，伤敌效果翻倍。'},
+  {id:'smoke',seal:'隐',name:'空城烟阵',tag:'防守',
+   desc:'本轮行动结束后，敌人的整次行动落空；适合抢楼梯或脱离包围。'},
+  {id:'breach',seal:'破',name:'破阵点睛',tag:'拆甲',
+   desc:'本轮所有星徒攻击忽略 2 点护甲，专门破解镜甲卫、铁角兽与弩机。'},
+  {id:'sprint',seal:'疾',name:'暗渡陈仓',tag:'机动',
+   desc:'每位仍能行动的星徒额外获得 3 点行动；稳定，但上限不如机关连锁。'},
+  {id:'bounty',seal:'赏',name:'围点打援',tag:'悬赏',
+   desc:'悬赏血量最高的敌人；本轮击破它额外获得 12 金，并返还当前星徒 4 点行动。'},
+  {id:'ward',seal:'守',name:'以逸待劳',tag:'续航',
+   desc:'全队恢复 3 血，并各得一层星盾，抵消下一次受到的伤害。'},
+  {id:'chain',seal:'连',name:'连环推进',tag:'节奏',
+   desc:'本轮前三次击杀各返还当前星徒 2 点行动，适合清理裂影与召唤物。'}
+];
+function classTactic(id){return CLASS_TACTICS.find(t=>t.id===id)||null;}
 function classBandRange(band,total){
   total=normalizeClassQuestions(total);
   if(band===1)return '0–1 题';
@@ -1403,12 +1845,14 @@ function classPlayer(){
 function classSaveActive(){
   const p=classPlayer(); if(!p)return;
   BATTLE_FIELDS.forEach(k=>{ p[k]=G[k]; });
+  PLAYER_SPECIAL_FIELDS.forEach(k=>{p[k]=G[k]===undefined?null:G[k];});
 }
 function classLoadPlayer(index){
   if(!G||!G.classroom)return;
   const p=G.classroom.players[index]; if(!p)return;
   G.classroom.current=index; G.hero=p.hero;
   BATTLE_FIELDS.forEach(k=>{ G[k]=p[k]; });
+  PLAYER_SPECIAL_FIELDS.forEach(k=>{G[k]=p[k]===undefined?null:p[k];});
 }
 function classLivingPlayers(){
   return G&&G.classroom ? G.classroom.players.filter(p=>!p.resting) : [];
@@ -1766,33 +2210,40 @@ function calculateRunScore(won){
   if(!G)return 0;
   const mult=heatData(G.heat).mult;
   if(G.classroom){
-    const ps=G.classroom.players,total=ps.reduce((n,p)=>n+p.score,0);
-    const avg=total/Math.max(1,ps.length),discoveries=Object.keys(G.classroom.discovered||{}).length;
-    return Math.max(0,Math.round((G.fi*900+(G.fi+1)*350+(G.kills||0)*110+
-      avg*360+discoveries*260+(G.spent||0)*5-(G.turns||0)*18+(won?6500:0))*mult));
+    const ps=G.classroom.players,personal=ps.reduce((n,p)=>n+classPersonalPoints(p,won),0);
+    const discoveries=Object.keys(G.classroom.discovered||{}).length;
+    const tactics=new Set(G.classroom.tacticHistory||[]).size;
+    const strategy=(G.fi+1)*420+(G.kills||0)*90+discoveries*180+tactics*160+
+      (G.laughs||0)*80+Math.max(0,700-(G.turns||0)*90)+(won?3200:0);
+    const harmony=ps.length===3||ps.length===4?1.10:1;
+    const loopMult=1+Math.min(2,G.loop||0)*.35;
+    return Math.max(0,Math.round((personal+strategy)*harmony*loopMult*mult));
   }
+  const s=normalizePlayerStats(G.stats),loopMult=1+Math.min(2,G.loop||0)*.35;
   return Math.max(0,Math.round((G.fi*900+(G.fi+1)*350+(G.kills||0)*125+
-    (G.coin||0)*12+(G.spent||0)*7-(G.turns||0)*4+(won?6500:0))*mult));
+    s.damage*8+s.hazards*120+s.objectives*120+(G.laughs||0)*60+
+    (G.coin||0)*12+(G.spent||0)*7-(G.turns||0)*4+(won?6500:0))*mult*loopMult));
 }
 function recordRanking(won,endedEarly){
   if(!G||G.sim||G.headless)return;
   const ts=Date.now();
   let type,record;
   if(G.classroom){
-    const players=G.classroom.players.map((p,i)=>({seat:i,name:p.name,hero:p.hero.id,score:p.score}));
+    const players=G.classroom.players.map((p,i)=>({seat:i,name:p.name,hero:p.hero.id,score:p.score,
+      points:classPersonalPoints(p,won)}));
     const total=players.reduce((n,p)=>n+p.score,0);
     record={ts,won:!!won,endedEarly:!!endedEarly,teamName:G.classroom.teamName,floor:G.fi+1,
       kills:G.kills||0,turns:G.turns||0,total,
       avg:Math.round(total/players.length*10)/10,
       discoveries:Object.keys(G.classroom.discovered||{}).length,players,
-      score:calculateRunScore(won),heat:normalizeHeat(G.heat),spent:G.spent||0};
+      score:calculateRunScore(won),heat:normalizeHeat(G.heat),spent:G.spent||0,loop:G.loop||0};
     RANKS.classroom.push(record);
     RANKS.classroom.sort(rankClassCompare);RANKS.classroom=RANKS.classroom.slice(0,50);
     type='classroom';
   }else{
     record={ts,won:!!won,name:IDENTITY.playerName,hero:G.hero.id,floor:G.fi+1,
       kills:G.kills||0,turns:G.turns||0,coin:G.coin||0,
-      score:calculateRunScore(won),heat:normalizeHeat(G.heat),spent:G.spent||0};
+      score:calculateRunScore(won),heat:normalizeHeat(G.heat),spent:G.spent||0,loop:G.loop||0};
     RANKS.personal.push(record);
     RANKS.personal.sort(rankPersonalCompare);RANKS.personal=RANKS.personal.slice(0,50);
     type='personal';
@@ -1807,7 +2258,9 @@ function recordRanking(won,endedEarly){
 const RUN_KEY='starDungeon_run_v1';
 const CLASS_RUN_KEY='starDungeon_classroom_run_v1';
 function savedEntity(e){return {t:e.type,x:e.x,y:e.y,hp:e.hp,tick:e.tick,intent:e.intent,
-  elite:!!e.elite,maxhp:e.maxhp,atk:e.atk,coin:e.coin};}
+  elite:!!e.elite,maxhp:e.maxhp,atk:e.atk,coin:e.coin,stolen:e.stolen||0,
+  tacticMarked:!!e.tacticMarked,bountyMarked:!!e.bountyMarked,
+  volatile:!!e.volatile,keykeeper:!!e.keykeeper,stunned:e.stunned||0};}
 function validCellData(c){return c&&Number.isInteger(c.x)&&Number.isInteger(c.y)&&inb(c.x,c.y);}
 function validIntentData(it){
   return it==null||(typeof it.t==='string'&&
@@ -1822,8 +2275,12 @@ function validEntitiesData(a){
 }
 function validItemsData(a){
   return Array.isArray(a)&&a.every(o=>o&&
-    ['potion','coin','sword','armor','chest','spike','rift','shrine','bomb'].includes(o.type)&&
+    ['potion','coin','sword','armor','chest','spike','rift','shrine','bomb','lever','mine','ward','spring','banana'].includes(o.type)&&
     Number.isInteger(o.x)&&Number.isInteger(o.y)&&inb(o.x,o.y));
+}
+function validStatsData(s){
+  return s===undefined||(s&&typeof s==='object'&&!Array.isArray(s)&&
+    Object.keys(EMPTY_PLAYER_STATS()).every(k=>s[k]===undefined||validRankNumber(s[k])));
 }
 function validMapData(d){
   return d&&typeof d.wall==='string'&&d.wall.length===N*N&&/^[01]+$/.test(d.wall)&&
@@ -1836,8 +2293,9 @@ function validSingleRunData(d){
     Number.isInteger(d.px)&&Number.isInteger(d.py)&&inb(d.px,d.py)&&
     Number.isInteger(d.hp)&&d.hp>0&&Number.isInteger(d.maxhp)&&d.maxhp>=d.hp&&
     Number.isFinite(d.atk)&&d.atk>0&&
-    ['crit','berserk','lifesteal','reflect','splash','coin','kills','turns','spent','smoke','luck']
+    ['crit','berserk','lifesteal','reflect','splash','ward','coin','kills','turns','spent','smoke','luck']
       .every(k=>d[k]===undefined||validRankNumber(d[k]))&&
+    (d.loop===undefined||validRankNumber(d.loop))&&validStatsData(d.stats)&&
     (d.heat===undefined||normalizeHeat(d.heat)===d.heat)&&
     (d.shopBought===undefined||(d.shopBought&&typeof d.shopBought==='object'&&!Array.isArray(d.shopBought)));
 }
@@ -1846,9 +2304,11 @@ function saveRun(){
   try{
     localStorage.setItem(RUN_KEY, JSON.stringify({v:1,savedAt:Date.now(),
       hero:G.hero.id, hp:G.hp, maxhp:G.maxhp, atk:G.atk,
-      crit:G.crit, berserk:G.berserk, lifesteal:G.lifesteal, reflect:G.reflect, splash:G.splash,
+      crit:G.crit, berserk:G.berserk, lifesteal:G.lifesteal, reflect:G.reflect, splash:G.splash,ward:G.ward||0,
       coin:G.coin, kills:G.kills, turns:G.turns,spent:G.spent,smoke:G.smoke,luck:G.luck,
-      heat:G.heat,shopBought:G.shopBought,fi:G.fi, px:G.px, py:G.py,
+      heat:G.heat,shopBought:G.shopBought,loop:G.loop||0,stats:normalizePlayerStats(G.stats),laughs:G.laughs||0,
+      skillStamp:G.skillStamp||null,skillPower:G.skillPower||null,skillCharges:G.skillCharges||0,
+      fi:G.fi, px:G.px, py:G.py,
       wall:G.wall.map(w=>w?1:0).join(''), stairs:G.stairs,
       ents:G.ents.map(savedEntity),
       items:G.items, perk:!!G.perkPending, perkIds:G.perkChoices||null}));
@@ -1870,24 +2330,30 @@ function resumeRun(){
   const h=HEROES.find(v=>v.id===d.hero);
   G={hero:h, hp:d.hp, maxhp:d.maxhp, atk:d.atk,
      crit:d.crit||0, berserk:d.berserk||0, lifesteal:d.lifesteal||0,
-     reflect:d.reflect||0, splash:d.splash||0,
+     reflect:d.reflect||0, splash:d.splash||0,ward:d.ward||0,
+     skillStamp:d.skillStamp||null,skillPower:d.skillPower||null,skillCharges:d.skillCharges||0,
      coin:d.coin||0, kills:d.kills||0, turns:d.turns||0,spent:d.spent||0,smoke:d.smoke||0,
      luck:d.luck||0,shopBought:Object.assign({},d.shopBought||{}),
      heat:normalizeHeat(d.heat),scoreMult:heatData(d.heat).mult,
+     loop:Math.max(0,Math.floor(Number(d.loop)||0)),stats:normalizePlayerStats(d.stats),laughs:d.laughs||0,
      fi:d.fi, px:d.px, py:d.py, over:false, parts:[],
      wall:[...d.wall].map(c=>c==='1'), stairs:d.stairs,
      ents:d.ents.map(o=>Object.assign(mkMob(o.t,o.x,o.y),{hp:o.hp,tick:o.tick||0,intent:o.intent||null,
-       elite:!!o.elite,maxhp:o.maxhp||o.hp,atk:o.atk||MOBS[o.t].atk,coin:o.coin||MOBS[o.t].coin})),
+       elite:!!o.elite,maxhp:o.maxhp||o.hp,atk:o.atk||MOBS[o.t].atk,coin:o.coin||MOBS[o.t].coin,
+       stolen:o.stolen||0,tacticMarked:!!o.tacticMarked,bountyMarked:!!o.bountyMarked,
+       volatile:!!o.volatile,keykeeper:!!o.keykeeper,stunned:o.stunned||0})),
      items:d.items||[], fname:floorName(d.fi), perkPending:!!d.perk};
-  document.getElementById('hFloor').textContent=G.fname;
+  document.getElementById('hFloor').textContent=G.fname+(G.loop>0?' · 二周目 '+G.loop:'');
   show('game'); syncHud();
   if(G.perkPending) offerUpgrades(d.perkIds||null);
 }
 
 function classPlayerSaveData(p,i){
   const out={seat:i,name:p.name,hero:p.hero.id,score:p.score,resting:!!p.resting,judged:!!p.judged,
+    studyPoints:p.studyPoints||0,stats:normalizePlayerStats(p.stats),
     roundScore:p.roundScore,roundAnswers:p.roundAnswers,roundAp:p.roundAp};
   BATTLE_FIELDS.forEach(k=>{out[k]=p[k];});
+  PLAYER_SPECIAL_FIELDS.forEach(k=>{out[k]=p[k]===undefined?null:p[k];});
   return out;
 }
 function classRunSnapshot(){
@@ -1896,13 +2362,18 @@ function classRunSnapshot(){
   const c=G.classroom;
   return {v:1,savedAt:Date.now(),coin:G.coin||0,kills:G.kills||0,turns:G.turns||0,
     spent:G.spent||0,smoke:G.smoke||0,luck:G.luck||0,heat:G.heat||0,
-    shopBought:Object.assign({},G.shopBought||{}),fi:G.fi,
+    shopBought:Object.assign({},G.shopBought||{}),loop:G.loop||0,laughs:G.laughs||0,fi:G.fi,
     wall:G.wall.map(w=>w?1:0).join(''),stairs:G.stairs,ents:G.ents.map(savedEntity),items:G.items,
-    classroom:{teamName:c.teamName,players:c.players.map(classPlayerSaveData),current:c.current,ap:c.ap,phase:c.phase,flowVersion:3,
+    classroom:{teamName:c.teamName,players:c.players.map(classPlayerSaveData),current:c.current,ap:c.ap,phase:c.phase,flowVersion:5,
       rhythm:c.rhythm,questionsPerRound:c.questionsPerRound,sceneMode:c.sceneMode,
       fixedScene:c.fixedScene,eggLevel:c.eggLevel,questionTotal:c.questionTotal,
       questionIndex:c.questionIndex,roundStartSeat:c.roundStartSeat,roundNumber:c.roundNumber,
-      discovered:Object.assign({},c.discovered||{})}};
+      discovered:Object.assign({},c.discovered||{}),tacticId:c.tacticId||null,
+      tacticHand:Array.isArray(c.tacticHand)?c.tacticHand.slice(0,4):[],
+      tacticHistory:Array.isArray(c.tacticHistory)?c.tacticHistory.slice(-20):[],
+      focusBonus:c.focusBonus||0,hazardBoost:c.hazardBoost||1,armorPierce:c.armorPierce||0,
+      killAp:c.killAp||0,killApLeft:c.killApLeft||0,roundPointGain:c.roundPointGain||0,
+      roundPointRows:Array.isArray(c.roundPointRows)?c.roundPointRows.slice(0,6):[]}};
 }
 function validClassPlayerData(p,i){
   return p&&p.seat===i&&(p.name===undefined||validDisplayName(p.name,12))&&
@@ -1910,17 +2381,19 @@ function validClassPlayerData(p,i){
     typeof p.resting==='boolean'&&typeof p.judged==='boolean'&&
     Number.isInteger(p.roundScore)&&p.roundScore>=0&&Number.isInteger(p.roundAnswers)&&p.roundAnswers>=0&&
     Number.isInteger(p.roundAp)&&p.roundAp>=0&&p.roundAp<=10000&&
+    (p.studyPoints===undefined||validRankNumber(p.studyPoints))&&validStatsData(p.stats)&&
     Number.isInteger(p.hp)&&p.hp>=0&&Number.isInteger(p.maxhp)&&p.maxhp>0&&p.hp<=p.maxhp&&
     Number.isFinite(p.atk)&&p.atk>0&&Number.isInteger(p.px)&&Number.isInteger(p.py)&&inb(p.px,p.py)&&
-    ['crit','berserk','lifesteal','reflect','splash'].every(k=>validRankNumber(p[k]));
+    ['crit','berserk','lifesteal','reflect','splash','ward'].every(k=>p[k]===undefined||validRankNumber(p[k]));
 }
 function validClassRunData(d){
   if(!d||d.v!==1||!validMapData(d)||!d.classroom)return false;
   if(!['coin','kills','turns'].every(k=>validRankNumber(d[k])))return false;
   if(!['spent','smoke','luck'].every(k=>d[k]===undefined||validRankNumber(d[k])))return false;
+  if(d.loop!==undefined&&!validRankNumber(d.loop))return false;
   if(d.heat!==undefined&&normalizeHeat(d.heat)!==d.heat)return false;
   if(d.shopBought!==undefined&&(!d.shopBought||typeof d.shopBought!=='object'||Array.isArray(d.shopBought)))return false;
-  const c=d.classroom,phases=['think','judge','ready','act','upgrade'];
+  const c=d.classroom,phases=['think','judge','tactic','ready','act','upgrade'];
   if(!Array.isArray(c.players)||c.players.length<1||c.players.length>6||
      !c.players.every(validClassPlayerData))return false;
   if(c.teamName!==undefined&&!validDisplayName(c.teamName,16))return false;
@@ -1933,6 +2406,9 @@ function validClassRunData(d){
      !Number.isInteger(c.questionIndex)||c.questionIndex<0||c.questionIndex>c.questionTotal||
      !Number.isInteger(c.roundStartSeat)||c.roundStartSeat<0||c.roundStartSeat>=c.players.length||
      !Number.isInteger(c.roundNumber)||c.roundNumber<1)return false;
+  if(c.tacticId!=null&&!classTactic(c.tacticId))return false;
+  if(c.tacticHand!==undefined&&(!Array.isArray(c.tacticHand)||c.tacticHand.some(id=>!classTactic(id))))return false;
+  if(c.tacticHistory!==undefined&&(!Array.isArray(c.tacticHistory)||c.tacticHistory.some(id=>!classTactic(id))))return false;
   return c.discovered&&typeof c.discovered==='object'&&!Array.isArray(c.discovered)&&
     Object.keys(c.discovered).every(k=>typeof k==='string'&&c.discovered[k]===true);
 }
@@ -1957,36 +2433,51 @@ function resumeClassRun(){
   const players=c.players.map((p,i)=>{
     const h=HEROES.find(v=>v.id===p.hero),out={
       seat:i,name:cleanDisplayName(p.name,SEAT_NAMES[i],12),hero:h,score:p.score,resting:p.resting,judged:p.judged,
-      roundScore:p.roundScore,roundAnswers:p.roundAnswers,roundAp:p.roundAp};
-    BATTLE_FIELDS.forEach(k=>{out[k]=p[k];});return out;
+      studyPoints:p.studyPoints||0,stats:normalizePlayerStats(p.stats),
+      roundScore:p.roundScore,roundAnswers:p.roundAnswers,roundAp:p.roundAp,ward:p.ward||0};
+    BATTLE_FIELDS.forEach(k=>{out[k]=p[k];});
+    PLAYER_SPECIAL_FIELDS.forEach(k=>{out[k]=p[k]===undefined?null:p[k];});return out;
   });
-  if(c.flowVersion!==3&&(c.phase==='think'||c.phase==='judge'||c.phase==='ready')){
+  const oldFlow=Number(c.flowVersion)||0;
+  if(oldFlow<4&&(c.phase==='think'||c.phase==='judge')){
     c.phase='judge';c.questionIndex=c.questionTotal;c.ap=0;
-    players.forEach(p=>{p.judged=false;p.roundScore=0;p.roundAnswers=0;p.roundAp=0;});
+  }
+  if(oldFlow<4&&c.phase==='ready'){
+    c.phase='tactic';c.ap=0;
   }
   G={hero:players[0].hero,hp:players[0].hp,maxhp:players[0].maxhp,atk:players[0].atk,
     crit:players[0].crit||0,berserk:players[0].berserk||0,lifesteal:players[0].lifesteal||0,
-    reflect:players[0].reflect||0,splash:players[0].splash||0,
+    reflect:players[0].reflect||0,splash:players[0].splash||0,ward:players[0].ward||0,
     coin:d.coin||0,kills:d.kills||0,turns:d.turns||0,spent:d.spent||0,smoke:d.smoke||0,
     luck:d.luck||0,shopBought:Object.assign({},d.shopBought||{}),
     heat:normalizeHeat(d.heat),scoreMult:heatData(d.heat).mult,
+    loop:Math.max(0,Math.floor(Number(d.loop)||0)),laughs:d.laughs||0,stats:EMPTY_PLAYER_STATS(),
     fi:d.fi,px:players[0].px,py:players[0].py,
     over:false,parts:[],wall:[...d.wall].map(v=>v==='1'),stairs:d.stairs,
     ents:d.ents.map(o=>Object.assign(mkMob(o.t,o.x,o.y),{hp:o.hp,tick:o.tick||0,intent:o.intent||null,
-      elite:!!o.elite,maxhp:o.maxhp||o.hp,atk:o.atk||MOBS[o.t].atk,coin:o.coin||MOBS[o.t].coin})),
+      elite:!!o.elite,maxhp:o.maxhp||o.hp,atk:o.atk||MOBS[o.t].atk,coin:o.coin||MOBS[o.t].coin,
+      stolen:o.stolen||0,tacticMarked:!!o.tacticMarked,bountyMarked:!!o.bountyMarked,
+      volatile:!!o.volatile,keykeeper:!!o.keykeeper,stunned:o.stunned||0})),
     items:d.items||[],fname:floorName(d.fi),
     classroom:{teamName:cleanDisplayName(c.teamName,'星徒小队',16),
-      players,current:c.current,ap:c.ap,phase:c.phase,flowVersion:3,rhythm:c.rhythm,
+      players,current:c.current,ap:c.ap,phase:c.phase,flowVersion:5,rhythm:c.rhythm,
       questionsPerRound:c.questionsPerRound,sceneMode:c.sceneMode,fixedScene:c.fixedScene,
       eggLevel:c.eggLevel,questionTotal:c.questionTotal,questionIndex:c.questionIndex,
       roundStartSeat:c.roundStartSeat,roundNumber:c.roundNumber,
-      discovered:Object.assign({},c.discovered),currentScene:'classroom',currentEgg:null}};
+      discovered:Object.assign({},c.discovered),currentScene:'classroom',currentEgg:null,
+      tacticId:c.tacticId||null,tacticHand:Array.isArray(c.tacticHand)?c.tacticHand.slice():[],
+      tacticHistory:Array.isArray(c.tacticHistory)?c.tacticHistory.slice():[],
+      focusBonus:c.focusBonus||0,hazardBoost:c.hazardBoost||1,armorPierce:c.armorPierce||0,
+      killAp:c.killAp||0,killApLeft:c.killApLeft||0,roundPointGain:c.roundPointGain||0,
+      roundPointRows:Array.isArray(c.roundPointRows)?c.roundPointRows.slice(0,6):[]}};
   classLoadPlayer(c.current);
-  document.getElementById('hFloor').textContent=G.fname;
+  document.getElementById('hFloor').textContent=G.fname+(G.loop>0?' · 二周目 '+G.loop:'');
   document.getElementById('classThink').classList.add('hidden');
   document.getElementById('classJudge').classList.add('hidden');
+  document.getElementById('classTactic').classList.add('hidden');
   show('game');syncHud();
   if(c.phase==='think'||c.phase==='judge')showClassJudge();
+  else if(c.phase==='tactic')showClassTactic();
   else if(c.phase==='ready')showClassRoundReady();
   else if(c.phase==='act'&&c.ap<=0&&c.rhythm===CLASS_RHYTHM_BATCH)showClassActionBoard();
   else if(c.phase==='upgrade')offerClassUpgrades();
@@ -2110,7 +2601,7 @@ function genFloor(fi){
     items.push({x:c%N,y:(c/N)|0,type:it}); });
   const heat=normalizeHeat(G&&G.heat);
   if(heat>=1){
-    const hazards=heat>=3?['spike','bomb','chest']:['spike','chest'];
+    const hazards=heat>=3?['spike','mine','bomb','chest','lever']:['spike','mine','chest'];
     hazards.forEach(it=>{const c=pool.pop();if(c!=null)items.push({x:c%N,y:(c/N)|0,type:it});});
   }
   if(heat>=2){
@@ -2126,6 +2617,22 @@ function genFloor(fi){
       elite.elite=true;elite.maxhp=Math.ceil(elite.maxhp*1.35);elite.hp=elite.maxhp;
       elite.atk+=1;elite.coin+=4;
     }
+  }
+  if(G&&G.loop>0){
+    const hpMult=Math.min(1.28,1.10+G.loop*.04);
+    ents.forEach(e=>{e.maxhp=Math.ceil(e.maxhp*hpMult);e.hp=e.maxhp;});
+    const secondTypes=['medic','bomber','ram','trapper','summoner','turret','slacker'];
+    const c=pool.pop(),type=secondTypes[fi%secondTypes.length];
+    if(c!=null)ents.push(mkMob(type,c%N,(c/N)|0));
+    const rule=LOOP_RULES[(fi+Math.max(0,G.loop-1))%LOOP_RULES.length];
+    if(rule.id==='volatile'){
+      ents.filter(e=>!e.boss).forEach((e,i)=>{if(i%2===0)e.volatile=true;});
+    }else if(rule.id==='keykeeper'){
+      const keeper=ents.filter(e=>!e.boss).sort((a,b)=>b.maxhp-a.maxhp||b.atk-a.atk)[0];
+      if(keeper)keeper.keykeeper=true;
+    }
+    const gift=pool.pop();
+    if(gift!=null)items.push({x:gift%N,y:(gift/N)|0,type:fi%2?'ward':'lever'});
   }
 
   return {wall,stairs:far,ents,items,name:floorName(fi)};
@@ -2152,19 +2659,21 @@ function startGame(heroId,opts){
   const h=HEROES.find(v=>v.id===heroId);
   G={hero:h, hp:h.hp, maxhp:h.hp, atk:h.atk, coin:0, fi:0, px:4, py:4,
      crit:h.crit||0, berserk:h.berserk||0, lifesteal:h.lifesteal||0,
-     reflect:h.reflect||0, splash:h.splash||0,
+     reflect:h.reflect||0, splash:h.splash||0,ward:0,skillStamp:null,skillPower:null,skillCharges:0,
      over:false, parts:[], kills:0, turns:0,spent:0,smoke:0,luck:0,shopBought:{},
-     heat:normalizeHeat(opts&&opts.heat),scoreMult:heatData(opts&&opts.heat).mult};
+     heat:normalizeHeat(opts&&opts.heat),scoreMult:heatData(opts&&opts.heat).mult,
+     loop:Math.max(0,Math.floor(Number(opts&&opts.loop)||0)),stats:EMPTY_PLAYER_STATS(),laughs:0};
   if(opts && opts.sim){ G.sim=true; G.headless=true; }
   loadFloor(0);
   if(!G.sim){ show('game'); syncHud(); saveRun(); }
 }
 function makeClassPlayer(heroId,index,name){
   const h=HEROES.find(v=>v.id===heroId)||HEROES[0];
-  return {seat:index,name:cleanDisplayName(name,SEAT_NAMES[index],12),hero:h,score:0,resting:false,
+  return {seat:index,name:cleanDisplayName(name,SEAT_NAMES[index],12),hero:h,score:0,studyPoints:0,resting:false,
     judged:false,roundScore:0,roundAnswers:0,roundAp:0,
     hp:h.hp,maxhp:h.hp,atk:h.atk,crit:h.crit||0,berserk:h.berserk||0,
-    lifesteal:h.lifesteal||0,reflect:h.reflect||0,splash:h.splash||0,px:4,py:4};
+    lifesteal:h.lifesteal||0,reflect:h.reflect||0,splash:h.splash||0,ward:0,px:4,py:4,
+    skillStamp:null,skillPower:null,skillCharges:0,stats:EMPTY_PLAYER_STATS()};
 }
 function startClassGame(heroIds,opts){
   const ids=(heroIds||[]).slice(0,6);
@@ -2174,18 +2683,21 @@ function startClassGame(heroIds,opts){
   const h=players[0].hero;
   G={hero:h,hp:h.hp,maxhp:h.hp,atk:h.atk,coin:0,fi:0,px:4,py:4,
     crit:h.crit||0,berserk:h.berserk||0,lifesteal:h.lifesteal||0,
-    reflect:h.reflect||0,splash:h.splash||0,over:false,parts:[],kills:0,turns:0,
+    reflect:h.reflect||0,splash:h.splash||0,ward:0,over:false,parts:[],kills:0,turns:0,
     spent:0,smoke:0,luck:0,shopBought:{},
     heat:normalizeHeat(opts&&opts.heat),scoreMult:heatData(opts&&opts.heat).mult,
+    loop:Math.max(0,Math.floor(Number(opts&&opts.loop)||0)),stats:EMPTY_PLAYER_STATS(),laughs:0,
     classroom:{teamName:cleanDisplayName(opts&&opts.teamName,CLASS_SETUP.teamName||'星徒小队',16),
-      players,current:0,ap:0,phase:'between',flowVersion:3,
+      players,current:0,ap:0,phase:'between',flowVersion:5,
       rhythm:normalizeClassRhythm(opts&&opts.rhythm!==undefined?opts.rhythm:CLASS_SETUP.rhythm),
       questionsPerRound:normalizeClassQuestions(opts&&opts.questions!==undefined?opts.questions:CLASS_SETUP.questions),
       sceneMode:normalizeClassSceneMode(opts&&opts.sceneMode!==undefined?opts.sceneMode:CLASS_SETUP.sceneMode),
       fixedScene:normalizeClassFixedScene(opts&&opts.fixedScene!==undefined?opts.fixedScene:CLASS_SETUP.fixedScene),
       eggLevel:normalizeClassEggs(opts&&opts.eggLevel!==undefined?opts.eggLevel:CLASS_SETUP.eggLevel),
       discovered:{},currentScene:'classroom',currentEgg:null,
-      questionTotal:0,questionIndex:0,roundStartSeat:0,roundNumber:0}};
+      questionTotal:0,questionIndex:0,roundStartSeat:0,roundNumber:0,
+      tacticId:null,tacticHand:[],tacticHistory:[],focusBonus:0,hazardBoost:1,
+      armorPierce:0,killAp:0,killApLeft:0,roundPointGain:0,roundPointRows:[]}};
   if(opts&&opts.sim){ G.sim=true; G.headless=true; }
   else if(opts&&opts.headless){ G.headless=true; }
   loadFloor(0);
@@ -2202,6 +2714,15 @@ function classDifficulty(count,boss){
 }
 function scaleClassFloor(f){
   const count=G.classroom.players.length, base=classDifficulty(count,false);
+  // 课堂不是长距离寻路课：主线出口控制在约 8—11 格。
+  // 迷宫远端仍保留宝物、扳机与支线敌人，是否绕路由全班自己权衡。
+  const route=bfs(f.wall,key(4,4));
+  const routeBlocked=new Set([...f.ents.map(e=>key(e.x,e.y)),...f.items.map(i=>key(i.x,i.y))]);
+  const routeMin=count===3?7:8,routeMax=count===3?9:count===4?10:11;
+  const routeTarget=count===3?8:count===4?9:10;
+  const exits=route.map((d,i)=>({i,d})).filter(o=>o.d>=routeMin&&o.d<=routeMax&&!routeBlocked.has(o.i));
+  exits.sort((a,b)=>Math.abs(a.d-routeTarget)-Math.abs(b.d-routeTarget)||b.d-a.d);
+  if(exits.length)f.stairs=exits[0].i;
   const scaleMob=e=>{
     const d=e.boss?classDifficulty(count,true):base;
     e.maxhp=Math.ceil(e.maxhp*d.hp); e.hp=e.maxhp;
@@ -2250,16 +2771,20 @@ function loadFloor(fi){
   if(newChapter) chapterCard(CHAPTERS[FLOORS[fi].ch].name);
   const b=G.ents.find(e=>e.boss);
   if(b) setTimeout(()=>bossEntry(),newChapter?900:260);
-  document.getElementById('hFloor').textContent=f.name;
+  document.getElementById('hFloor').textContent=f.name+(G.loop>0?' · 二周目 '+G.loop:'');
 }
 function classBeginRound(){
   if(!G||!G.classroom||G.over)return;
   const c=G.classroom, ps=c.players;
   if(!ps.some(p=>!p.resting)){ lose(); return; }
+  G.ents.forEach(e=>{e.tacticMarked=false;e.bountyMarked=false;});
+  c.tacticId=null;c.tacticHand=[];c.focusBonus=0;c.hazardBoost=1;c.armorPierce=0;
+  c.killAp=0;c.killApLeft=0;c.roundPointGain=0;c.roundPointRows=[];
   if(c.roundNumber>0) c.roundStartSeat=(c.roundStartSeat+1)%ps.length;
   c.questionTotal=c.questionsPerRound;
   c.questionIndex=c.questionTotal; c.roundNumber++;
-  ps.forEach(p=>{ p.judged=false; p.roundScore=0; p.roundAnswers=0; p.roundAp=0; });
+  ps.forEach(p=>{ p.judged=false; p.roundScore=0; p.roundAnswers=0;p.roundAp=0;
+    p.skillPower=null;p.skillCharges=0; });
   const first=ps.findIndex(p=>!p.resting);
   classLoadPlayer(first<0?0:first);
   c.ap=0; c.phase='judge';
@@ -2583,8 +3108,15 @@ function renderGroupGradeBoard(){
   }).join('');
   box.querySelectorAll('canvas').forEach((canvas,i)=>drawSprTo(canvas.getContext('2d'),c.players[i].hero.spr));
   const done=c.players.filter(p=>p.judged).length;
+  const preview=c.players.reduce((n,p)=>n+(p.judged?classGradePoints(p.roundScore):0),0);
+  const ready=done===c.players.length,calc=document.getElementById('btnCalculateGrades');
+  calc.disabled=!ready;calc.textContent=ready?'立即计算全队行动与积分':'请先为全员选择倍率';
+  document.getElementById('roundScorePreview').innerHTML='<div><b>'+
+    (ready?'本轮积分已经就绪':'本轮积分等待计算')+'</b>'+
+    (ready?'一次计算后进入计谋选择。':'还差 '+(c.players.length-done)+' 人，仍可随时改选。')+
+    '</div><strong>'+(preview?preview+' 分':'--')+'</strong>';
   document.getElementById('judgeNote').textContent='已完成 '+done+' / '+c.players.length+
-    ' 人 · 本班每个“×1”价值 '+base+' 步；最后一人选完自动开行动板。';
+    ' 人 · 本班每个“×1”价值 '+base+' 步；只需全班最后计算一次。';
 }
 function setClassGrade(index,correct){
   if(!G||!G.classroom||G.classroom.phase!=='judge'||G.over)return;
@@ -2592,7 +3124,6 @@ function setClassGrade(index,correct){
   p.roundScore=Math.max(1,Math.min(3,Number(correct)||1));
   p.roundAnswers=c.questionTotal;p.roundAp=classActionSteps(p.roundScore,c.players.length);p.judged=true;
   syncHud();renderGroupGradeBoard();
-  if(c.players.every(q=>q.judged))confirmClassGrades();
 }
 function setAllClassGrades(correct){
   if(!G||!G.classroom||G.classroom.phase!=='judge'||G.over)return;
@@ -2601,7 +3132,7 @@ function setAllClassGrades(correct){
     p.roundScore=Math.max(1,Math.min(3,Number(correct)||1));
     p.roundAnswers=c.questionTotal;p.roundAp=classActionSteps(p.roundScore,c.players.length);p.judged=true;
   });
-  syncHud();renderGroupGradeBoard();confirmClassGrades();
+  syncHud();renderGroupGradeBoard();
 }
 function showClassJudge(){
   if(!G||!G.classroom||G.headless)return;
@@ -2610,7 +3141,7 @@ function showClassJudge(){
   document.getElementById('judgeName').textContent='直接选择行动倍率';
   document.getElementById('judgePrompt').textContent='本轮 '+c.questionTotal+' 题 · 全员共同完成';
   document.getElementById('judgeHint').textContent=
-    '每位玩家点一次 ×1、×2 或 ×3；最后一人选完自动进入行动，不再出现确认页。';
+    '每位玩家点一次 ×1、×2 或 ×3；全部选好后只点一次“立即计算”。';
   prepareClassScenePanel();
   document.getElementById('classThink').classList.add('hidden');
   document.getElementById('classJudge').classList.remove('hidden');
@@ -2622,13 +3153,80 @@ function showClassRoundReady(){
 function confirmClassGrades(){
   if(!G||!G.classroom||G.classroom.phase!=='judge'||G.over)return;
   const c=G.classroom;if(!c.players.every(p=>p.judged))return;
+  const rows=[];
   c.players.forEach(p=>{
     p.score+=p.roundScore;
+    const gain=classGradePoints(p.roundScore);p.studyPoints=(p.studyPoints||0)+gain;
+    rows.push({name:p.name,band:p.roundScore,points:gain});
     p.roundAp=classActionSteps(p.roundScore,c.players.length);
   });
-  c.phase='ready';c.ap=0;
+  c.roundPointRows=rows;c.roundPointGain=rows.reduce((n,r)=>n+r.points,0);
+  c.phase='tactic';c.ap=0;c.tacticId=null;
+  c.tacticHand=dealClassTactics();
   if(!G.headless)document.getElementById('classJudge').classList.add('hidden');
-  syncHud();classBeginActions();
+  syncHud();
+  if(G.headless)chooseClassTactic(autoClassTactic());
+  else showClassTactic();
+}
+function dealClassTactics(){
+  const c=G.classroom,last=(c.tacticHistory||[]).slice(-2),pool=CLASS_TACTICS.filter(t=>!last.includes(t.id));
+  const handSize=c.players.length===3||c.players.length===4?4:3;
+  const start=(c.roundNumber*3+G.fi+c.players.length)%pool.length,out=[];
+  for(let i=0;out.length<handSize&&i<pool.length;i++)out.push(pool[(start+i*2)%pool.length].id);
+  return [...new Set(out)].concat(CLASS_TACTICS.map(t=>t.id).filter(id=>!out.includes(id))).slice(0,handSize);
+}
+function autoClassTactic(){
+  const hand=G.classroom.tacticHand||[];
+  if(G.ents.some(e=>(e.armor||0)>0)&&hand.includes('breach'))return 'breach';
+  if(G.items.some(i=>i.type==='spike'||i.type==='mine')&&hand.includes('engineer'))return 'engineer';
+  if(G.ents.length>=5&&hand.includes('chain'))return 'chain';
+  return hand.includes('focus')?'focus':hand[0];
+}
+function showClassTactic(){
+  if(!G||!G.classroom||G.classroom.phase!=='tactic'||G.over||G.headless)return;
+  const c=G.classroom,hand=(c.tacticHand&&c.tacticHand.length?c.tacticHand:dealClassTactics());
+  c.tacticHand=hand;
+  document.getElementById('tacticTitle').textContent='第 '+c.roundNumber+' 轮 · 本轮用哪一计？';
+  const armored=G.ents.filter(e=>(e.armor||0)>0).length;
+  const hazards=G.items.filter(i=>i.type==='spike'||i.type==='mine').length;
+  document.getElementById('tacticIntro').textContent='地图情报：'+G.ents.length+' 名敌人 · '+
+    armored+' 名带甲 · '+hazards+' 处可利用机关。'+
+    (c.players.length===3||c.players.length===4?'最佳搭档编制，本轮四选一。':'选择后立即打开全队行动板。');
+  document.getElementById('tacticRoundScore').innerHTML=
+    '<span><b>团队本轮 +'+(c.roundPointGain||0)+'</b></span>'+
+    (c.roundPointRows||[]).map(r=>'<span>'+htmlSafe(r.name)+' ×'+r.band+' <b>+'+r.points+'</b></span>').join('');
+  document.getElementById('tacticCards').innerHTML=hand.map(id=>{
+    const t=classTactic(id);
+    return '<button class="tacticcard" data-tactic="'+t.id+'"><i class="tacticseal">'+t.seal+
+      '</i><b>'+t.name+'</b>'+t.desc+'<span>'+t.tag+'计 · 每轮只能选一张</span></button>';
+  }).join('');
+  document.getElementById('classTactic').classList.remove('hidden');
+}
+function markTacticTarget(kind){
+  const target=G.ents.slice().sort((a,b)=>b.hp-a.hp||b.atk-a.atk)[0];
+  if(!target)return null;
+  if(kind==='focus')target.tacticMarked=true;
+  if(kind==='bounty')target.bountyMarked=true;
+  return target;
+}
+function chooseClassTactic(id){
+  if(!G||!G.classroom||G.classroom.phase!=='tactic'||G.over)return false;
+  const c=G.classroom,t=classTactic(id);
+  if(!t||!(c.tacticHand||[]).includes(id))return false;
+  c.tacticId=id;c.tacticHistory=(c.tacticHistory||[]).concat(id).slice(-20);
+  c.focusBonus=0;c.hazardBoost=1;c.armorPierce=0;c.killAp=0;c.killApLeft=0;
+  if(id==='focus'){c.focusBonus=2;markTacticTarget('focus');}
+  else if(id==='engineer'){
+    c.hazardBoost=2;G.items.forEach(i=>{if(i.type==='spike'||i.type==='mine')i.friendly=true;});
+  }else if(id==='smoke')G.smoke=Math.max(1,G.smoke||0);
+  else if(id==='breach')c.armorPierce=2;
+  else if(id==='sprint')c.players.forEach(p=>{if(!p.resting)p.roundAp+=3;});
+  else if(id==='bounty')markTacticTarget('bounty');
+  else if(id==='ward')c.players.forEach(p=>{p.hp=Math.min(p.maxhp,p.hp+3);p.ward=(p.ward||0)+1;});
+  else if(id==='chain'){c.killAp=2;c.killApLeft=3;}
+  c.phase='ready';
+  if(!G.headless)document.getElementById('classTactic').classList.add('hidden');
+  syncHud();classBeginActions();saveClassRun();return true;
 }
 function classReadyPlayers(){
   return G.classroom.players.filter(p=>!p.resting&&p.roundAp>0);
@@ -2673,6 +3271,67 @@ function showClassActionBoard(){
   }).join('');
   document.getElementById('classAction').classList.remove('hidden');
 }
+function heroSkillStamp(){
+  return G&&G.classroom?'r'+G.classroom.roundNumber:'f'+(G?G.fi:0);
+}
+function heroSkillReady(){
+  if(!G||G.over||G.skillStamp===heroSkillStamp())return false;
+  return !G.classroom||G.classroom.phase==='act';
+}
+function useHeroSkill(){
+  if(!heroSkillReady()||uiBlocked())return false;
+  const owner=G.classroom?classPlayer():G,stats=playerStats(owner);
+  G.skillStamp=heroSkillStamp();owner.skillStamp=G.skillStamp;
+  if(G.hero.id==='jin'){
+    G.skillPower='crit';G.skillCharges=1;
+    fnum(G.px,G.py,'狐火 · 下一击破甲暴击','#ffcd75',true);
+  }else if(G.hero.id==='wen'){
+    const cost=Math.min(4,Math.max(0,G.hp-1));G.hp-=cost;
+    G.skillPower='rage';G.skillCharges=3;stats.support+=cost?1:0;
+    fnum(G.px,G.py,'逆誓 · 三次强攻','#ef7d57',true);
+  }else if(G.hero.id==='xi'){
+    let healed=0;
+    if(G.classroom){
+      G.classroom.players.forEach(p=>{
+        const n=Math.min(p===owner?7:3,p.maxhp-p.hp);p.hp+=n;healed+=n;
+      });
+      classLoadPlayer(G.classroom.current);
+    }else{
+      const n=Math.min(7,G.maxhp-G.hp);G.hp+=n;healed=n;
+    }
+    stats.support+=healed;fnum(G.px,G.py,'兔跃回春 +'+healed,'#38b764',true);
+  }else if(G.hero.id==='hao'){
+    let guarded=0;
+    if(G.classroom){
+      G.classroom.players.forEach(p=>{
+        if(!p.resting&&Math.max(Math.abs(p.px-G.px),Math.abs(p.py-G.py))<=1){
+          p.ward=(p.ward||0)+1;guarded++;
+        }
+      });
+      classLoadPlayer(G.classroom.current);
+    }else{G.ward=(G.ward||0)+1;guarded=1;}
+    stats.support+=guarded;fnum(G.px,G.py,'原牛守阵 · '+guarded+' 盾','#41a6f6',true);
+  }else if(G.hero.id==='hai'){
+    const targets=G.ents.filter(e=>adjacent(e.x,e.y,G.px,G.py)).slice();
+    let moved=0;
+    targets.forEach(e=>{
+      if(!G.ents.includes(e))return;
+      const dx=Math.sign(e.x-G.px),dy=Math.sign(e.y-G.py),nx=e.x+dx,ny=e.y+dy;
+      if(inb(nx,ny)&&!G.wall[key(nx,ny)]&&!occupied(nx,ny,e)){
+        e.x=nx;e.y=ny;moved++;triggerEnemyHazard(e);
+      }
+      if(G.ents.includes(e)){
+        damageFoe(e,2,'震场 -2','#41a6f6',true);
+      }
+    });
+    stats.support+=moved;
+    fnum(G.px,G.py,'震场 · 推开 '+moved,'#41a6f6',true);
+  }
+  owner.skillPower=G.skillPower||null;owner.skillCharges=G.skillCharges||0;
+  sfx('pickup');flash();syncHud();
+  if(G.classroom)saveClassRun();else saveRun();
+  return true;
+}
 function classBeginActions(){
   if(!G||!G.classroom||G.classroom.phase!=='ready'||G.over)return;
   const c=G.classroom;
@@ -2692,6 +3351,7 @@ function gradeStudent(score){
   const c=G.classroom,n=Math.max(1,Math.min(3,Number(score)||1));
   const i=c.players.findIndex(p=>!p.judged);if(i<0)return;
   setClassGrade(i,n);
+  if(c.players.every(p=>p.judged))confirmClassGrades();
 }
 function classUseAction(){
   classSaveActive();
@@ -2816,21 +3476,29 @@ function resumeClassAfterUpgrade(){
 
 /* ---------- 星币商店：击杀与探索所得金币转化为可研究的长期路线 ---------- */
 const SHOP_ITEMS=[
-  {id:'bandage',name:'星尘绷带',cost:8,desc:'当前星徒回复 10 血',
+  {id:'bandage',name:'星尘绷带',spr:'potion',cost:8,desc:'当前星徒回复 10 血',
     use:()=>{const h=Math.min(10,G.maxhp-G.hp);G.hp+=h;fnum(G.px,G.py,'回复 +'+h,'#38b764');}},
-  {id:'edge',name:'磨刃石',cost:18,desc:'当前星徒攻击永久 +1',
+  {id:'edge',name:'磨刃石',spr:'sword',cost:18,desc:'当前星徒攻击永久 +1',
     use:()=>{G.atk+=1;fnum(G.px,G.py,'攻击 +1','#e8cf95',true);}},
-  {id:'plate',name:'守心甲片',cost:16,desc:'血上限 +4，并回复 4 血',
+  {id:'plate',name:'守心甲片',spr:'armor',cost:16,desc:'血上限 +4，并回复 4 血',
     use:()=>{G.maxhp+=4;G.hp+=4;fnum(G.px,G.py,'血上限 +4','#41a6f6',true);}},
-  {id:'smoke',name:'灰塔烟幕',cost:14,desc:'下一次敌人阶段全部落空',
+  {id:'smoke',name:'灰塔烟幕',spr:'wisp',cost:14,desc:'下一次敌人阶段全部落空',
     use:()=>{G.smoke=(G.smoke||0)+1;fnum(G.px,G.py,'烟幕已备','#94b0c2',true);}},
-  {id:'bell',name:'共鸣行动铃',cost:12,desc:'课堂当前星徒额外获得 1 个基础行动包',classOnly:true,
+  {id:'bell',name:'共鸣行动铃',spr:'spring',cost:12,desc:'课堂当前星徒额外获得 1 个基础行动包',classOnly:true,
     use:()=>{const bonus=classActionBase(G.classroom.players.length);
       G.classroom.ap+=bonus;const p=classPlayer();p.roundAp=G.classroom.ap;
       fnum(G.px,G.py,'行动 +'+bonus,'#ffcd75',true);}},
-  {id:'compass',name:'星图罗盘',cost:15,desc:'宝匣更安全，奖励更多',
-    use:()=>{G.luck=(G.luck||0)+1;fnum(G.px,G.py,'星运 +1','#ffcd75',true);}}
+  {id:'compass',name:'星图罗盘',spr:'shrine',cost:15,desc:'宝匣更安全，奖励更多',
+    use:()=>{G.luck=(G.luck||0)+1;fnum(G.px,G.py,'星运 +1','#ffcd75',true);}},
+  {id:'banana',name:'御前蕉皮',spr:'banana',cost:9,desc:'放在身旁；第一个踩中的敌人会认真摔倒一回合',
+    use:()=>{const c=bananaSpot();if(c){G.items.push({type:'banana',x:c.x,y:c.y,friendly:true});
+      G.laughs=(G.laughs||0)+1;fnum(c.x,c.y,'战术蕉皮就位','#ffcd75',true);}}}
 ];
+function bananaSpot(){
+  return [[0,1],[1,0],[0,-1],[-1,0]].map(([dx,dy])=>({x:G.px+dx,y:G.py+dy}))
+    .find(c=>inb(c.x,c.y)&&!G.wall[key(c.x,c.y)]&&!occupied(c.x,c.y)&&
+      !G.items.some(i=>i.x===c.x&&i.y===c.y))||null;
+}
 function shopMessage(text,kind){
   const el=document.getElementById('shopMsg');el.textContent=text||'';
   el.className='panelmsg'+(kind?' '+kind:'');
@@ -2846,17 +3514,22 @@ function buildShop(){
   SHOP_ITEMS.forEach(it=>{
     if(it.classOnly&&!G.classroom)return;
     const bought=!!G.shopBought[shopKey(it.id)],poor=G.coin<it.cost;
-    const b=document.createElement('button');b.className='shopcard';b.disabled=bought||poor;
-    b.innerHTML='<b>'+it.name+'</b>'+it.desc+'<em>'+(
+    const noSpace=it.id==='banana'&&!bananaSpot();
+    const b=document.createElement('button');b.className='shopcard';b.disabled=bought||poor||noSpace;
+    b.innerHTML='<div class="shopcardhead"><canvas width="16" height="16" data-shop-spr="'+it.spr+
+      '"></canvas><b>'+it.name+'</b></div>'+it.desc+'<em>'+(
+      noSpace?'身旁没有空格':
       bought?'本层已购':poor?'需要 '+it.cost+' 金':'花费 '+it.cost+' 金')+'</em>';
     b.onclick=()=>buyShopItem(it.id);box.appendChild(b);
   });
+  box.querySelectorAll('[data-shop-spr]').forEach(c=>drawSprTo(c.getContext('2d'),c.dataset.shopSpr));
   shopMessage('商店完全可选；留着金币也会计入战利榜。');
   document.getElementById('shop').classList.remove('hidden');
 }
 function buyShopItem(id){
   const it=SHOP_ITEMS.find(x=>x.id===id);if(!G||!it||G.over)return false;
   if(it.classOnly&&!G.classroom)return false;
+  if(it.id==='banana'&&!bananaSpot()){shopMessage('身旁没有空格，先回地图挪一步。','bad');return false;}
   const k=shopKey(id);if(G.shopBought[k]||G.coin<it.cost)return false;
   G.coin-=it.cost;G.spent=(G.spent||0)+it.cost;G.shopBought[k]=true;
   it.use();
@@ -2897,6 +3570,12 @@ function lineToPlayer(e,maxLen){
 function computeIntentFor(e){
   e.tick=(e.tick||0)+1;
   const p=e.pattern;
+  if(e.stunned>0){
+    e.stunned--;e.intent={t:'wait',joke:'蕉皮'};return;
+  }
+  if(p==='slacker'&&e.tick%3===0){
+    e.intent={t:'wait',joke:'摸鱼'};return;
+  }
 
     // 头目节奏铁律：大招之后必须留一拍"破绽"（不攻击的回合）。
     // 没有破绽＝玩家每次输出都必挨打＝纯换血消耗战（夜班模拟证明会无限僵持）。
@@ -2944,6 +3623,55 @@ function computeIntentFor(e){
       if(adjacent(e.x,e.y,G.px,G.py)){ e.intent={t:'atk',cells:[{x:G.px,y:G.py}]}; return; }
       const st=stepToward(e);
       e.intent = st ? {t:'mov',x:st.x,y:st.y} : {t:'wait'}; return;
+    }
+
+    // 雾医：治疗框也完全预告；击杀或推离受疗目标都能破解。
+    if(p==='medic'){
+      const hurt=G.ents.filter(o=>o!==e&&o.hp<o.maxhp).sort((a,b)=>a.hp/a.maxhp-b.hp/b.maxhp)[0];
+      if(hurt&&e.tick%3===0){e.intent={t:'heal',x:hurt.x,y:hurt.y,amount:4};return;}
+    }
+
+    // 骨灯司：紫框先出现，下一拍才从该格召来裂影。
+    if(p==='summoner'&&e.tick%4===0&&G.ents.filter(o=>o.type==='shard').length<4){
+      const spot=cellsAround(e.x,e.y).find(c=>!G.wall[key(c.x,c.y)]&&!occupied(c.x,c.y,e));
+      if(spot){e.intent={t:'summon',x:spot.x,y:spot.y,summonType:'shard'};return;}
+    }
+
+    // 灰塔弩机：不移动，只封锁直线。
+    if(p==='turret'){
+      const line=lineToPlayer(e,8);
+      e.intent=line?{t:'atk',cells:line}:{t:'wait'};return;
+    }
+
+    // 爆符童子：贴身后蓄一拍、炸一拍；爆圈会误伤同伴。
+    if(p==='blast'){
+      const near=Math.max(Math.abs(G.px-e.x),Math.abs(G.py-e.y))<=1;
+      if(near){
+        e.intent=e.tick%2===0
+          ?{t:'atk',cells:cellsAround(e.x,e.y).filter(c=>!G.wall[key(c.x,c.y)]),blast:true}
+          :{t:'wait'};return;
+      }
+    }
+
+    // 铁角兽：第三拍沿直线冲撞；红叉路径可被用来引它踩雷。
+    if(p==='ram'&&e.tick%3===0){
+      const line=lineToPlayer(e,4);
+      if(line&&line.length>=2){
+        const to=line[line.length-2];
+        if(!occupied(to.x,to.y,e)){e.intent={t:'dash',cells:line,to};return;}
+      }
+    }
+
+    // 机关狸：把下一步铺成伏雷；机关同样显示紫色施工框。
+    if(p==='trapper'&&e.tick%3===0){
+      const spot=stepToward(e);
+      if(spot&&!G.items.some(i=>i.x===spot.x&&i.y===spot.y)){
+        e.intent={t:'trap',x:spot.x,y:spot.y};return;
+      }
+    }
+
+    if(p==='thief'&&adjacent(e.x,e.y,G.px,G.py)){
+      e.intent={t:'atk',cells:[{x:G.px,y:G.py}],steal:true};return;
     }
 
     // 雾蝰：隔着直线两格就吐毒（整条线预告）
@@ -3004,7 +3732,7 @@ function uiBlocked(){
   // 否则玩家会在看不见棋盘的情况下被键盘走位、白白挨打（夜班查出的真竞态）。
   if(G && G.headless) return false;          // 自测/模拟局不走 DOM 判定
   if(document.getElementById('game').classList.contains('hidden')) return true;
-  return ['upgrade','shop','codex','archive','leaderboard','howto','classThink','classJudge','classAction']
+  return ['upgrade','shop','codex','archive','leaderboard','howto','classThink','classJudge','classTactic','classAction']
     .some(id=>!document.getElementById(id).classList.contains('hidden'));
 }
 function act(dir){
@@ -3026,13 +3754,17 @@ function act(dir){
     if(foe){ playerHit(foe); }
     else{
       G.px=nx; G.py=ny; sfx('move');
+      playerStats(G.classroom?classPlayer():G).steps++;
       pickup();
       if(key(G.px,G.py)===G.stairs){
         // 最终层的出口被叶王镇守：她不倒，谁也别想绕过去下楼白捡通关
         //（夜班模拟局逮出来的真漏洞：bot 曾 55 回合全程避战速通）
         if(G.fi>=FLOORS.length-1 && G.ents.some(e=>e.type==='ye')){
           fnum(G.px,G.py,'叶王镇守着出口','#9d72d6');
+        }else if(G.loop>0&&currentLoopRule()&&currentLoopRule().id==='keykeeper'&&G.ents.some(e=>e.keykeeper)){
+          fnum(G.px,G.py,'金印守门 · 先取钥匙','#ffcd75',true);
         }else{
+          playerStats(G.classroom?classPlayer():G).objectives++;
           if(G.classroom){
             classSaveActive();
             G.classroom.ap=Math.max(0,G.classroom.ap-1);
@@ -3061,16 +3793,52 @@ function act(dir){
 
 function killFoe(foe){
   burst(foe.x,foe.y, foe.boss?'#ffcd75':'#ef7d57');
-  G.coin+=foe.coin; G.kills=(G.kills||0)+1;
+  const deathSpot={x:foe.x,y:foe.y},wasSplit=foe.pattern==='split',wasVolatile=!!foe.volatile;
+  G.coin+=foe.coin+(foe.stolen||0); G.kills=(G.kills||0)+1;
+  playerStats(G.classroom?classPlayer():G).kills++;
   G.ents=G.ents.filter(e=>e!==foe);
+  if(foe.keykeeper)fnum(deathSpot.x,deathSpot.y,'金印钥匙 · 出口解封','#ffcd75',true);
+  if(G.classroom&&foe.bountyMarked){
+    G.coin+=12;
+    const p=classPlayer();
+    if(p&&!p.resting){p.roundAp+=4;G.classroom.ap+=4;}
+    fnum(deathSpot.x,deathSpot.y,'悬赏 +12 金 · +4 行动','#ffcd75',true);
+  }
+  if(G.classroom&&G.classroom.killApLeft>0){
+    const p=classPlayer(),gain=G.classroom.killAp||2;
+    if(p&&!p.resting){p.roundAp+=gain;G.classroom.ap+=gain;}
+    G.classroom.killApLeft--;
+    fnum(deathSpot.x,deathSpot.y,'连环 +'+gain+' 行动','#e8cf95',true);
+  }
+  if(wasSplit){
+    cellsAround(deathSpot.x,deathSpot.y)
+      .filter(c=>!G.wall[key(c.x,c.y)]&&!occupied(c.x,c.y)).slice(0,2)
+      .forEach(c=>G.ents.push(mkMob('shard',c.x,c.y)));
+  }
+  if(wasVolatile&&!G.over){
+    G.laughs=(G.laughs||0)+1;burst(deathSpot.x,deathSpot.y,'#9d72d6');
+    G.ents.filter(o=>Math.max(Math.abs(o.x-deathSpot.x),Math.abs(o.y-deathSpot.y))<=1)
+      .slice().forEach(o=>{if(G.ents.includes(o))damageFoe(o,3,'笑爆 -3','#9d72d6',true);});
+    if(G.classroom){
+      classLivingPlayers().filter(p=>Math.max(Math.abs(p.px-deathSpot.x),Math.abs(p.py-deathSpot.y))<=1)
+        .forEach(p=>hurtClassPlayer(p,2,null));
+    }else if(Math.max(Math.abs(G.px-deathSpot.x),Math.abs(G.py-deathSpot.y))<=1)hurtPlayer(2,null);
+    fnum(deathSpot.x,deathSpot.y,'砰！笑爆连锁','#9d72d6',true);
+  }
   if(foe.boss && foe.type==='ye'){ sfx('win'); win(); return true; }   // 打倒叶王＝通关
   sfx(foe.boss?'boss':'hit');
   return false;
 }
 function damageFoe(foe,dmg,label,color,big){
-  const dealt=Math.max(1,Math.round(dmg)-(foe.armor||0));
+  const focus=G.classroom&&foe.tacticMarked?(G.classroom.focusBonus||0):0;
+  const formation=currentLoopRule()&&currentLoopRule().id==='formation'&&
+    G.ents.some(o=>o!==foe&&adjacent(o.x,o.y,foe.x,foe.y))?1:0;
+  const pierce=(G.classroom?G.classroom.armorPierce||0:0)+(G.skillAttack==='crit'?99:0);
+  const armor=Math.max(0,(foe.armor||0)+formation-pierce);
+  const dealt=Math.max(1,Math.round(dmg)+focus-armor);
+  playerStats(G.classroom?classPlayer():G).damage+=Math.min(foe.hp,dealt);
   foe.hp-=dealt; foe.flash=performance.now()+220;
-  fnum(foe.x,foe.y,foe.armor&&dealt<dmg?'镜甲 -'+dealt:label,color,big);
+  fnum(foe.x,foe.y,focus?'集火 -'+dealt:(armor&&dealt<dmg?'镜甲 -'+dealt:label),color,big);
   if(foe.hp<=0) return killFoe(foe);
   return false;
 }
@@ -3080,8 +3848,10 @@ function berserkBonus(){
   return Math.min(G.berserk, Math.round((1-G.hp/G.maxhp)*G.berserk));
 }
 function playerHit(foe){
+  const owner=G.classroom?classPlayer():G,stats=playerStats(owner),power=G.skillPower;
   let dmg=G.atk, crit=false;
-  if(G.crit>0 && Math.random()<G.crit){ dmg*=2; crit=true; }
+  if(power==='crit'||(G.crit>0 && Math.random()<G.crit)){ dmg*=2; crit=true; }
+  if(power==='rage')dmg+=3;
   dmg += berserkBonus();
   sfx(crit?'crit':'hit');
   if(crit) shake();
@@ -3093,12 +3863,23 @@ function playerHit(foe){
     const heal=Math.min(G.lifesteal, G.maxhp-G.hp);
     if(heal>0){ G.hp+=heal; fnum(G.px,G.py,'+'+heal,'#38b764'); }
   }
-  const ended = damageFoe(foe,dmg,(crit?'暴击 ':'')+'-'+dmg, crit?'#ffcd75':'#ffffff', crit);
-  if(ended) return;
-  splashFoes.forEach(o=>{ if(G.ents.includes(o)) damageFoe(o,G.splash,'-'+G.splash,'#41a6f6'); });
+  stats.attacks++;G.skillAttack=power;
+  const ended=damageFoe(foe,dmg,(crit?'暴击 ':'')+'-'+dmg, crit?'#ffcd75':'#ffffff', crit);
+  splashFoes.forEach(o=>{
+    if(!G.ents.includes(o))return;
+    damageFoe(o,G.splash,'-'+G.splash,'#41a6f6');
+  });
+  G.skillAttack=null;
+  if(power){
+    G.skillCharges=Math.max(0,(G.skillCharges||1)-1);
+    if(G.skillCharges<=0)G.skillPower=null;
+    owner.skillPower=G.skillPower;owner.skillCharges=G.skillCharges;
+  }
+  if(ended)return;
 }
 
 function hurtPlayer(dmg,attacker){
+  if(G.ward>0){G.ward--;fnum(G.px,G.py,'星盾抵消','#41a6f6',true);return;}
   G.hp-=dmg;
   fnum(G.px,G.py,'-'+dmg,'#ef4d4d');
   sfx('hurt'); hitNudge(); flash('red');
@@ -3110,6 +3891,14 @@ function hurtPlayer(dmg,attacker){
 }
 function hurtClassPlayer(p,dmg,attacker){
   if(!p||p.resting)return;
+  if(p.ward>0){p.ward--;if(p===classPlayer())G.ward=p.ward;fnum(p.px,p.py,'星盾抵消','#41a6f6',true);return;}
+  const guard=G.classroom.players.find(q=>q!==p&&!q.resting&&q.hero.id==='hao'&&
+    Math.max(Math.abs(q.px-p.px),Math.abs(q.py-p.py))<=1);
+  if(guard){
+    const blocked=Math.min(2,Math.max(0,dmg-1));dmg=Math.max(1,dmg-blocked);
+    playerStats(guard).support+=blocked;
+    if(blocked)fnum(guard.px,guard.py,'原牛护阵 -'+blocked,'#41a6f6',true);
+  }
   p.hp-=dmg;
   fnum(p.px,p.py,'-'+dmg,'#ef4d4d');
   sfx('hurt'); hitNudge(); flash('red');
@@ -3124,16 +3913,25 @@ function hurtClassPlayer(p,dmg,attacker){
 }
 
 function triggerEnemyHazard(e){
-  const i=G.items.findIndex(o=>o.x===e.x&&o.y===e.y&&(o.type==='spike'||o.type==='bomb'));
+  const i=G.items.findIndex(o=>o.x===e.x&&o.y===e.y&&
+    (o.type==='spike'||o.type==='bomb'||o.type==='mine'||o.type==='banana'));
   if(i<0)return false;
   const it=G.items[i];G.items.splice(i,1);
+  playerStats(G.classroom?classPlayer():G).hazards++;
+  const mult=(it.friendly&&G.classroom)?Math.max(2,G.classroom.hazardBoost||1):1;
   if(it.type==='spike'){
     fnum(e.x,e.y,'踩中尖刺','#ef7d57');
-    damageFoe(e,4,'机关 -4','#ef7d57');
-  }else{
+    damageFoe(e,4*mult,'机关 -'+(4*mult),'#ef7d57');
+  }else if(it.type==='mine'){
+    burst(e.x,e.y,'#ef7d57');shake();
+    damageFoe(e,6*mult,'伏雷 -'+(6*mult),'#ef7d57',true);
+  }else if(it.type==='bomb'){
     const targets=G.ents.filter(o=>Math.max(Math.abs(o.x-e.x),Math.abs(o.y-e.y))<=1);
     burst(e.x,e.y,'#ffcd75');shake();
     targets.forEach(o=>{if(G.ents.includes(o))damageFoe(o,6,'爆裂 -6','#ffcd75',true);});
+  }else{
+    e.stunned=(e.stunned||0)+1;G.laughs=(G.laughs||0)+1;
+    fnum(e.x,e.y,'啪叽！认真摔倒','#ffcd75',true);sfx('pickup');
   }
   return !G.ents.includes(e);
 }
@@ -3151,23 +3949,44 @@ function enemiesAct(){
       if(it.t==='dash' && it.to && !occupied(it.to.x,it.to.y,e)){
         e.x=it.to.x; e.y=it.to.y;if(triggerEnemyHazard(e))return;
       }
+      if(it.blast){
+        G.ents.filter(o=>o!==e&&(it.cells||[]).some(c=>c.x===o.x&&c.y===o.y))
+          .slice().forEach(o=>{if(G.ents.includes(o))damageFoe(o,3,'误爆 -3','#ef7d57');});
+      }
       if(G.classroom){
         const hits=classLivingPlayers().filter(p=>(it.cells||[]).some(c=>c.x===p.px&&c.y===p.py));
-        hits.forEach(p=>hurtClassPlayer(p,e.atk,e));
+        hits.forEach(p=>{hurtClassPlayer(p,e.atk,e);
+          if(it.steal&&!p.resting){
+            const stolen=Math.min(5,G.coin);G.coin-=stolen;e.stolen=(e.stolen||0)+stolen;
+            if(stolen)fnum(p.px,p.py,'灯贼偷走 '+stolen+' 金','#ffcd75');
+          }
+        });
         if(!hits.length){
           const c=(it.cells||[])[0];
           if(c) fnum(c.x,c.y,'落空','#6b7391');
         }
       }else if((it.cells||[]).some(c=>c.x===G.px&&c.y===G.py)){
         hurtPlayer(e.atk,e);
+        if(it.steal&&G.hp>0){
+          const stolen=Math.min(5,G.coin);G.coin-=stolen;e.stolen=(e.stolen||0)+stolen;
+          if(stolen)fnum(G.px,G.py,'灯贼偷走 '+stolen+' 金','#ffcd75');
+        }
       }else{
         const c=(it.cells||[])[0];
         if(c) fnum(c.x,c.y,'落空','#6b7391');
       }
     }else if(it.t==='summon'){
       if(!occupied(it.x,it.y,e) && !G.wall[key(it.x,it.y)]){
-        G.ents.push(mkMob('shade',it.x,it.y));   // 召影卒：8血堆得起来，才是真压力（蛇卒一刀死=白送）
-        fnum(it.x,it.y,'召来影卒','#9d72d6');
+        const type=it.summonType&&MOBS[it.summonType]?it.summonType:'shade';
+        G.ents.push(mkMob(type,it.x,it.y));
+        fnum(it.x,it.y,'召来'+MOBS[type].name,'#9d72d6');
+      }
+    }else if(it.t==='heal'){
+      const ally=G.ents.find(o=>o!==e&&o.x===it.x&&o.y===it.y);
+      if(ally){const n=Math.min(it.amount||4,ally.maxhp-ally.hp);ally.hp+=n;if(n)fnum(ally.x,ally.y,'雾医 +'+n,'#38b764');}
+    }else if(it.t==='trap'){
+      if(!occupied(it.x,it.y,e)&&!G.items.some(o=>o.x===it.x&&o.y===it.y)){
+        G.items.push({type:'mine',x:it.x,y:it.y});fnum(it.x,it.y,'布下伏雷','#ef7d57');
       }
     }else if(it.t==='mov'){
       if(!occupied(it.x,it.y,e) && !G.wall[key(it.x,it.y)]){
@@ -3181,6 +4000,9 @@ function pickup(){
   const i=G.items.findIndex(o=>o.x===G.px&&o.y===G.py);
   if(i<0) return;
   const it=G.items[i];
+  if((it.type==='spike'||it.type==='mine'||it.type==='banana')&&it.friendly){
+    fnum(G.px,G.py,'友军机关 · 可诱敌踩入','#38b764');return;
+  }
   if(it.type==='rift'){
     const mate=G.items.find((o,j)=>j!==i&&o.type==='rift');
     if(mate){
@@ -3190,12 +4012,21 @@ function pickup(){
     return;
   }
   G.items.splice(i,1);
+  playerStats(G.classroom?classPlayer():G).items++;
   if(it.type==='potion'){ const h=Math.min(8,G.maxhp-G.hp); G.hp+=h; fnum(G.px,G.py,'+'+h,'#38b764'); }
   if(it.type==='coin'){ G.coin+=5; fnum(G.px,G.py,'+5 金','#ffcd75'); }
   if(it.type==='sword'){ G.atk+=1; fnum(G.px,G.py,'攻击 +1','#e8cf95'); flash(); }
   if(it.type==='armor'){ G.maxhp+=5; G.hp+=5; fnum(G.px,G.py,'血上限 +5','#41a6f6'); flash(); }
   if(it.type==='spike'){
     const dmg=3;G.hp-=dmg;fnum(G.px,G.py,'尖刺 -'+dmg,'#ef4d4d');shake();
+    if(G.classroom){
+      const p=classPlayer();p.hp=Math.max(0,G.hp);
+      if(p.hp<=0){p.resting=true;fnum(p.px,p.py,p.name+'本层休整','#9aa3bd',true);}
+    }
+    if(G.hp<=0&&!G.classroom)lose();
+  }
+  if(it.type==='mine'){
+    const dmg=4;G.hp-=dmg;burst(G.px,G.py,'#ef4d4d');fnum(G.px,G.py,'伏雷 -'+dmg,'#ef4d4d',true);shake();
     if(G.classroom){
       const p=classPlayer();p.hp=Math.max(0,G.hp);
       if(p.hp<=0){p.resting=true;fnum(p.px,p.py,p.name+'本层休整','#9aa3bd',true);}
@@ -3229,12 +4060,38 @@ function pickup(){
     else{G.coin+=12;G.luck=(G.luck||0)+1;fnum(G.px,G.py,'星运 +1 · 金 +12','#ffcd75',true);}
     flash();
   }
+  if(it.type==='lever'){
+    let n=0;
+    G.items.forEach(o=>{if(o.type==='spike'||o.type==='mine'){o.friendly=true;n++;}});
+    if(G.classroom)G.classroom.hazardBoost=Math.max(2,G.classroom.hazardBoost||1);
+    playerStats(G.classroom?classPlayer():G).support+=n;
+    fnum(G.px,G.py,'星轨翻转 · '+n+' 处机关归队','#38b764',true);flash();
+  }
+  if(it.type==='ward'){
+    G.ward=(G.ward||0)+1;
+    if(G.classroom)classPlayer().ward=G.ward;
+    playerStats(G.classroom?classPlayer():G).support++;
+    fnum(G.px,G.py,'星盾 +1','#41a6f6',true);flash();
+  }
+  if(it.type==='spring'){
+    if(G.classroom){
+      G.classroom.ap+=3;const p=classPlayer();p.roundAp=G.classroom.ap;
+      fnum(G.px,G.py,'弹簧阵 +3 行动','#e8cf95',true);
+    }else{
+      const h=Math.min(3,G.maxhp-G.hp);G.hp+=h;fnum(G.px,G.py,'弹簧阵回气 +'+h,'#38b764');
+    }
+  }
 }
 
 function descend(){
   if(G.fi>=FLOORS.length-1){ win(); return; }
   flash(); shake(); sfx('stairs');
   loadFloor(G.fi+1);
+  if(G.classroom&&G.classroom.phase==='act'){
+    G.classroom.ap+=3;
+    const p=classPlayer();if(p)p.roundAp=G.classroom.ap;
+    fnum(G.px,G.py,'深入士气 +3 行动','#e8cf95',true);
+  }
   syncHud();
   if(G.classroom){ offerClassUpgrades(); }
   else if(G.sim) simPerk();      // 模拟局：按"普通玩家"偏好自动选强化
@@ -3271,20 +4128,28 @@ function lose(){ if(G.over)return; G.over=true;
   else{ clearRun(); recordRun(false); }
   recordRanking(false,false);
   endScreen(false); }
-function classEndData(){
+function classEndData(won){
   if(!G||!G.classroom)return null;
   return {
     teamName:G.classroom.teamName,
-    players:G.classroom.players.map(p=>({name:p.name,hero:p.hero.name,score:p.score})),
+    players:G.classroom.players.map(p=>({name:p.name,hero:p.hero.name,heroId:p.hero.id,
+      score:p.score,studyPoints:p.studyPoints||0,points:classPersonalPoints(p,won),
+      stats:normalizePlayerStats(p.stats),hp:p.hp,maxhp:p.maxhp})),
     floor:G.fi+1,kills:G.kills||0,turns:G.turns||0,
-    discoveries:Object.keys(G.classroom.discovered||{}).length
+    discoveries:Object.keys(G.classroom.discovered||{}).length,
+    tactics:new Set(G.classroom.tacticHistory||[]).size,
+    teamPoints:calculateRunScore(won),loop:G.loop||0,laughs:G.laughs||0
   };
 }
+let LAST_RESULT=null;
 function endScreen(w,endedEarly){
   // 同步取值：G 可能在延时期间被重置（换英雄/自测），别在回调里再读 G
   const s={n:G.hero.name, f:G.fname, coin:G.coin, atk:G.atk, mh:G.maxhp,
            fl:G.fi+1, k:G.kills||0, t:G.turns||0,score:calculateRunScore(w),
-           heat:heatData(G.heat),spent:G.spent||0,classroom:classEndData()};
+           heat:heatData(G.heat),spent:G.spent||0,classroom:classEndData(w),
+           heroId:G.hero.id,won:!!w,endedEarly:!!endedEarly,loop:G.loop||0,
+           stats:normalizePlayerStats(G.stats),laughs:G.laughs||0,ts:Date.now()};
+  LAST_RESULT=s;
   setTimeout(()=>{
     const big=document.getElementById('overBig');
     if(!big) return;                       // 页面已被自测/模拟报告替换：静默放弃
@@ -3300,9 +4165,9 @@ function endScreen(w,endedEarly){
         '<br><br>到达 <b>第'+s.classroom.floor+'层</b> · 击杀 <b>'+s.classroom.kills+
         '</b> · 总回合 <b>'+s.classroom.turns+'</b>'+
         '<br>本局发现地图异闻 <b>'+s.classroom.discoveries+' 处</b>'+
-        '<br><b>'+s.heat.name+'</b> · 黑域综合分 <b>'+s.score+'</b>'+
-        '<br>下次可以争夺：综合分、九层速通、猎王战利三张榜。';
-      document.getElementById('btnAgain').textContent='同组再来';
+        '<br><b>'+s.heat.name+'</b> · 团队远征积分等待计算'+
+        '<br>答题、配合、机关、路线与通关都会计分。';
+      document.getElementById('btnAgain').textContent=w?'开启二周目':'同组再来';
       document.getElementById('btnMenu').textContent='回到主菜单';
     }else{
       document.getElementById('overSum').innerHTML=
@@ -3310,13 +4175,174 @@ function endScreen(w,endedEarly){
           : '<b>'+s.n+'</b> 倒在了'+s.f+'。')+
         '<br>到达 <b>第'+s.fl+'层</b> · 击杀 <b>'+s.k+'</b> · 回合 <b>'+s.t+'</b>'+
         '<br>金币 <b>'+s.coin+'</b> · 已消费 <b>'+s.spent+'</b> · 攻击 <b>'+s.atk+'</b> · 血上限 <b>'+s.mh+'</b>'+
-        '<br><b>'+s.heat.name+'</b> · 黑域综合分 <b>'+s.score+'</b>'+
-        '<br>失败也会入榜；下一局可以换契约冲综合、速通或猎王榜。';
-      document.getElementById('btnAgain').textContent='再来一局';
+        '<br><b>'+s.heat.name+'</b> · 远征积分等待计算'+
+        '<br>失败也会有完整成绩；路线、机关与战斗贡献都会记分。';
+      document.getElementById('btnAgain').textContent=w?'开启二周目':'再来一局';
       document.getElementById('btnMenu').textContent='换英雄';
     }
+    document.getElementById('btnScoreNow').classList.remove('hidden');
+    document.getElementById('scoreReport').classList.add('hidden');
+    document.getElementById('scoreActions').classList.add('hidden');
+    document.getElementById('scoreStatus').textContent='';
     show('over');
   }, w?520:420);
+}
+
+/* ---------- 即时积分与像素战绩卡 ----------
+   成绩图完全在本机 Canvas 生成；二维码仅编码公开游戏网址，不含姓名或设备信息。 */
+const SCORE_QR=[
+'111111100101000010110001001111111','100000100101100110100010001000001',
+'101110101010101000010110001011101','101110101010100000100101101011101',
+'101110101101011111001101101011101','100000101001001001010110101000001',
+'111111101010101010101010101111111','000000001100001010111111000000000',
+'101111100111011001010001101111100','110011010011010011111001001101111',
+'001111100000111111001010010010110','111111010111110001101001110011111',
+'101011100111101110001111110011000','100001010010100101100001001001111',
+'001010100100101110101010011100110','011001000101111100000101011001100',
+'100011110001000111001011110110001','100000000101101010111101001101111',
+'011111101101000110100100011110110','010100000110011100000111101111110',
+'011101110100011000110100110111011','101101000110101111001111001000101',
+'101100100100111001010010011001110','101110011110111010011110010011110',
+'101100101011000011110010111111011','000000001101110011111001100010101',
+'111111100111001111000011101010100','100000101000011111101001100011110',
+'101110101001001010001110111111010','101110101110001101100001110010101',
+'101110101010101111001100011100000','100000100001001100000110010010100',
+'111111101111101101001011111100010'];
+function scoreBreakdown(s){
+  if(s.classroom){
+    const academic=s.classroom.players.reduce((n,p)=>n+p.studyPoints,0);
+    const battle=s.classroom.players.reduce((n,p)=>n+p.stats.damage*10+p.stats.kills*120,0);
+    const strategy=Math.max(0,s.score-academic-battle);
+    return [{name:'答题成长',value:academic},{name:'战斗贡献',value:battle},{name:'策略协作',value:strategy}];
+  }
+  return [{name:'深入层数',value:s.fl},{name:'击杀敌人',value:s.k},
+    {name:'机关利用',value:s.stats.hazards},{name:'有效伤害',value:s.stats.damage},
+    {name:'欢乐事件',value:s.laughs||0},{name:'远征回合',value:s.t}];
+}
+function renderScoreReport(){
+  const s=LAST_RESULT;if(!s)return;
+  const report=document.getElementById('scoreReport'),breaks=scoreBreakdown(s);
+  let html='<div class="scorehero"><div><span>'+(s.loop?'二周目 '+s.loop+' · ':'')+
+    (s.won?'完整通关':'本次远征')+'</span><b>'+
+    htmlSafe(s.classroom?s.classroom.teamName:s.n)+'</b></div><div class="scoretotal">'+s.score+
+    '<small>'+(s.classroom?'团队远征积分':'个人远征积分')+'</small></div></div>'+
+    '<div class="scorebreakdown">'+breaks.map(x=>'<div class="scorechip">'+x.name+'<b>'+x.value+'</b></div>').join('')+'</div>';
+  if(s.classroom){
+    html+='<div class="scoreplayers">'+s.classroom.players.map((p,i)=>
+      '<div class="scoreplayer"><canvas width="16" height="16" data-score-hero="'+p.heroId+'"></canvas>'+
+      '<div><b>'+htmlSafe(p.name)+' · '+p.hero+'</b><span>答题 '+p.studyPoints+
+      ' · 伤害 '+p.stats.damage+' · 击杀 '+p.stats.kills+' · 协作 '+p.stats.support+
+      '</span></div><strong>'+p.points+'</strong></div>').join('')+'</div>';
+  }else{
+    html+='<div class="scorechip">推荐复盘<b>'+(
+      s.won?'二周目会改变敌人阵法，先观察再走。':
+      s.stats.hazards?'你已经会利用机关，下次试着缩短路线。':'试着把敌人引到伏雷和爆圈里。')+'</b></div>';
+  }
+  html+='<div class="scorechip">计分原则<b>答题成长不扣分；战斗、协作、机关、探索和通关分别加分。</b></div>';
+  report.innerHTML=html;
+  report.querySelectorAll('[data-score-hero]').forEach(c=>{
+    const h=HEROES.find(x=>x.id===c.dataset.scoreHero);if(h)drawSprTo(c.getContext('2d'),h.spr);
+  });
+  report.classList.remove('hidden');document.getElementById('scoreActions').classList.remove('hidden');
+  document.getElementById('btnScoreNow').classList.add('hidden');
+  setScoreStatus('积分已经计算完成。成绩图会附带游戏官网二维码。','good');
+  createScorePoster();
+}
+function setScoreStatus(text,kind){
+  const el=document.getElementById('scoreStatus');el.textContent=text||'';
+  el.className='scorestatus'+(kind?' '+kind:'');
+}
+function posterText(c,text,x,y,size,color,align,weight){
+  c.fillStyle=color||'#f4f4f4';c.font=(weight||700)+' '+size+'px system-ui,-apple-system,"PingFang SC",sans-serif';
+  c.textAlign=align||'left';c.textBaseline='alphabetic';c.fillText(String(text),x,y);
+}
+function posterFrame(c,x,y,w,h,color){
+  c.strokeStyle=color||'#c8a558';c.lineWidth=6;c.strokeRect(x+.5,y+.5,w-1,h-1);
+  c.strokeStyle='#3a3425';c.lineWidth=2;c.strokeRect(x+13.5,y+13.5,w-27,h-27);
+}
+function posterSprite(c,spr,x,y,scale){
+  const rows=SPR[spr];if(!rows)return;
+  rows.forEach((row,ry)=>[...row].forEach((ch,rx)=>{
+    if(ch==='.')return;c.fillStyle=PAL[ch]||'#fff';c.fillRect(x+rx*scale,y+ry*scale,scale,scale);
+  }));
+}
+function drawScoreQr(c,x,y,module){
+  c.fillStyle='#f4f0df';c.fillRect(x-module*4,y-module*4,module*41,module*41);
+  c.fillStyle='#080a10';
+  SCORE_QR.forEach((row,ry)=>[...row].forEach((v,rx)=>{if(v==='1')c.fillRect(x+rx*module,y+ry*module,module,module);}));
+}
+function createScorePoster(){
+  const s=LAST_RESULT,cv=document.getElementById('scoreCanvas');if(!s)return cv;
+  const c=cv.getContext('2d');c.imageSmoothingEnabled=false;
+  c.fillStyle='#070910';c.fillRect(0,0,cv.width,cv.height);
+  posterFrame(c,42,42,996,1356,'#c8a558');
+  c.fillStyle='#141827';c.fillRect(70,70,940,190);
+  posterText(c,'MYSKME · 星徒地牢',95,125,28,'#c8a558','left',800);
+  posterText(c,s.won?'九层通关战绩':'本次远征战绩',95,195,54,'#e8cf95','left',900);
+  posterText(c,(s.loop?'二周目 '+s.loop+' · ':'')+s.heat.name,980,124,24,'#9aa3bd','right',700);
+  if(s.classroom){
+    posterText(c,s.classroom.teamName,94,330,42,'#f4f4f4','left',900);
+    posterText(c,'团队远征积分',94,382,21,'#9aa3bd','left',700);
+    posterText(c,s.score,980,370,82,'#ffcd75','right',900);
+    const rowH=108,startY=420;
+    s.classroom.players.forEach((p,i)=>{
+      const y=startY+i*rowH;c.fillStyle=i%2?'#0d101a':'#111522';c.fillRect(84,y,912,rowH-10);
+      const h=HEROES.find(x=>x.id===p.heroId);if(h)posterSprite(c,h.spr,102,y+8,5);
+      posterText(c,p.name+' · '+p.hero,205,y+42,25,'#e8cf95','left',800);
+      posterText(c,'答题 '+p.studyPoints+'  伤害 '+p.stats.damage+'  击杀 '+p.stats.kills+'  协作 '+p.stats.support,
+        205,y+78,18,'#9aa3bd','left',600);
+      posterText(c,p.points,970,y+62,34,'#ffcd75','right',900);
+    });
+    if(s.classroom.players.length<=4)scoreBreakdown(s).forEach((v,i)=>{
+      const x=84+i*304,y=900;c.fillStyle='#111522';c.fillRect(x,y,286,104);
+      posterText(c,v.name,x+18,y+35,17,'#9aa3bd','left',700);
+      posterText(c,v.value,x+268,y+78,36,'#e8cf95','right',900);
+    });
+  }else{
+    const h=HEROES.find(x=>x.id===s.heroId);if(h)posterSprite(c,h.spr,100,330,9);
+    posterText(c,s.n,285,405,54,'#e8cf95','left',900);
+    posterText(c,'个人远征积分',285,455,22,'#9aa3bd','left',700);
+    posterText(c,s.score,970,430,86,'#ffcd75','right',900);
+    const tiles=[['到达层数',s.fl],['击杀',s.k],['有效伤害',s.stats.damage],
+      ['机关利用',s.stats.hazards],['欢乐事件',s.laughs||0],['回合',s.t]];
+    tiles.forEach((v,i)=>{
+      const x=84+(i%3)*304,y=570+Math.floor(i/3)*126;
+      c.fillStyle='#111522';c.fillRect(x,y,286,106);
+      posterText(c,v[0],x+18,y+35,18,'#9aa3bd','left',700);
+      posterText(c,v[1],x+268,y+80,42,'#e8cf95','right',900);
+    });
+  }
+  const footerY=1090;c.fillStyle='#10131f';c.fillRect(84,footerY,912,250);
+  posterText(c,'扫码进入星徒地牢',112,1140,25,'#e8cf95','left',800);
+  posterText(c,'再来一局，把攻略讲给队友听。',112,1180,19,'#9aa3bd','left',600);
+  posterText(c,'第 '+s.fl+' 层 · '+s.k+' 击杀 · '+s.t+' 回合',112,1235,21,'#f4f4f4','left',700);
+  posterText(c,new Date(s.ts).toLocaleDateString('zh-CN'),112,1280,18,'#6f7895','left',600);
+  posterText(c,GAME_URL,112,1318,15,'#6f7895','left',600);
+  drawScoreQr(c,710,1130,8);
+  return cv;
+}
+function scorePosterBlob(){
+  const cv=createScorePoster();
+  return new Promise((resolve,reject)=>cv.toBlob(b=>b?resolve(b):reject(new Error('图片生成失败')),'image/png'));
+}
+async function saveScorePoster(shareOnly){
+  if(!LAST_RESULT)return;
+  try{
+    const blob=await scorePosterBlob(),safe=(LAST_RESULT.classroom?LAST_RESULT.classroom.teamName:LAST_RESULT.n)
+      .replace(/[\\/:*?"<>|]/g,'-');
+    const filename='星徒地牢-'+safe+'-'+LAST_RESULT.score+'分.png';
+    const file=typeof File==='function'?new File([blob],filename,{type:'image/png'}):null;
+    if(file&&navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+      await navigator.share({title:'星徒地牢战绩',text:'我的星徒地牢积分：'+LAST_RESULT.score,files:[file]});
+      setScoreStatus(shareOnly?'分享面板已经打开。':'请选择“存储到照片”或保存图片。','good');return;
+    }
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+    setScoreStatus('战绩图片已经下载；手机可在下载项中保存到相册。','good');
+  }catch(err){
+    if(err&&err.name==='AbortError'){setScoreStatus('已取消保存。');return;}
+    setScoreStatus('暂时无法保存：'+(err&&err.message||'未知错误'),'bad');
+  }
 }
 
 /* ---------- 特效 ---------- */
@@ -3421,8 +4447,13 @@ function draw(){
   const sx=(G.stairs%N)*TS, sy=((G.stairs/N)|0)*TS;
   drawSpr('stairs',sx,sy);
 
-  // 道具
-  G.items.forEach(o=>drawSpr(o.type,o.x*TS,o.y*TS));
+  // 道具；被扳机翻为友军的机关带绿色框，玩家能一眼判断可安全踩过。
+  G.items.forEach(o=>{
+    drawSpr(o.type,o.x*TS,o.y*TS);
+    if(o.friendly){
+      ctx.strokeStyle='#38b764';ctx.lineWidth=1;ctx.strokeRect(o.x*TS+1.5,o.y*TS+1.5,13,13);
+    }
+  });
 
   // 移动 / 召唤意图（画在角色下面即可，只是"它要去哪 / 要召什么"的提示）
   const t=performance.now(), pulse=0.55+0.45*Math.sin(t/240);
@@ -3436,10 +4467,10 @@ function draw(){
       ctx.strokeStyle='#4a5170'; ctx.lineWidth=1;
       ctx.strokeRect(px+3.5,py+3.5,9,9);
       ctx.globalAlpha=1;
-    }else if(it.t==='summon'){
+    }else if(it.t==='summon'||it.t==='trap'||it.t==='heal'){
       const px=it.x*TS, py=it.y*TS;
       ctx.globalAlpha=pulse;
-      ctx.strokeStyle='#9d72d6'; ctx.lineWidth=1;
+      ctx.strokeStyle=it.t==='heal'?'#38b764':it.t==='trap'?'#ef7d57':'#9d72d6'; ctx.lineWidth=1;
       ctx.strokeRect(px+2.5,py+2.5,11,11);
       ctx.beginPath(); ctx.arc(px+8,py+8,3,0,Math.PI*2); ctx.stroke();
       ctx.globalAlpha=1;
@@ -3459,6 +4490,20 @@ function draw(){
       ctx.globalAlpha=0.55+0.35*Math.sin(t/210);
       ctx.strokeStyle='#9d72d6';ctx.lineWidth=1;
       ctx.strokeRect(e.x*TS+0.5,e.y*TS+0.5,15,15);
+      ctx.globalAlpha=1;
+    }
+    if(e.tacticMarked||e.bountyMarked){
+      ctx.globalAlpha=0.65+0.3*Math.sin(t/180);
+      ctx.strokeStyle=e.bountyMarked?'#ffcd75':'#41a6f6';ctx.lineWidth=1;
+      ctx.strokeRect(e.x*TS+2.5,e.y*TS+2.5,11,11);
+      ctx.globalAlpha=1;
+    }
+    if(e.volatile||e.keykeeper){
+      ctx.globalAlpha=0.7+0.25*Math.sin(t/170);
+      ctx.strokeStyle=e.keykeeper?'#ffcd75':'#9d72d6';ctx.lineWidth=1;
+      ctx.strokeRect(e.x*TS+3.5,e.y*TS+3.5,9,9);
+      if(e.keykeeper){ctx.fillStyle='#ffcd75';ctx.fillRect(e.x*TS+7,e.y*TS+1,2,3);}
+      else{ctx.fillStyle='#9d72d6';ctx.fillRect(e.x*TS+1,e.y*TS+7,3,2);ctx.fillRect(e.x*TS+12,e.y*TS+7,3,2);}
       ctx.globalAlpha=1;
     }
     drawSpr(e.spr, e.x*TS, e.y*TS, e.flash>t);
@@ -3526,6 +4571,10 @@ function syncHud(){
   hc.clearRect(0,0,16,16);
   const old=ctx; // 借用绘制函数
   drawSprTo(hc,G.hero.spr);
+  const skillBtn=document.getElementById('btnSkill'),skillReady=heroSkillReady();
+  const skillUsed=G.skillStamp===heroSkillStamp();
+  skillBtn.textContent=G.hero.active+(skillReady?'':skillUsed?' · 已用':' · 等待行动');
+  skillBtn.disabled=!skillReady;skillBtn.classList.toggle('ready',skillReady);
   const ch=document.getElementById('classHud');
   ch.classList.toggle('hidden',!G.classroom);
   if(G.classroom){
@@ -3536,6 +4585,7 @@ function syncHud(){
     document.getElementById('btnBack').textContent='提前结算';
     const phaseName=G.classroom.teamName+' · '+(G.classroom.phase==='think'||G.classroom.phase==='judge'
         ?'第 '+G.classroom.roundNumber+' 轮 · '+G.classroom.questionTotal+' 题 · 选行动倍率'
+      :G.classroom.phase==='tactic'?'第 '+G.classroom.roundNumber+' 轮 · 选择全队计谋'
       :G.classroom.phase==='ready'?'全员判分完成'
       :G.classroom.phase==='enemy'?'敌人行动'
       :G.classroom.ap>0?'轮到 '+p.name+' · '+p.hero.name+' 行动'
@@ -3561,13 +4611,21 @@ function syncHud(){
         '<div class="rostername">'+htmlSafe(q.name)+' · '+q.hero.name+'</div>'+
         '<div class="rosterline"><span class="rosterstate">'+state+'</span>'+mini+'</div></button>';
     }).join('');
-    document.getElementById('tip').innerHTML=G.classroom.rhythm===CLASS_RHYTHM_BATCH
-      ?'全员一屏判分后，可直接点任意星徒换人。<b>行动点用完，敌人才统一行动。</b>'
-      :'全员一屏判分，行动按座位自动轮换。<b>全队走完，敌人才统一行动。</b>';
+    const tactic=classTactic(G.classroom.tacticId);
+    const loopRule=currentLoopRule();
+    document.getElementById('tip').innerHTML=(loopRule
+      ?'<div class="tacticactive"><b>二周目阵法 · '+loopRule.name+'</b>　'+loopRule.desc+'</div>':'')+(tactic
+      ?'<div class="tacticactive"><b>本轮计谋 · '+tactic.name+'</b>　'+tactic.desc+'</div>':'')+
+      (G.classroom.rhythm===CLASS_RHYTHM_BATCH
+        ?'可直接点任意星徒换人。<b>行动点用完，敌人才统一行动。</b>'
+        :'行动按座位自动轮换。<b>全队走完，敌人才统一行动。</b>');
     saveClassRun();
   }else{
     document.getElementById('btnBack').textContent='换英雄';
-    document.getElementById('tip').innerHTML='格子上亮起<b>红叉</b> = 下回合那里会挨打，<b>走开就能躲掉</b>';
+    const loopRule=currentLoopRule();
+    document.getElementById('tip').innerHTML=(loopRule
+      ?'<div class="tacticactive"><b>二周目阵法 · '+loopRule.name+'</b>　'+loopRule.desc+'</div>':'')+
+      '格子上亮起<b>红叉</b> = 下回合那里会挨打，<b>走开就能躲掉</b>';
   }
 }
 function drawSprTo(c,name){
@@ -3585,6 +4643,7 @@ function show(id){
     document.getElementById('shop').classList.add('hidden');
     document.getElementById('classThink').classList.add('hidden');
     document.getElementById('classJudge').classList.add('hidden');
+    document.getElementById('classTactic').classList.add('hidden');
     document.getElementById('classAction').classList.add('hidden');
   }
 }
@@ -3622,7 +4681,7 @@ function savedDate(ts){
   return (d.getMonth()+1)+'月'+d.getDate()+'日 '+two(d.getHours())+':'+two(d.getMinutes());
 }
 function classPhaseLabel(p){
-  return p==='think'?'思考答题':p==='judge'?'正在判分':p==='ready'?'等待行动':
+  return p==='think'?'思考答题':p==='judge'?'正在判分':p==='tactic'?'选择计谋':p==='ready'?'等待行动':
     p==='act'?'小队行动':p==='upgrade'?'选择强化':'远征途中';
 }
 function buildContinueHub(){
@@ -3840,7 +4899,7 @@ function buildCodex(){
     d.className='cxrow'+(seen?'':' dim');
     d.innerHTML='<canvas width="16" height="16"></canvas><div>'+
       '<div class="cxn">'+(seen?m.name:'？？？')+(m.boss?'　<span style="font-size:10px">头目</span>':'')+'</div>'+
-      '<div class="cxd">'+(seen?m.lore:'尚未在地牢里遇见。')+'</div></div>';
+      '<div class="cxd">'+(seen?m.lore+'<br><b>'+m.counter+'</b>':'尚未在地牢里遇见；遭遇后会解锁对策。')+'</div></div>';
     const c=d.querySelector('canvas').getContext('2d');
     if(seen) drawSprTo(c,m.spr); else drawSprSil(c,m.spr);
     box.appendChild(d);
@@ -3925,7 +4984,9 @@ function buildClassSetup(count){
   for(let i=1;i<=6;i++){
     const b=document.createElement('button');
     b.className='countbtn'+(i===CLASS_SETUP.count?' active':'');
-    b.textContent=i; b.onclick=()=>buildClassSetup(i); counts.appendChild(b);
+    b.innerHTML=i+(i===3||i===4?'<small>最佳</small>':'');
+    b.title=i===3||i===4?'最佳搭档编制：每轮四选一计谋':'';
+    b.onclick=()=>buildClassSetup(i); counts.appendChild(b);
   }
   const seats=document.getElementById('classSeats');
   seats.innerHTML='';
@@ -4046,11 +5107,16 @@ document.getElementById('classJudge').addEventListener('click',ev=>{
 });
 document.getElementById('judgeAllCorrect').onclick=()=>
   setAllClassGrades(3);
+document.getElementById('btnCalculateGrades').onclick=()=>confirmClassGrades();
 document.getElementById('judgeClearAll').onclick=()=>{
   if(!G||!G.classroom||G.classroom.phase!=='judge')return;
   G.classroom.players.forEach(p=>{p.judged=false;p.roundScore=0;p.roundAnswers=0;p.roundAp=0;});
   syncHud();renderGroupGradeBoard();
 };
+document.getElementById('tacticCards').addEventListener('click',ev=>{
+  const b=ev.target.closest('[data-tactic]');
+  if(b)chooseClassTactic(b.dataset.tactic);
+});
 document.getElementById('actionPlayers').addEventListener('click',ev=>{
   const b=ev.target.closest('[data-action-player]');
   if(b)selectClassActionPlayer(Number(b.dataset.actionPlayer));
@@ -4059,6 +5125,7 @@ document.getElementById('btnActionBoard').onclick=()=>showClassActionBoard();
 document.getElementById('btnActionClose').onclick=()=>
   document.getElementById('classAction').classList.add('hidden');
 document.getElementById('btnEndActions').onclick=()=>finishClassActionsEarly();
+document.getElementById('btnSkill').onclick=()=>useHeroSkill();
 document.getElementById('btnShop').onclick=()=>buildShop();
 document.getElementById('btnShopClose').onclick=()=>document.getElementById('shop').classList.add('hidden');
 document.getElementById('classRoster').addEventListener('click',ev=>{
@@ -4083,16 +5150,20 @@ btnBack.onclick=()=>{
   }else{ show('menu'); buildMenu(); }
 };
 document.getElementById('btnMenu').onclick=()=>{show('menu');buildMenu()};
+document.getElementById('btnScoreNow').onclick=()=>renderScoreReport();
+document.getElementById('btnSavePoster').onclick=()=>saveScorePoster(false);
+document.getElementById('btnSharePoster').onclick=()=>saveScorePoster(true);
 document.getElementById('btnAgain').onclick=()=>{
+  const nextLoop=LAST_RESULT&&LAST_RESULT.won?(LAST_RESULT.loop||0)+1:(G.loop||0);
   if(G.classroom){
     const rhythm=G.classroom.rhythm,questions=G.classroom.questionsPerRound;
     const sceneMode=G.classroom.sceneMode,fixedScene=G.classroom.fixedScene,eggLevel=G.classroom.eggLevel;
     const heat=G.heat;
     startClassGame(G.classroom.players.map(p=>p.hero.id),
       {teamName:G.classroom.teamName,names:G.classroom.players.map(p=>p.name),
-       rhythm,questions,sceneMode,fixedScene,eggLevel,heat});
+       rhythm,questions,sceneMode,fixedScene,eggLevel,heat,loop:nextLoop});
   }
-  else startGame(G.hero.id,{heat:G.heat});
+  else startGame(G.hero.id,{heat:G.heat,loop:nextLoop});
 };
 document.getElementById('btnCodex').onclick=()=>buildCodex();
 document.getElementById('btnCxClose').onclick=()=>document.getElementById('codex').classList.add('hidden');
@@ -4231,7 +5302,10 @@ function runSim(perHero){
     for(let i=0;i<perHero;i++){
       startGame(h.id,{sim:true});
       let guard=0;
-      while(!G.over && guard++<1500) act(simBot());
+      while(!G.over && guard++<1500){
+        if(heroSkillReady())useHeroSkill();
+        act(simBot());
+      }
       r.runs++; r.turnsSum+=G.turns; r.floorSum+=G.fi+1;
       if(!G.over){ r.timeouts++;                          // 卡死到步数上限：单独记，不算战死
         r.toFloor=r.toFloor||{}; r.toFloor[G.fi+1]=(r.toFloor[G.fi+1]||0)+1; }
@@ -4262,9 +5336,12 @@ function runClassSim(perCount,rhythm,questions){
       while(!G.over&&guard++<5000){
         if(G.classroom.phase==='judge'){
           gradeStudent(grades[gradeCursor++%grades.length]);
+        }else if(G.classroom.phase==='tactic'){
+          chooseClassTactic(autoClassTactic());
         }else if(G.classroom.phase==='ready'){
           classBeginActions();
         }else if(G.classroom.phase==='act'){
+          if(heroSkillReady())useHeroSkill();
           act(simBot());
         }else break;
       }
@@ -4396,6 +5473,27 @@ function selftest(){
   computeIntents();
   ok('璇出招后必歇一拍(破绽)', xu.intent.t==='wait'||xu.intent.t==='mov');
 
+  // 新敌人生态：治疗、偷金、爆圈、冲锋、分裂、召唤、弩线、布雷都必须可读可解
+  G=blank({});
+  const med=mkMob('medic',6,6),hurtMob=mkMob('snake',6,5);med.tick=2;hurtMob.hp=1;
+  G.ents=[med,hurtMob];computeIntents();
+  ok('雾医提前预告绿色治疗格',med.intent.t==='heal'&&med.intent.x===hurtMob.x);
+  enemiesAct();ok('雾医按预告治疗受伤同伴',hurtMob.hp>1);
+  G=blank({});const sum=mkMob('summoner',6,6);sum.tick=3;G.ents=[sum];computeIntents();
+  ok('骨灯司提前预告召唤格',sum.intent.t==='summon'&&sum.intent.summonType==='shard');
+  G=blank({});const tur=mkMob('turret',4,7);G.ents=[tur];computeIntents();
+  ok('灰塔弩机预告整条走廊',tur.intent.t==='atk'&&tur.intent.cells.length===3);
+  G=blank({px:4,py:4});const blast=mkMob('bomber',5,5);blast.tick=1;G.ents=[blast];computeIntents();
+  ok('爆符童子爆圈覆盖周围八格',blast.intent.t==='atk'&&blast.intent.blast&&blast.intent.cells.length===8);
+  G=blank({});const ram=mkMob('ram',4,7);ram.tick=2;G.ents=[ram];computeIntents();
+  ok('铁角兽第三拍预告冲锋路径',ram.intent.t==='dash'&&ram.intent.cells.length>=2);
+  G=blank({});const trapper=mkMob('trapper',7,4);trapper.tick=2;G.ents=[trapper];computeIntents();
+  ok('机关狸提前标出布雷格',trapper.intent.t==='trap'&&inb(trapper.intent.x,trapper.intent.y));
+  G=blank({coin:9});const thief=mkMob('thief',5,4);G.ents=[thief];computeIntents();enemiesAct();
+  ok('灯贼贴身偷走星币且赃物可追缴',G.coin===4&&thief.stolen===5);
+  G=blank({atk:20});const split=mkMob('splitter',5,4);G.ents=[split];playerHit(split);
+  ok('裂影团击破后分裂成两只裂影仔',G.ents.filter(e=>e.type==='shard').length===2);
+
   // 三选一强化真的生效
   G=blank({atk:3,hp:10,maxhp:20});
   UPGRADES.find(u=>u.id==='atk').go();  ok('强化「利刃」攻击 +1', G.atk===4);
@@ -4408,6 +5506,12 @@ function selftest(){
   G.items=[{x:2,y:2,type:'sword'}];  pickup(); ok('剑 +1 攻击', G.atk===4);
   G.items=[{x:2,y:2,type:'armor'}];  pickup(); ok('甲 +5 血上限', G.maxhp===25);
   G.items=[{x:2,y:2,type:'coin'}];   pickup(); ok('金币 +5', G.coin===5);
+  G.items=[{x:2,y:2,type:'ward'}];   pickup();
+  G.ents=[Object.assign(mkMob('snake',3,2),{intent:{t:'atk',cells:[{x:2,y:2}]}})];enemiesAct();
+  ok('星盾符抵消下一次伤害',G.hp===23&&G.ward===0);
+  G.items=[{x:2,y:2,type:'lever'},{x:3,y:2,type:'spike'},{x:4,y:2,type:'mine'}];pickup();
+  ok('星轨扳机把尖刺和伏雷翻为友军机关',
+    G.items.filter(i=>i.type==='spike'||i.type==='mine').every(i=>i.friendly));
 
   // 下楼 / 胜负
   G.fi=0; descend(); ok('下楼进到第二层', G.fi===1);
@@ -4527,12 +5631,48 @@ function selftest(){
   ok('回到菜单后键盘不再操控棋盘', G.px===3);
 
   // ── 课堂模式：整轮静态场景、行动倍率、按人数归一步数 ──
-  ok('1—6 人每个行动倍率依次折算为 330/180/96/48/18/12 步',
-    [1,2,3,4,5,6].map(classActionBase).join(',')==='330,180,96,48,18,12');
-  ok('小队人数越少，缺少英雄协作时获得越高步数补正',
-    classActionSteps(2,1)===660&&classActionSteps(2,3)===192&&classActionSteps(2,6)===24);
+  ok('1—6 人每个行动倍率依次折算为 100/60/52/32/13/10 步',
+    [1,2,3,4,5,6].map(classActionBase).join(',')==='100,60,52,32,13,10');
+  ok('多人班按人数补正，三到四人保留最佳战术空间',
+    classActionSteps(2,2)*2===240&&classActionSteps(2,3)*3===312&&
+    classActionSteps(2,4)*4===256&&classActionSteps(2,6)*6===120);
   ok('五题与六题的行动倍率区间明确',
     classBandRange(2,5)==='2–3 题'&&classBandRange(3,6)==='5–6 题');
+  ok('课堂计谋库至少有八种且名称互不重复',
+    CLASS_TACTICS.length>=8&&new Set(CLASS_TACTICS.map(t=>t.id)).size===CLASS_TACTICS.length);
+  ok('成绩图二维码是固定网址的完整 33 格矩阵',
+    SCORE_QR.length===33&&SCORE_QR.every(r=>r.length===33&&/^[01]+$/.test(r))&&
+    GAME_URL==='https://myskme.github.io/myskme-star-dungeon/');
+  startGame('jin',{sim:true,loop:1});
+  loadFloor(1);
+  ok('二周目笑爆阵会把可连锁敌人明确标出',
+    currentLoopRule().id==='volatile'&&G.ents.some(e=>e.volatile));
+  loadFloor(2);
+  ok('二周目守门阵会明确指定金印守门敌人',
+    currentLoopRule().id==='keykeeper'&&G.ents.some(e=>e.keykeeper));
+  startClassGame(['jin','wen','xi','hao'],{headless:true,rhythm:CLASS_RHYTHM_BATCH,questions:5});
+  ok('三到四人最佳搭档编制每轮获得四张计谋候选',dealClassTactics().length===4);
+  G.classroom.phase='act';G.classroom.players.forEach(p=>p.roundAp=8);G.classroom.ap=8;
+  G.wall=new Array(N*N).fill(false);G.ents=[mkMob('guard',5,4)];classLoadPlayer(0);
+  const skillTarget=G.ents[0],skillHp=skillTarget.hp;
+  useHeroSkill();playerHit(skillTarget);
+  ok('瑾的职业技每轮一次并让下一击破甲暴击',
+    G.skillStamp==='r1'&&skillTarget.hp===skillHp-G.atk*2);
+  G.items=[];SHOP_ITEMS.find(i=>i.id==='banana').use();
+  ok('御前蕉皮会成为可被敌人利用的友军机关',
+    G.items.some(i=>i.type==='banana'&&i.friendly));
+  startClassGame(['jin','wen'],{headless:true,rhythm:CLASS_RHYTHM_BATCH,questions:5});
+  G.classroom.phase='tactic';G.classroom.tacticHand=['breach'];
+  G.classroom.players.forEach(p=>p.roundAp=8);G.ents=[mkMob('guard',5,4)];
+  chooseClassTactic('breach');
+  ok('破阵点睛会进入行动并忽略两点护甲',
+    G.classroom.phase==='act'&&G.classroom.armorPierce===2);
+  startClassGame(['jin','wen'],{headless:true,rhythm:CLASS_RHYTHM_BATCH,questions:5});
+  G.items=[{type:'spike',x:5,y:4},{type:'mine',x:6,y:4}];
+  G.classroom.phase='tactic';G.classroom.tacticHand=['engineer'];
+  G.classroom.players.forEach(p=>p.roundAp=8);chooseClassTactic('engineer');
+  ok('借刀杀人将两类机关翻为友军并翻倍伤敌',
+    G.classroom.hazardBoost===2&&G.items.every(i=>i.friendly));
   ok('世界景册：至少十二处正典场景', THINK_SCENES.length>=12);
   ok('世界景册：场景编号互不重复', new Set(THINK_SCENE_IDS).size===THINK_SCENES.length);
   ok('世界景册：每处至少两枚异闻彩蛋',
@@ -4544,6 +5684,7 @@ function selftest(){
   };
   const gradeClassRound=corrects=>{
     corrects.forEach((n,i)=>setClassGrade(i,n));
+    confirmClassGrades();
   };
 
   startClassGame(['jin','wen'],{headless:true,rhythm:CLASS_RHYTHM_BATCH,questions:5,
@@ -4576,22 +5717,26 @@ function selftest(){
   setClassGrade(1,2);
   ok('判分板可任意顺序先填二号', classP1.judged&&classP1.roundScore===2&&!classP0.judged);
   setClassGrade(0,3);
-  ok('最后一人选完自动生成步数并进入行动',
-    G.classroom.phase==='act'&&classP0.score===3&&classP0.roundAp===540&&
-    classP1.score===2&&classP1.roundAp===360);
+  ok('最后一人选完只点亮立即计算，不自动跳页',
+    G.classroom.phase==='judge'&&G.classroom.players.every(p=>p.judged));
+  confirmClassGrades();
+  ok('立即计算同时生成积分、行动并进入计谋',
+    G.classroom.phase==='act'&&classP0.score===3&&classP0.roundAp>=180&&
+    classP1.score===2&&classP1.roundAp>=120&&G.classroom.tacticId&&
+    classP0.studyPoints===300&&classP1.studyPoints===180);
   selectClassActionPlayer(1);
   ok('自由行动可直接先选二号星徒',
-    G.classroom.current===1&&G.classroom.ap===360&&classP0.roundAp===540);
+    G.classroom.current===1&&G.classroom.ap>=120&&classP0.roundAp>=180);
   selectClassActionPlayer(0);act('u');
   ok('课堂星徒不能走进同伴所在格',
-    G.px===4&&G.py===4&&G.classroom.ap===540&&G.classroom.current===0);
+    G.px===4&&G.py===4&&G.classroom.ap>=180&&G.classroom.current===0);
   ok('自由换人不会增加行动点总量',
-    G.classroom.players.reduce((n,p)=>n+p.roundAp,0)===900);
+    G.classroom.players.reduce((n,p)=>n+p.roundAp,0)>=300);
   G.coin=12;
   const beforeBell=G.classroom.ap;
   const boughtBell=buyShopItem('bell');
   ok('金币可兑换共鸣行动包',
-    boughtBell&&G.coin===0&&G.spent===12&&G.classroom.ap===beforeBell+180);
+    boughtBell&&G.coin===0&&G.spent===12&&G.classroom.ap===beforeBell+60);
   document.getElementById('shop').classList.add('hidden');
   const beforeEarlyTurn=G.turns;
   finishClassActionsEarly();
@@ -4648,7 +5793,7 @@ function selftest(){
   ok('星徒倒下只在本层休整', rested.resting===true&&standing.resting===false&&G.over===false);
   finishClassQuestions();gradeClassRound([3,2]);
   ok('休整星徒仍在同一页面获得行动星',
-    rested.judged&&rested.roundAnswers===5&&rested.roundScore===3&&rested.roundAp===540&&rested.score===3);
+    rested.judged&&rested.roundAnswers===5&&rested.roundScore===3&&rested.roundAp===180&&rested.score===3);
   ok('休整星徒本层不能行动', G.classroom.current===1&&G.classroom.phase==='act');
   const restedMax=rested.maxhp;
   loadFloor(1);
@@ -4797,18 +5942,26 @@ function selftest(){
   ok('一屏倍率板可以先点任意学生',
     G.classroom.players[1].roundScore===2&&!G.classroom.players[0].judged);
   setClassGrade(0,3);
-  ok('最后一人选完自动打开全队行动板',
-    G.classroom.phase==='act'&&G.classroom.ap===0&&
-    !document.getElementById('classAction').classList.contains('hidden'));
+  ok('最后一人选完仍停留在同屏积分计算页',
+    G.classroom.phase==='judge'&&!document.getElementById('btnCalculateGrades').disabled);
+  confirmClassGrades();
+  ok('立即计算后打开当前编制计谋板',
+    G.classroom.phase==='tactic'&&G.classroom.ap===0&&
+    !document.getElementById('classTactic').classList.contains('hidden')&&
+    document.querySelectorAll('#tacticCards .tacticcard').length===3);
+  chooseClassTactic(G.classroom.tacticHand[0]);
+  ok('选择计谋后才打开全队行动板',
+    G.classroom.phase==='act'&&!document.getElementById('classAction').classList.contains('hidden'));
   selectClassActionPlayer(1);
   ok('行动板直接选择任意星徒后回到地图',
-    G.classroom.current===1&&G.classroom.ap===360&&
+    G.classroom.current===1&&G.classroom.ap>=120&&
     document.getElementById('classAction').classList.contains('hidden'));
   selectClassActionPlayer(0);
   ok('地图名单也能直接换人且不丢行动点',
-    G.classroom.current===0&&G.classroom.ap===540&&G.classroom.players[1].roundAp===360);
+    G.classroom.current===0&&G.classroom.ap>=180&&G.classroom.players[1].roundAp>=120);
   document.getElementById('classThink').classList.add('hidden');
   document.getElementById('classJudge').classList.add('hidden');
+  document.getElementById('classTactic').classList.add('hidden');
   document.getElementById('classAction').classList.add('hidden');
   show('menu');
 
@@ -4874,23 +6027,28 @@ function mkMob(type,x,y){
           slow:!!t.slow,armor:t.armor||0,rare:!!t.rare,elite:false,tick:0,intent:null,flash:0};
 }
 function qaScene(mode){
-  startGame('jin');
+  startGame('jin',mode==='loop'?{loop:1}:undefined);
   document.getElementById('chapter').classList.remove('go');   // 截图时别让过场大字挡住场面
   const setF=(fi)=>{ G.fi=fi; G.fname=floorName(fi);
     document.getElementById('hFloor').textContent=G.fname; };
+  if(mode==='single-over'){
+    setF(6);G.kills=19;G.turns=46;G.coin=37;G.spent=24;G.laughs=3;
+    G.stats=normalizePlayerStats({damage:126,kills:19,hazards:5,items:12,objectives:6});
+    lose();return;
+  }
   if(mode==='xuan'){ setF(2); G.ents=[mkMob('xuan',4,7), mkMob('snake',6,3)]; }
   else if(mode==='tiger'){ setF(5); const t=mkMob('tiger',5,4); t.tick=1;
     G.ents=[t, mkMob('viper',4,7), mkMob('shade',2,5)]; }
   else if(mode==='ye'){ setF(8); const q=mkMob('ye',5,4); q.tick=2;
     G.ents=[q, mkMob('shell',3,6), mkMob('shade',2,3)]; }
   else if(mode==='ch2'){ setF(3); G.ents=[mkMob('viper',4,7), mkMob('shade',5,4), mkMob('snake',2,5)]; }
-  else if(mode==='world'){ setF(6); G.ents=[mkMob('witch',6,4),mkMob('guard',4,7),
-    mkMob('wisp',2,5),mkMob('mimic',4,2)]; }
+  else if(mode==='world'){ setF(7); G.ents=[mkMob('medic',6,4),mkMob('ram',4,7),
+    mkMob('summoner',2,5),mkMob('turret',4,2),mkMob('bomber',6,3),mkMob('trapper',2,3)]; }
   else
   G.ents=[mkMob('snake',5,4), mkMob('crow',4,2), mkMob('shade',2,5)];
   G.items=mode==='world'
-    ?[{x:6,y:6,type:'chest'},{x:3,y:6,type:'spike'},{x:6,y:2,type:'rift'},
-      {x:3,y:2,type:'rift'},{x:2,y:6,type:'shrine'},{x:7,y:5,type:'bomb'}]
+    ?[{x:6,y:6,type:'lever'},{x:3,y:6,type:'spike'},{x:6,y:2,type:'mine'},
+      {x:3,y:2,type:'ward'},{x:2,y:6,type:'spring'},{x:7,y:5,type:'bomb'}]
     :[{x:6,y:6,type:'potion'},{x:3,y:6,type:'sword'},{x:6,y:2,type:'coin'}];
   [[5,4],[4,2],[2,5],[6,6],[3,6],[6,2],[4,4],[4,3],[3,5],[5,5],[5,6],[6,5],[4,5],[5,3],[6,3],[6,4]]
     .forEach(([x,y])=>{ G.wall[key(x,y)]=false; });
@@ -4914,25 +6072,37 @@ function qaClass(mode){
       (mode==='think-rich'?CLASS_EGGS_RICH:CLASS_EGGS_NORMAL)});
   document.getElementById('chapter').classList.remove('go');
   const qaFinish=()=>{while(G.classroom.phase==='think')beginClassJudge();};
-  const qaGrades=()=>{
+  const qaGrades=(choose)=>{
     qaFinish();
     [6,5,3,1].forEach((n,i)=>setClassGrade(i,n));
     confirmClassGrades();
+    if(choose!==false&&G.classroom.phase==='tactic')chooseClassTactic(G.classroom.tacticHand[0]);
   };
   if(mode==='judge'){
     qaFinish();
+  }else if(mode==='tactic'){
+    qaGrades(false);
   }else if(mode==='turn'){
-    qaGrades();classBeginActions();selectClassActionPlayer(0);
+    qaGrades();selectClassActionPlayer(0);
     G.ents=[mkMob('snake',6,4),mkMob('viper',4,7),mkMob('shade',2,5)];
     [[2,5],[3,4],[4,3],[4,4],[4,5],[5,4],[6,4],[4,6],[4,7],[5,5]]
       .forEach(([x,y])=>{ G.wall[key(x,y)]=false; });
     computeIntents(); syncHud();
   }else if(mode==='action'){
-    qaGrades();classBeginActions();
+    qaGrades();
   }else if(mode==='summary'){
     qaGrades();
   }else if(mode==='over'){
-    G.classroom.players.forEach((p,i)=>{ p.score=[8,6,9,7][i]; });
+    G.classroom.players.forEach((p,i)=>{
+      p.score=[8,6,9,7][i];p.studyPoints=[780,560,860,640][i];
+      p.stats=normalizePlayerStats([
+        {damage:31,kills:4,items:2,objectives:2},
+        {damage:22,kills:2,support:5,objectives:1},
+        {damage:18,kills:2,support:11,items:3},
+        {damage:15,kills:1,support:9,hazards:2}
+      ][i]);
+    });
+    G.classroom.tacticHistory=['focus','engineer','ward'];G.laughs=2;
     G.fi=5; G.fname=floorName(5); G.kills=13; G.turns=7;
     lose();
   }
