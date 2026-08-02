@@ -632,7 +632,7 @@ body{
     <div id="singlePicker" class="hidden">
       <div class="sectionhead">选 一 位 星 徒</div>
       <div class="namefield" style="margin-top:10px">
-        <label for="personalName">个人昵称<span>本机存档；开启云榜后公开</span></label>
+        <label for="personalName">个人昵称<span>本机存档；开启后经品牌网关公开</span></label>
         <input class="nameinput" id="personalName" maxlength="12" value="星徒旅人" autocomplete="off">
       </div>
       <div class="sectionhead" style="margin-top:10px">今 日 挑 战</div>
@@ -2551,7 +2551,8 @@ addEventListener('visibilitychange',()=>{
    名称允许中文、英文、数字、空格、点和短横；课堂成员名绝不上传。 */
 const IDENTITY_KEY='starDungeon_identity_v1';
 const CLOUD_QUEUE_KEY='starDungeon_cloud_queue_v1';
-const CLOUD_API='https://myskme-game-api.wzc1020.workers.dev';
+// MYSKME 品牌网关固定转发到原 game Worker；不迁库、不双写。
+const CLOUD_API='https://play.myskme.com/api/game';
 const CLOUD_BUILD='star-dungeon-20260726-audio-cloud';
 const NETWORK_DISABLED=location.hash==='#selftest'||location.hash.startsWith('#qa')||location.hash.startsWith('#sim');
 function cleanDisplayName(raw,fallback,max){
@@ -5979,7 +5980,7 @@ function buildLeaderboard(tab,source){
   document.getElementById('btnCloudRefresh').classList.toggle('hidden',ACTIVE_RANK_SOURCE!=='cloud');
   document.getElementById('rankNote').textContent=ACTIVE_RANK_SOURCE==='local'
     ?'本机榜保留完整个人与课堂成员成绩；模拟、自测和未结算续玩档不会入榜。'
-    :'云端榜只展示公开昵称或队名，不含课堂成员姓名。';
+    :'云端榜只展示公开昵称或队名，不含课堂成员姓名；设备标识与成绩经 play.myskme.com 加密转发。';
   if(ACTIVE_RANK_SOURCE==='cloud'){
     document.getElementById('rankSummary').textContent='云端公开榜 · 展示前 50 名';
     renderCloudLeaderboard(ACTIVE_RANK_TAB);
@@ -6161,7 +6162,7 @@ function syncCloudControl(){
   b.textContent=IDENTITY.cloud?'已开启':'未开启';
   b.classList.toggle('on',IDENTITY.cloud);
   if(location.protocol==='file:')setCloudStatus('本地文件保持离线；请用正式在线版查看和上传云榜。','bad');
-  else if(!IDENTITY.cloud)setCloudStatus('云榜读取无需开启；上传由你手动选择。');
+  else if(!IDENTITY.cloud)setCloudStatus('云榜读取无需开启；上传经 play.myskme.com，由你手动选择。');
   else if(IDENTITY.lastSync)setCloudStatus('上次云端核对 '+cloudClock(IDENTITY.lastSync),'good');
 }
 
