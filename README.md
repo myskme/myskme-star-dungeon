@@ -9,7 +9,7 @@ MYSKME 世界观下的单文件像素战术地牢最终课堂版。含单人九�
 - 源提交：`340d984635d966621d2fb00ff8b531b424a3e13e`（`myskme/myskme-expedition` 的 `像素地牢/星徒地牢.html`）
 - 权威设计与维护说明：[像素地牢／说明.md](https://github.com/myskme/myskme-expedition/blob/main/%E5%83%8F%E7%B4%A0%E5%9C%B0%E7%89%A2/%E8%AF%B4%E6%98%8E.md)
 - 云端榜只公开个人昵称或队名，不公开课堂成员姓名；化名/队名、设备标识和成绩统一经
-  `https://play.myskme.com/api/game` 品牌网关转发到原排行榜，原数据库不迁移、不双写
+  `https://myskme.com/api/game` 品牌网关转发到原排行榜，原数据库不迁移、不双写
 
 ## 设计精髓
 
